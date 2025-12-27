@@ -1,0 +1,169 @@
+generator client {
+  provider     = "prisma-client"
+  output       = "../src/generated/prisma"
+  moduleFormat = "cjs"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id              String    @id @default(cuid())
+  email           String    @unique
+  password        String?   // bcrypt hashed (null for OAuth users)
+  name            String
+  avatar          String?
+  
+  // OAuth (GitHub, Google)
+  provider        String?   // "github", "google", or null for email signup
+  providerId      String?   // OAuth provider's user ID
+  
+  // Email verification (only for email+password signups)
+  emailVerified   Boolean   @default(false)
+  verifyToken     String?   @unique  // Token sent via email
+  verifyTokenExp  DateTime? // Token expiration
+  
+  // 2FA (V2)
+  twoFactorEnabled Boolean  @default(false)
+  twoFactorSecret  String?  // TOTP secret for authenticator apps
+  
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  
+  // Relations
+  memberships     ProjectMember[]
+  apiKeys         ApiKey[]
+  sentInvites     Invitation[]    @relation("InviteSender")
+  receivedInvites Invitation[]  @relation("InviteReceiver")
+
+  @@unique([provider, providerId]) // One account per OAuth provider
+}
+
+model Project {
+  id           String   @id @default(cuid())
+  name         String
+  slug         String   @unique  // "my-project-name"
+  description  String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  // Relations
+  members      ProjectMember[]
+  environments Environment[]
+  invitations  Invitation[]
+  auditLogs    AuditLog[]
+}
+
+enum Role {
+  OWNER   // Full control, can delete project
+  ADMIN   // Manage team, all envs
+  MEMBER  // Edit assigned envs
+  VIEWER  // Read only
+}
+
+model ProjectMember {
+  id        String   @id @default(cuid())
+  userId    String
+  projectId String
+  role      Role     @default(MEMBER)
+  joinedAt  DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  @@unique([userId, projectId]) // User can only be member once per project
+}
+
+model Environment {
+  id        String       @id @default(cuid())
+  name      String       // "development", "staging", "production"
+  projectId String
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+  project   Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  variables EnvVariable[]
+  @@unique([projectId, name]) // One "development" per project
+}
+
+model EnvVariable {
+  id             String      @id @default(cuid())
+  key            String      // "DATABASE_URL"
+  encryptedValue String      // AES-256-GCM ciphertext (base64)
+  iv             String      // Initialization vector (base64)
+  authTag        String      // GCM authentication tag (base64) - tamper detection
+  environmentId  String
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+  createdBy      String      // User ID
+  updatedBy      String      // User ID
+  environment    Environment @relation(fields: [environmentId], references: [id], onDelete: Cascade)
+  @@unique([environmentId, key]) // One API_KEY per environment
+}
+
+enum InviteStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+  EXPIRED
+}
+
+model Invitation {
+  id          String       @id @default(cuid())
+  email       String       // Can invite non-users
+  projectId   String
+  role        Role         @default(MEMBER)
+  invitedById String
+  inviteeId   String?      // Null if email not registered yet
+  status      InviteStatus @default(PENDING)
+  token       String       @unique @default(cuid())
+  expiresAt   DateTime
+  createdAt   DateTime     @default(now())
+  project     Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  invitedBy   User         @relation("InviteSender", fields: [invitedById], references: [id])
+  invitee     User?        @relation("InviteReceiver", fields: [inviteeId], references: [id])
+}
+
+model ApiKey {
+  id         String    @id @default(cuid())
+  name       String    // "Work Laptop", "CI Server"
+  keyHash    String    // bcrypt hash of full key
+  keyPrefix  String    // "envsync_a8f3" (for display)
+  userId     String
+  lastUsedAt DateTime?
+  expiresAt  DateTime?
+  createdAt  DateTime  @default(now())
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+enum AuditAction {
+  // Variables
+  VARIABLE_CREATED
+  VARIABLE_UPDATED
+  VARIABLE_DELETED
+  VARIABLES_EXPORTED
+  
+  // Environment
+  ENVIRONMENT_CREATED
+  ENVIRONMENT_DELETED
+  
+  // Members
+  MEMBER_INVITED
+  MEMBER_JOINED
+  MEMBER_REMOVED
+  MEMBER_ROLE_CHANGED
+  
+  // Project
+  PROJECT_CREATED
+  PROJECT_UPDATED
+  PROJECT_DELETED
+}
+
+model AuditLog {
+  id        String      @id @default(cuid())
+  action    AuditAction
+  projectId String
+  userId    String
+  metadata  Json?       // { variableKey: "API_KEY", oldValue: "***", newValue: "***" }
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime    @default(now())
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+}
