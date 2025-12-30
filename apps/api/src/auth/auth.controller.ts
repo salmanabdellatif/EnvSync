@@ -4,9 +4,12 @@ import {
   Get,
   Post,
   Query,
+  Req,
   Request,
+  Res,
   UseGuards,
 } from '@nestjs/common';
+import type { Response } from 'express';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { LocalAuthGuard } from './guards/local-auth.guard';
@@ -16,6 +19,7 @@ import { Throttle } from '@nestjs/throttler';
 import { LoginDto } from './dto/login.dto';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
+import { GithubAuthGuard } from './guards/github-auth.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -39,14 +43,17 @@ export class AuthController {
     return req.user;
   }
 
+  @UseGuards(GithubAuthGuard)
   @Get('github')
-  githubLogin() {
-    return { msg: 'GitHub OAuth redirect' };
-  }
+  async githubLogin() {}
 
   @Get('github/callback')
-  githubCallback(@Request() req) {
-    return { msg: 'GitHub OAuth redirect' };
+  @UseGuards(GithubAuthGuard)
+  async githubCallback(@Req() req, @Res() res: Response) {
+    const { access_token } = await this.authService.login(req.user);
+    // Redirect to Frontend with Token
+    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
+    res.redirect(`${frontendUrl}/dashboard?token=${access_token}`);
   }
 
   @Get('google')

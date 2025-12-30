@@ -14,6 +14,13 @@ import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 
 export type AuthUser = Omit<User, 'password'>;
+interface OAuthUserDetails {
+  email: string;
+  name: string;
+  avatar: string | null;
+  provider: string;
+  providerId: string;
+}
 
 @Injectable()
 export class AuthService {
@@ -93,6 +100,53 @@ export class AuthService {
       user,
       access_token: this.jwtService.sign(payload),
     };
+  }
+
+  async validateOAuthLogin(details: OAuthUserDetails) {
+    // 1. Check if user exists with this OAuth provider
+    let user = await this.prisma.user.findFirst({
+      where: {
+        provider: details.provider,
+        providerId: details.providerId,
+      },
+    });
+    if (user) {
+      const { password: _, ...rest } = user;
+      return rest;
+    }
+    // 2. Check if email exists (registered via password)
+    const existingEmail = await this.prisma.user.findUnique({
+      where: { email: details.email },
+    });
+    if (existingEmail) {
+      // Security: Only link if email is verified
+      if (!existingEmail.emailVerified) {
+        throw new BadRequestException(
+          'Please verify your email before linking OAuth account',
+        );
+      }
+      // Link the accounts
+      user = await this.prisma.user.update({
+        where: { email: details.email },
+        data: {
+          provider: details.provider,
+          providerId: details.providerId,
+          avatar: details.avatar || existingEmail.avatar,
+          emailVerified: true,
+        },
+      });
+      const { password: _, ...rest } = user;
+      return rest;
+    }
+    // 3. Create new user
+    user = await this.prisma.user.create({
+      data: {
+        ...details,
+        emailVerified: true, // OAuth emails are trusted
+      },
+    });
+    const { password: _, ...rest } = user;
+    return rest;
   }
 
   async verifyEmail(token: string) {

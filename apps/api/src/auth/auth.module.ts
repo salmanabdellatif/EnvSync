@@ -8,6 +8,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
 import { PrismaModule } from '../prisma/prisma.module';
 import { LocalStrategy } from './strategies/local.strategy';
 import { MailModule } from '../mail/mail.module';
+import { GithubStrategy } from './strategies/github.strategy';
 
 @Module({
   imports: [
@@ -25,7 +26,7 @@ import { MailModule } from '../mail/mail.module';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy, LocalStrategy],
+  providers: [AuthService, JwtStrategy, LocalStrategy, GithubStrategy],
   exports: [AuthService],
 })
 export class AuthModule {}
