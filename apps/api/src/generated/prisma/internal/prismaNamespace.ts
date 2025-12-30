@@ -1053,6 +1053,8 @@ export const UserScalarFieldEnum = {
   emailVerified: 'emailVerified',
   verifyToken: 'verifyToken',
   verifyTokenExp: 'verifyTokenExp',
+  resetToken: 'resetToken',
+  resetTokenExp: 'resetTokenExp',
   twoFactorEnabled: 'twoFactorEnabled',
   twoFactorSecret: 'twoFactorSecret',
   createdAt: 'createdAt',

@@ -23,6 +23,10 @@ model User {
   emailVerified   Boolean   @default(false)
   verifyToken     String?   @unique  // Token sent via email
   verifyTokenExp  DateTime? // Token expiration
+
+  // Password reset
+  resetToken      String?   @unique
+  resetTokenExp   DateTime?
   
   // 2FA (V2)
   twoFactorEnabled Boolean  @default(false)

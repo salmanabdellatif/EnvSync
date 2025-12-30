@@ -14,12 +14,14 @@ import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { ResendVerificationDto } from './dto/resend-verification.dto';
 import { Throttle } from '@nestjs/throttler';
 import { LoginDto } from './dto/login.dto';
+import { ForgotPasswordDto } from './dto/forgot-password.dto';
+import { ResetPasswordDto } from './dto/reset-password.dto';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @Throttle({ default: { limit: 3, ttl: 60000 } })
+  // @Throttle({ default: { limit: 3, ttl: 60000 } })
   @Post('register')
   register(@Body() registerDto: RegisterDto) {
     return this.authService.register(registerDto);
@@ -66,5 +68,15 @@ export class AuthController {
   @Post('resend-verification')
   resendVerification(@Body() dto: ResendVerificationDto) {
     return this.authService.resendVerification(dto.email);
+  }
+
+  @Post('forgot-password')
+  forgotPassword(@Body() dto: ForgotPasswordDto) {
+    return this.authService.forgotPassword(dto);
+  }
+
+  @Post('reset-password')
+  resetPassword(@Body() dto: ResetPasswordDto) {
+    return this.authService.resetPassword(dto);
   }
 }

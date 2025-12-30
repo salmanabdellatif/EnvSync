@@ -10,6 +10,8 @@ import { User } from 'src/generated/prisma/client';
 import { RegisterDto } from './dto/register.dto';
 import * as crypto from 'crypto';
 import { MailService } from '../mail/mail.service';
+import { ForgotPasswordDto } from './dto/forgot-password.dto';
+import { ResetPasswordDto } from './dto/reset-password.dto';
 
 export type AuthUser = Omit<User, 'password'>;
 
@@ -42,11 +44,15 @@ export class AuthService {
       },
     });
 
-    // Send verification email
-    await this.mailService.sendVerificationEmail(
-      newUser.email,
-      verificationToken,
-    );
+    try {
+      await this.mailService.sendVerificationEmail(
+        newUser.email,
+        verificationToken,
+      );
+    } catch (error) {
+      console.error('Failed to send verification email:', error);
+      // User is still registered, they can resend verification later
+    }
 
     return {
       message:
@@ -121,20 +127,19 @@ export class AuthService {
   async resendVerification(email: string) {
     const user = await this.prisma.user.findUnique({ where: { email } });
 
+    const genericMessage = {
+      message: 'If an account exists, a verification email has been sent.',
+    };
+
     if (!user || user.emailVerified) {
-      return {
-        message: 'If an account exists, a verification email has been sent.',
-      };
+      return genericMessage;
     }
 
-    const isTooFrequent =
+    if (
       user.verifyTokenExp &&
-      user.verifyTokenExp.getTime() > Date.now() + 23 * 60 * 60 * 1000; // Greater than 23 hours from now
-
-    if (isTooFrequent) {
-      throw new BadRequestException(
-        'Please wait a while before requesting another email.',
-      );
+      user.verifyTokenExp.getTime() > Date.now() + 23 * 60 * 60 * 1000
+    ) {
+      return genericMessage;
     }
 
     const verificationToken = crypto.randomBytes(32).toString('hex');
@@ -148,10 +153,78 @@ export class AuthService {
       },
     });
 
-    await this.mailService.sendVerificationEmail(email, verificationToken);
+    try {
+      await this.mailService.sendVerificationEmail(email, verificationToken);
+    } catch (error) {
+      console.error('Failed to send verification email:', error);
+    }
+    return genericMessage;
+  }
 
-    return {
-      message: 'If an account exists, a verification email has been sent.',
+  async forgotPassword(dto: ForgotPasswordDto) {
+    const user = await this.prisma.user.findUnique({
+      where: { email: dto.email },
+    });
+
+    const genericMessage = {
+      message: 'If an account exists, a reset link has been sent.',
     };
+    if (!user || !user.password) {
+      return genericMessage;
+    }
+
+    // Anti-Spam, prevent users to resend reset token in less than 5 mins
+    if (
+      user.resetTokenExp &&
+      user.resetTokenExp.getTime() > Date.now() + 55 * 60 * 1000
+    ) {
+      return genericMessage;
+    }
+
+    // Generate Token
+    const resetToken = crypto.randomBytes(32).toString('hex');
+    const resetTokenExp = new Date(Date.now() + 60 * 60 * 1000);
+
+    // Save to DB
+    await this.prisma.user.update({
+      where: { id: user.id },
+      data: {
+        resetToken,
+        resetTokenExp,
+      },
+    });
+
+    try {
+      await this.mailService.sendPasswordResetEmail(dto.email, resetToken);
+    } catch (error) {
+      console.error('Failed to send password reset email:', error);
+    }
+    return genericMessage;
+  }
+
+  async resetPassword(dto: ResetPasswordDto) {
+    const user = await this.prisma.user.findFirst({
+      where: {
+        resetToken: dto.token,
+        resetTokenExp: { gt: new Date() },
+      },
+    });
+
+    if (!user) {
+      throw new BadRequestException('Invalid or expired token');
+    }
+
+    const hashedPassword = await bcrypt.hash(dto.newPassword, 10);
+
+    await this.prisma.user.update({
+      where: { id: user.id },
+      data: {
+        password: hashedPassword,
+        resetToken: null,
+        resetTokenExp: null,
+      },
+    });
+
+    return { message: 'Password reset successfully. You can now login.' };
   }
 }
