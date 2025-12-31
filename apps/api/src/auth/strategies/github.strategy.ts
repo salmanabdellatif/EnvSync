@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-github2';
 import { ConfigService } from '@nestjs/config';
@@ -21,8 +21,16 @@ export class GithubStrategy extends PassportStrategy(Strategy, 'github') {
   async validate(accessToken: string, refreshToken: string, profile: any) {
     const { id, displayName, username, emails, photos } = profile;
 
+    const primaryEmail = emails?.[0]?.value;
+
+    if (!primaryEmail) {
+      throw new UnauthorizedException(
+        'GitHub did not provide an email. Please disable "Keep my email addresses private" in your GitHub settings or set a public email.',
+      );
+    }
+
     const userDetails = {
-      email: emails?.[0]?.value || '',
+      email: primaryEmail,
       name: displayName || username || 'GitHub User',
       avatar: photos?.[0]?.value || null,
       provider: 'github',
@@ -32,6 +40,6 @@ export class GithubStrategy extends PassportStrategy(Strategy, 'github') {
     // This will create or update the user
     const user = await this.authService.validateOAuthLogin(userDetails);
 
-    return user; // ✅ Direct return, no done()
+    return user;
   }
 }
