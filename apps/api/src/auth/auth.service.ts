@@ -103,48 +103,73 @@ export class AuthService {
   }
 
   async validateOAuthLogin(details: OAuthUserDetails) {
-    // 1. Check if user exists with this OAuth provider
-    let user = await this.prisma.user.findFirst({
+    // 1. Check if this specific OAuth provider is already linked
+    const existingOAuth = await this.prisma.oAuthProvider.findUnique({
       where: {
-        provider: details.provider,
-        providerId: details.providerId,
+        provider_providerId: {
+          provider: details.provider,
+          providerId: details.providerId,
+        },
       },
+      include: { user: true },
     });
-    if (user) {
-      const { password: _, ...rest } = user;
+
+    // return user if founded
+    if (existingOAuth) {
+      const { password: _, ...rest } = existingOAuth.user;
       return rest;
     }
-    // 2. Check if email exists (registered via password)
-    const existingEmail = await this.prisma.user.findUnique({
+
+    // 2. Check if email exists
+    let user = await this.prisma.user.findUnique({
       where: { email: details.email },
     });
-    if (existingEmail) {
-      // Security: Only link if email is verified
-      if (!existingEmail.emailVerified) {
+
+    if (user) {
+      // User exists - link this new OAuth provider to existing account
+      if (!user.emailVerified) {
         throw new BadRequestException(
-          'Please verify your email before linking OAuth account',
+          `Please verify your email before linking ${details.provider} account`,
         );
       }
-      // Link the accounts
-      user = await this.prisma.user.update({
-        where: { email: details.email },
+
+      // Link the new OAuth provider
+      await this.prisma.oAuthProvider.create({
         data: {
           provider: details.provider,
           providerId: details.providerId,
-          avatar: details.avatar || existingEmail.avatar,
-          emailVerified: true,
+          userId: user.id,
         },
       });
+
+      // Update avatar if not set
+      if (!user.avatar && details.avatar) {
+        user = await this.prisma.user.update({
+          where: { id: user.id },
+          data: { avatar: details.avatar },
+        });
+      }
+
       const { password: _, ...rest } = user;
       return rest;
     }
-    // 3. Create new user
+
+    // 3. Create new user with OAuth provider
     user = await this.prisma.user.create({
       data: {
-        ...details,
-        emailVerified: true, // OAuth emails are trusted
+        email: details.email,
+        name: details.name,
+        avatar: details.avatar,
+        emailVerified: true,
+        oauthProviders: {
+          create: {
+            provider: details.provider,
+            providerId: details.providerId,
+          },
+        },
       },
     });
+
     const { password: _, ...rest } = user;
     return rest;
   }

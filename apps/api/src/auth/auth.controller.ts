@@ -20,10 +20,15 @@ import { LoginDto } from './dto/login.dto';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { GithubAuthGuard } from './guards/github-auth.guard';
+import { GoogleAuthGuard } from './guards/google-auth.guard';
+import { ConfigService } from '@nestjs/config';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private configService: ConfigService,
+  ) {}
 
   // @Throttle({ default: { limit: 3, ttl: 60000 } })
   @Post('register')
@@ -52,18 +57,20 @@ export class AuthController {
   async githubCallback(@Req() req, @Res() res: Response) {
     const { access_token } = await this.authService.login(req.user);
     // Redirect to Frontend with Token
-    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
+    const frontendUrl = this.configService.getOrThrow<string>('FRONTEND_URL');
     res.redirect(`${frontendUrl}/dashboard?token=${access_token}`);
   }
 
+  @UseGuards(GoogleAuthGuard)
   @Get('google')
-  googleLogin() {
-    return { msg: 'google OAuth redirect' };
-  }
+  googleLogin() {}
 
   @Get('google/callback')
-  googleCallback(@Request() req) {
-    return { msg: 'google OAuth redirect' };
+  @UseGuards(GoogleAuthGuard)
+  async googleCallback(@Req() req, @Res() res: Response) {
+    const { access_token } = await this.authService.login(req.user);
+    const frontendUrl = this.configService.getOrThrow<string>('FRONTEND_URL');
+    res.redirect(`${frontendUrl}/dashboard?token=${access_token}`);
   }
 
   @Get('verify-email')
