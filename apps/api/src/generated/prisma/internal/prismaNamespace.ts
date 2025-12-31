@@ -385,6 +385,7 @@ type FieldRefInputType<Model, FieldType> = Model extends never ? never : FieldRe
 
 export const ModelName = {
   User: 'User',
+  OAuthProvider: 'OAuthProvider',
   Project: 'Project',
   ProjectMember: 'ProjectMember',
   Environment: 'Environment',
@@ -407,7 +408,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "project" | "projectMember" | "environment" | "envVariable" | "invitation" | "apiKey" | "auditLog"
+    modelProps: "user" | "oAuthProvider" | "project" | "projectMember" | "environment" | "envVariable" | "invitation" | "apiKey" | "auditLog"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -482,6 +483,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.UserCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.UserCountAggregateOutputType> | number
+        }
+      }
+    }
+    OAuthProvider: {
+      payload: Prisma.$OAuthProviderPayload<ExtArgs>
+      fields: Prisma.OAuthProviderFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.OAuthProviderFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OAuthProviderPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.OAuthProviderFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OAuthProviderPayload>
+        }
+        findFirst: {
+          args: Prisma.OAuthProviderFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OAuthProviderPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.OAuthProviderFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OAuthProviderPayload>
+        }
+        findMany: {
+          args: Prisma.OAuthProviderFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OAuthProviderPayload>[]
+        }
+        create: {
+          args: Prisma.OAuthProviderCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OAuthProviderPayload>
+        }
+        createMany: {
+          args: Prisma.OAuthProviderCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.OAuthProviderCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OAuthProviderPayload>[]
+        }
+        delete: {
+          args: Prisma.OAuthProviderDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OAuthProviderPayload>
+        }
+        update: {
+          args: Prisma.OAuthProviderUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OAuthProviderPayload>
+        }
+        deleteMany: {
+          args: Prisma.OAuthProviderDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.OAuthProviderUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.OAuthProviderUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OAuthProviderPayload>[]
+        }
+        upsert: {
+          args: Prisma.OAuthProviderUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OAuthProviderPayload>
+        }
+        aggregate: {
+          args: Prisma.OAuthProviderAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateOAuthProvider>
+        }
+        groupBy: {
+          args: Prisma.OAuthProviderGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.OAuthProviderGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.OAuthProviderCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.OAuthProviderCountAggregateOutputType> | number
         }
       }
     }
@@ -1048,8 +1123,6 @@ export const UserScalarFieldEnum = {
   password: 'password',
   name: 'name',
   avatar: 'avatar',
-  provider: 'provider',
-  providerId: 'providerId',
   emailVerified: 'emailVerified',
   verifyToken: 'verifyToken',
   verifyTokenExp: 'verifyTokenExp',
@@ -1062,6 +1135,17 @@ export const UserScalarFieldEnum = {
 } as const
 
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
+
+
+export const OAuthProviderScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  provider: 'provider',
+  providerId: 'providerId',
+  createdAt: 'createdAt'
+} as const
+
+export type OAuthProviderScalarFieldEnum = (typeof OAuthProviderScalarFieldEnum)[keyof typeof OAuthProviderScalarFieldEnum]
 
 
 export const ProjectScalarFieldEnum = {
@@ -1405,6 +1489,7 @@ export type PrismaClientOptions = ({
 }
 export type GlobalOmitConfig = {
   user?: Prisma.UserOmit
+  oAuthProvider?: Prisma.OAuthProviderOmit
   project?: Prisma.ProjectOmit
   projectMember?: Prisma.ProjectMemberOmit
   environment?: Prisma.EnvironmentOmit

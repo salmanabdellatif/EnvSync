@@ -15,9 +15,7 @@ model User {
   name            String
   avatar          String?
   
-  // OAuth (GitHub, Google)
-  provider        String?   // "github", "google", or null for email signup
-  providerId      String?   // OAuth provider's user ID
+  oauthProviders  OAuthProvider[] // connected accounts
   
   // Email verification (only for email+password signups)
   emailVerified   Boolean   @default(false)
@@ -40,8 +38,18 @@ model User {
   apiKeys         ApiKey[]
   sentInvites     Invitation[]    @relation("InviteSender")
   receivedInvites Invitation[]  @relation("InviteReceiver")
+}
 
-  @@unique([provider, providerId]) // One account per OAuth provider
+model OAuthProvider {
+  id         String @id @default(cuid())
+  userId     String
+  provider   String   
+  providerId String   
+  createdAt  DateTime @default(now())
+  
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@unique([provider, providerId])
 }
 
 model Project {
