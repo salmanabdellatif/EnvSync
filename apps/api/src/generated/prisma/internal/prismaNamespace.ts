@@ -1152,6 +1152,7 @@ export const ProjectScalarFieldEnum = {
   id: 'id',
   name: 'name',
   slug: 'slug',
+  ownerId: 'ownerId',
   description: 'description',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'

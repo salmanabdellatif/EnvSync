@@ -255,6 +255,7 @@ export type UserWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   oauthProviders?: Prisma.OAuthProviderListRelationFilter
+  ownedProjects?: Prisma.ProjectListRelationFilter
   memberships?: Prisma.ProjectMemberListRelationFilter
   apiKeys?: Prisma.ApiKeyListRelationFilter
   sentInvites?: Prisma.InvitationListRelationFilter
@@ -277,6 +278,7 @@ export type UserOrderByWithRelationInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   oauthProviders?: Prisma.OAuthProviderOrderByRelationAggregateInput
+  ownedProjects?: Prisma.ProjectOrderByRelationAggregateInput
   memberships?: Prisma.ProjectMemberOrderByRelationAggregateInput
   apiKeys?: Prisma.ApiKeyOrderByRelationAggregateInput
   sentInvites?: Prisma.InvitationOrderByRelationAggregateInput
@@ -302,6 +304,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   oauthProviders?: Prisma.OAuthProviderListRelationFilter
+  ownedProjects?: Prisma.ProjectListRelationFilter
   memberships?: Prisma.ProjectMemberListRelationFilter
   apiKeys?: Prisma.ApiKeyListRelationFilter
   sentInvites?: Prisma.InvitationListRelationFilter
@@ -364,6 +367,7 @@ export type UserCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   oauthProviders?: Prisma.OAuthProviderCreateNestedManyWithoutUserInput
+  ownedProjects?: Prisma.ProjectCreateNestedManyWithoutOwnerInput
   memberships?: Prisma.ProjectMemberCreateNestedManyWithoutUserInput
   apiKeys?: Prisma.ApiKeyCreateNestedManyWithoutUserInput
   sentInvites?: Prisma.InvitationCreateNestedManyWithoutInvitedByInput
@@ -386,6 +390,7 @@ export type UserUncheckedCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   oauthProviders?: Prisma.OAuthProviderUncheckedCreateNestedManyWithoutUserInput
+  ownedProjects?: Prisma.ProjectUncheckedCreateNestedManyWithoutOwnerInput
   memberships?: Prisma.ProjectMemberUncheckedCreateNestedManyWithoutUserInput
   apiKeys?: Prisma.ApiKeyUncheckedCreateNestedManyWithoutUserInput
   sentInvites?: Prisma.InvitationUncheckedCreateNestedManyWithoutInvitedByInput
@@ -408,6 +413,7 @@ export type UserUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   oauthProviders?: Prisma.OAuthProviderUpdateManyWithoutUserNestedInput
+  ownedProjects?: Prisma.ProjectUpdateManyWithoutOwnerNestedInput
   memberships?: Prisma.ProjectMemberUpdateManyWithoutUserNestedInput
   apiKeys?: Prisma.ApiKeyUpdateManyWithoutUserNestedInput
   sentInvites?: Prisma.InvitationUpdateManyWithoutInvitedByNestedInput
@@ -430,6 +436,7 @@ export type UserUncheckedUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   oauthProviders?: Prisma.OAuthProviderUncheckedUpdateManyWithoutUserNestedInput
+  ownedProjects?: Prisma.ProjectUncheckedUpdateManyWithoutOwnerNestedInput
   memberships?: Prisma.ProjectMemberUncheckedUpdateManyWithoutUserNestedInput
   apiKeys?: Prisma.ApiKeyUncheckedUpdateManyWithoutUserNestedInput
   sentInvites?: Prisma.InvitationUncheckedUpdateManyWithoutInvitedByNestedInput
@@ -582,6 +589,20 @@ export type UserUpdateOneRequiredWithoutOauthProvidersNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutOauthProvidersInput, Prisma.UserUpdateWithoutOauthProvidersInput>, Prisma.UserUncheckedUpdateWithoutOauthProvidersInput>
 }
 
+export type UserCreateNestedOneWithoutOwnedProjectsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutOwnedProjectsInput, Prisma.UserUncheckedCreateWithoutOwnedProjectsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutOwnedProjectsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutOwnedProjectsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutOwnedProjectsInput, Prisma.UserUncheckedCreateWithoutOwnedProjectsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutOwnedProjectsInput
+  upsert?: Prisma.UserUpsertWithoutOwnedProjectsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutOwnedProjectsInput, Prisma.UserUpdateWithoutOwnedProjectsInput>, Prisma.UserUncheckedUpdateWithoutOwnedProjectsInput>
+}
+
 export type UserCreateNestedOneWithoutMembershipsInput = {
   create?: Prisma.XOR<Prisma.UserCreateWithoutMembershipsInput, Prisma.UserUncheckedCreateWithoutMembershipsInput>
   connectOrCreate?: Prisma.UserCreateOrConnectWithoutMembershipsInput
@@ -655,6 +676,7 @@ export type UserCreateWithoutOauthProvidersInput = {
   twoFactorSecret?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  ownedProjects?: Prisma.ProjectCreateNestedManyWithoutOwnerInput
   memberships?: Prisma.ProjectMemberCreateNestedManyWithoutUserInput
   apiKeys?: Prisma.ApiKeyCreateNestedManyWithoutUserInput
   sentInvites?: Prisma.InvitationCreateNestedManyWithoutInvitedByInput
@@ -676,6 +698,7 @@ export type UserUncheckedCreateWithoutOauthProvidersInput = {
   twoFactorSecret?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  ownedProjects?: Prisma.ProjectUncheckedCreateNestedManyWithoutOwnerInput
   memberships?: Prisma.ProjectMemberUncheckedCreateNestedManyWithoutUserInput
   apiKeys?: Prisma.ApiKeyUncheckedCreateNestedManyWithoutUserInput
   sentInvites?: Prisma.InvitationUncheckedCreateNestedManyWithoutInvitedByInput
@@ -713,6 +736,7 @@ export type UserUpdateWithoutOauthProvidersInput = {
   twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  ownedProjects?: Prisma.ProjectUpdateManyWithoutOwnerNestedInput
   memberships?: Prisma.ProjectMemberUpdateManyWithoutUserNestedInput
   apiKeys?: Prisma.ApiKeyUpdateManyWithoutUserNestedInput
   sentInvites?: Prisma.InvitationUpdateManyWithoutInvitedByNestedInput
@@ -734,6 +758,111 @@ export type UserUncheckedUpdateWithoutOauthProvidersInput = {
   twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  ownedProjects?: Prisma.ProjectUncheckedUpdateManyWithoutOwnerNestedInput
+  memberships?: Prisma.ProjectMemberUncheckedUpdateManyWithoutUserNestedInput
+  apiKeys?: Prisma.ApiKeyUncheckedUpdateManyWithoutUserNestedInput
+  sentInvites?: Prisma.InvitationUncheckedUpdateManyWithoutInvitedByNestedInput
+  receivedInvites?: Prisma.InvitationUncheckedUpdateManyWithoutInviteeNestedInput
+}
+
+export type UserCreateWithoutOwnedProjectsInput = {
+  id?: string
+  email: string
+  password?: string | null
+  name: string
+  avatar?: string | null
+  emailVerified?: boolean
+  verifyToken?: string | null
+  verifyTokenExp?: Date | string | null
+  resetToken?: string | null
+  resetTokenExp?: Date | string | null
+  twoFactorEnabled?: boolean
+  twoFactorSecret?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  oauthProviders?: Prisma.OAuthProviderCreateNestedManyWithoutUserInput
+  memberships?: Prisma.ProjectMemberCreateNestedManyWithoutUserInput
+  apiKeys?: Prisma.ApiKeyCreateNestedManyWithoutUserInput
+  sentInvites?: Prisma.InvitationCreateNestedManyWithoutInvitedByInput
+  receivedInvites?: Prisma.InvitationCreateNestedManyWithoutInviteeInput
+}
+
+export type UserUncheckedCreateWithoutOwnedProjectsInput = {
+  id?: string
+  email: string
+  password?: string | null
+  name: string
+  avatar?: string | null
+  emailVerified?: boolean
+  verifyToken?: string | null
+  verifyTokenExp?: Date | string | null
+  resetToken?: string | null
+  resetTokenExp?: Date | string | null
+  twoFactorEnabled?: boolean
+  twoFactorSecret?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  oauthProviders?: Prisma.OAuthProviderUncheckedCreateNestedManyWithoutUserInput
+  memberships?: Prisma.ProjectMemberUncheckedCreateNestedManyWithoutUserInput
+  apiKeys?: Prisma.ApiKeyUncheckedCreateNestedManyWithoutUserInput
+  sentInvites?: Prisma.InvitationUncheckedCreateNestedManyWithoutInvitedByInput
+  receivedInvites?: Prisma.InvitationUncheckedCreateNestedManyWithoutInviteeInput
+}
+
+export type UserCreateOrConnectWithoutOwnedProjectsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutOwnedProjectsInput, Prisma.UserUncheckedCreateWithoutOwnedProjectsInput>
+}
+
+export type UserUpsertWithoutOwnedProjectsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutOwnedProjectsInput, Prisma.UserUncheckedUpdateWithoutOwnedProjectsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutOwnedProjectsInput, Prisma.UserUncheckedCreateWithoutOwnedProjectsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutOwnedProjectsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutOwnedProjectsInput, Prisma.UserUncheckedUpdateWithoutOwnedProjectsInput>
+}
+
+export type UserUpdateWithoutOwnedProjectsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  avatar?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  verifyToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  verifyTokenExp?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resetToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetTokenExp?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  oauthProviders?: Prisma.OAuthProviderUpdateManyWithoutUserNestedInput
+  memberships?: Prisma.ProjectMemberUpdateManyWithoutUserNestedInput
+  apiKeys?: Prisma.ApiKeyUpdateManyWithoutUserNestedInput
+  sentInvites?: Prisma.InvitationUpdateManyWithoutInvitedByNestedInput
+  receivedInvites?: Prisma.InvitationUpdateManyWithoutInviteeNestedInput
+}
+
+export type UserUncheckedUpdateWithoutOwnedProjectsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  avatar?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  verifyToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  verifyTokenExp?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resetToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetTokenExp?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  oauthProviders?: Prisma.OAuthProviderUncheckedUpdateManyWithoutUserNestedInput
   memberships?: Prisma.ProjectMemberUncheckedUpdateManyWithoutUserNestedInput
   apiKeys?: Prisma.ApiKeyUncheckedUpdateManyWithoutUserNestedInput
   sentInvites?: Prisma.InvitationUncheckedUpdateManyWithoutInvitedByNestedInput
@@ -756,6 +885,7 @@ export type UserCreateWithoutMembershipsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   oauthProviders?: Prisma.OAuthProviderCreateNestedManyWithoutUserInput
+  ownedProjects?: Prisma.ProjectCreateNestedManyWithoutOwnerInput
   apiKeys?: Prisma.ApiKeyCreateNestedManyWithoutUserInput
   sentInvites?: Prisma.InvitationCreateNestedManyWithoutInvitedByInput
   receivedInvites?: Prisma.InvitationCreateNestedManyWithoutInviteeInput
@@ -777,6 +907,7 @@ export type UserUncheckedCreateWithoutMembershipsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   oauthProviders?: Prisma.OAuthProviderUncheckedCreateNestedManyWithoutUserInput
+  ownedProjects?: Prisma.ProjectUncheckedCreateNestedManyWithoutOwnerInput
   apiKeys?: Prisma.ApiKeyUncheckedCreateNestedManyWithoutUserInput
   sentInvites?: Prisma.InvitationUncheckedCreateNestedManyWithoutInvitedByInput
   receivedInvites?: Prisma.InvitationUncheckedCreateNestedManyWithoutInviteeInput
@@ -814,6 +945,7 @@ export type UserUpdateWithoutMembershipsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   oauthProviders?: Prisma.OAuthProviderUpdateManyWithoutUserNestedInput
+  ownedProjects?: Prisma.ProjectUpdateManyWithoutOwnerNestedInput
   apiKeys?: Prisma.ApiKeyUpdateManyWithoutUserNestedInput
   sentInvites?: Prisma.InvitationUpdateManyWithoutInvitedByNestedInput
   receivedInvites?: Prisma.InvitationUpdateManyWithoutInviteeNestedInput
@@ -835,6 +967,7 @@ export type UserUncheckedUpdateWithoutMembershipsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   oauthProviders?: Prisma.OAuthProviderUncheckedUpdateManyWithoutUserNestedInput
+  ownedProjects?: Prisma.ProjectUncheckedUpdateManyWithoutOwnerNestedInput
   apiKeys?: Prisma.ApiKeyUncheckedUpdateManyWithoutUserNestedInput
   sentInvites?: Prisma.InvitationUncheckedUpdateManyWithoutInvitedByNestedInput
   receivedInvites?: Prisma.InvitationUncheckedUpdateManyWithoutInviteeNestedInput
@@ -856,6 +989,7 @@ export type UserCreateWithoutSentInvitesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   oauthProviders?: Prisma.OAuthProviderCreateNestedManyWithoutUserInput
+  ownedProjects?: Prisma.ProjectCreateNestedManyWithoutOwnerInput
   memberships?: Prisma.ProjectMemberCreateNestedManyWithoutUserInput
   apiKeys?: Prisma.ApiKeyCreateNestedManyWithoutUserInput
   receivedInvites?: Prisma.InvitationCreateNestedManyWithoutInviteeInput
@@ -877,6 +1011,7 @@ export type UserUncheckedCreateWithoutSentInvitesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   oauthProviders?: Prisma.OAuthProviderUncheckedCreateNestedManyWithoutUserInput
+  ownedProjects?: Prisma.ProjectUncheckedCreateNestedManyWithoutOwnerInput
   memberships?: Prisma.ProjectMemberUncheckedCreateNestedManyWithoutUserInput
   apiKeys?: Prisma.ApiKeyUncheckedCreateNestedManyWithoutUserInput
   receivedInvites?: Prisma.InvitationUncheckedCreateNestedManyWithoutInviteeInput
@@ -903,6 +1038,7 @@ export type UserCreateWithoutReceivedInvitesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   oauthProviders?: Prisma.OAuthProviderCreateNestedManyWithoutUserInput
+  ownedProjects?: Prisma.ProjectCreateNestedManyWithoutOwnerInput
   memberships?: Prisma.ProjectMemberCreateNestedManyWithoutUserInput
   apiKeys?: Prisma.ApiKeyCreateNestedManyWithoutUserInput
   sentInvites?: Prisma.InvitationCreateNestedManyWithoutInvitedByInput
@@ -924,6 +1060,7 @@ export type UserUncheckedCreateWithoutReceivedInvitesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   oauthProviders?: Prisma.OAuthProviderUncheckedCreateNestedManyWithoutUserInput
+  ownedProjects?: Prisma.ProjectUncheckedCreateNestedManyWithoutOwnerInput
   memberships?: Prisma.ProjectMemberUncheckedCreateNestedManyWithoutUserInput
   apiKeys?: Prisma.ApiKeyUncheckedCreateNestedManyWithoutUserInput
   sentInvites?: Prisma.InvitationUncheckedCreateNestedManyWithoutInvitedByInput
@@ -961,6 +1098,7 @@ export type UserUpdateWithoutSentInvitesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   oauthProviders?: Prisma.OAuthProviderUpdateManyWithoutUserNestedInput
+  ownedProjects?: Prisma.ProjectUpdateManyWithoutOwnerNestedInput
   memberships?: Prisma.ProjectMemberUpdateManyWithoutUserNestedInput
   apiKeys?: Prisma.ApiKeyUpdateManyWithoutUserNestedInput
   receivedInvites?: Prisma.InvitationUpdateManyWithoutInviteeNestedInput
@@ -982,6 +1120,7 @@ export type UserUncheckedUpdateWithoutSentInvitesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   oauthProviders?: Prisma.OAuthProviderUncheckedUpdateManyWithoutUserNestedInput
+  ownedProjects?: Prisma.ProjectUncheckedUpdateManyWithoutOwnerNestedInput
   memberships?: Prisma.ProjectMemberUncheckedUpdateManyWithoutUserNestedInput
   apiKeys?: Prisma.ApiKeyUncheckedUpdateManyWithoutUserNestedInput
   receivedInvites?: Prisma.InvitationUncheckedUpdateManyWithoutInviteeNestedInput
@@ -1014,6 +1153,7 @@ export type UserUpdateWithoutReceivedInvitesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   oauthProviders?: Prisma.OAuthProviderUpdateManyWithoutUserNestedInput
+  ownedProjects?: Prisma.ProjectUpdateManyWithoutOwnerNestedInput
   memberships?: Prisma.ProjectMemberUpdateManyWithoutUserNestedInput
   apiKeys?: Prisma.ApiKeyUpdateManyWithoutUserNestedInput
   sentInvites?: Prisma.InvitationUpdateManyWithoutInvitedByNestedInput
@@ -1035,6 +1175,7 @@ export type UserUncheckedUpdateWithoutReceivedInvitesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   oauthProviders?: Prisma.OAuthProviderUncheckedUpdateManyWithoutUserNestedInput
+  ownedProjects?: Prisma.ProjectUncheckedUpdateManyWithoutOwnerNestedInput
   memberships?: Prisma.ProjectMemberUncheckedUpdateManyWithoutUserNestedInput
   apiKeys?: Prisma.ApiKeyUncheckedUpdateManyWithoutUserNestedInput
   sentInvites?: Prisma.InvitationUncheckedUpdateManyWithoutInvitedByNestedInput
@@ -1056,6 +1197,7 @@ export type UserCreateWithoutApiKeysInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   oauthProviders?: Prisma.OAuthProviderCreateNestedManyWithoutUserInput
+  ownedProjects?: Prisma.ProjectCreateNestedManyWithoutOwnerInput
   memberships?: Prisma.ProjectMemberCreateNestedManyWithoutUserInput
   sentInvites?: Prisma.InvitationCreateNestedManyWithoutInvitedByInput
   receivedInvites?: Prisma.InvitationCreateNestedManyWithoutInviteeInput
@@ -1077,6 +1219,7 @@ export type UserUncheckedCreateWithoutApiKeysInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   oauthProviders?: Prisma.OAuthProviderUncheckedCreateNestedManyWithoutUserInput
+  ownedProjects?: Prisma.ProjectUncheckedCreateNestedManyWithoutOwnerInput
   memberships?: Prisma.ProjectMemberUncheckedCreateNestedManyWithoutUserInput
   sentInvites?: Prisma.InvitationUncheckedCreateNestedManyWithoutInvitedByInput
   receivedInvites?: Prisma.InvitationUncheckedCreateNestedManyWithoutInviteeInput
@@ -1114,6 +1257,7 @@ export type UserUpdateWithoutApiKeysInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   oauthProviders?: Prisma.OAuthProviderUpdateManyWithoutUserNestedInput
+  ownedProjects?: Prisma.ProjectUpdateManyWithoutOwnerNestedInput
   memberships?: Prisma.ProjectMemberUpdateManyWithoutUserNestedInput
   sentInvites?: Prisma.InvitationUpdateManyWithoutInvitedByNestedInput
   receivedInvites?: Prisma.InvitationUpdateManyWithoutInviteeNestedInput
@@ -1135,6 +1279,7 @@ export type UserUncheckedUpdateWithoutApiKeysInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   oauthProviders?: Prisma.OAuthProviderUncheckedUpdateManyWithoutUserNestedInput
+  ownedProjects?: Prisma.ProjectUncheckedUpdateManyWithoutOwnerNestedInput
   memberships?: Prisma.ProjectMemberUncheckedUpdateManyWithoutUserNestedInput
   sentInvites?: Prisma.InvitationUncheckedUpdateManyWithoutInvitedByNestedInput
   receivedInvites?: Prisma.InvitationUncheckedUpdateManyWithoutInviteeNestedInput
@@ -1147,6 +1292,7 @@ export type UserUncheckedUpdateWithoutApiKeysInput = {
 
 export type UserCountOutputType = {
   oauthProviders: number
+  ownedProjects: number
   memberships: number
   apiKeys: number
   sentInvites: number
@@ -1155,6 +1301,7 @@ export type UserCountOutputType = {
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   oauthProviders?: boolean | UserCountOutputTypeCountOauthProvidersArgs
+  ownedProjects?: boolean | UserCountOutputTypeCountOwnedProjectsArgs
   memberships?: boolean | UserCountOutputTypeCountMembershipsArgs
   apiKeys?: boolean | UserCountOutputTypeCountApiKeysArgs
   sentInvites?: boolean | UserCountOutputTypeCountSentInvitesArgs
@@ -1176,6 +1323,13 @@ export type UserCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensi
  */
 export type UserCountOutputTypeCountOauthProvidersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.OAuthProviderWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountOwnedProjectsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ProjectWhereInput
 }
 
 /**
@@ -1223,6 +1377,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   createdAt?: boolean
   updatedAt?: boolean
   oauthProviders?: boolean | Prisma.User$oauthProvidersArgs<ExtArgs>
+  ownedProjects?: boolean | Prisma.User$ownedProjectsArgs<ExtArgs>
   memberships?: boolean | Prisma.User$membershipsArgs<ExtArgs>
   apiKeys?: boolean | Prisma.User$apiKeysArgs<ExtArgs>
   sentInvites?: boolean | Prisma.User$sentInvitesArgs<ExtArgs>
@@ -1284,6 +1439,7 @@ export type UserSelectScalar = {
 export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "password" | "name" | "avatar" | "emailVerified" | "verifyToken" | "verifyTokenExp" | "resetToken" | "resetTokenExp" | "twoFactorEnabled" | "twoFactorSecret" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   oauthProviders?: boolean | Prisma.User$oauthProvidersArgs<ExtArgs>
+  ownedProjects?: boolean | Prisma.User$ownedProjectsArgs<ExtArgs>
   memberships?: boolean | Prisma.User$membershipsArgs<ExtArgs>
   apiKeys?: boolean | Prisma.User$apiKeysArgs<ExtArgs>
   sentInvites?: boolean | Prisma.User$sentInvitesArgs<ExtArgs>
@@ -1297,6 +1453,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   name: "User"
   objects: {
     oauthProviders: Prisma.$OAuthProviderPayload<ExtArgs>[]
+    ownedProjects: Prisma.$ProjectPayload<ExtArgs>[]
     memberships: Prisma.$ProjectMemberPayload<ExtArgs>[]
     apiKeys: Prisma.$ApiKeyPayload<ExtArgs>[]
     sentInvites: Prisma.$InvitationPayload<ExtArgs>[]
@@ -1712,6 +1869,7 @@ readonly fields: UserFieldRefs;
 export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   oauthProviders<T extends Prisma.User$oauthProvidersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$oauthProvidersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OAuthProviderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  ownedProjects<T extends Prisma.User$ownedProjectsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$ownedProjectsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProjectPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   memberships<T extends Prisma.User$membershipsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$membershipsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProjectMemberPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   apiKeys<T extends Prisma.User$apiKeysArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$apiKeysArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ApiKeyPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   sentInvites<T extends Prisma.User$sentInvitesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$sentInvitesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$InvitationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -2168,6 +2326,30 @@ export type User$oauthProvidersArgs<ExtArgs extends runtime.Types.Extensions.Int
   take?: number
   skip?: number
   distinct?: Prisma.OAuthProviderScalarFieldEnum | Prisma.OAuthProviderScalarFieldEnum[]
+}
+
+/**
+ * User.ownedProjects
+ */
+export type User$ownedProjectsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Project
+   */
+  select?: Prisma.ProjectSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Project
+   */
+  omit?: Prisma.ProjectOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ProjectInclude<ExtArgs> | null
+  where?: Prisma.ProjectWhereInput
+  orderBy?: Prisma.ProjectOrderByWithRelationInput | Prisma.ProjectOrderByWithRelationInput[]
+  cursor?: Prisma.ProjectWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ProjectScalarFieldEnum | Prisma.ProjectScalarFieldEnum[]
 }
 
 /**

@@ -34,6 +34,7 @@ model User {
   updatedAt       DateTime  @updatedAt
   
   // Relations
+  ownedProjects   Project[]       @relation("OwnedProjects")
   memberships     ProjectMember[]
   apiKeys         ApiKey[]
   sentInvites     Invitation[]    @relation("InviteSender")
@@ -55,15 +56,20 @@ model OAuthProvider {
 model Project {
   id           String   @id @default(cuid())
   name         String
-  slug         String   @unique  // "my-project-name"
+  slug         String   
+  ownerId      String   
   description  String?
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+  
   // Relations
+  owner        User            @relation("OwnedProjects", fields: [ownerId], references: [id], onDelete: Cascade)
   members      ProjectMember[]
   environments Environment[]
   invitations  Invitation[]
   auditLogs    AuditLog[]
+  
+  @@unique([ownerId, slug])  // Unique per owner
 }
 
 enum Role {
