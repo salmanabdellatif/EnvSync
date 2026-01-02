@@ -8,6 +8,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { ConfigModule } from '@nestjs/config';
 import { ProjectModule } from './project/project.module';
 import { EnvironmentModule } from './environment/environment.module';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { EnvironmentModule } from './environment/environment.module';
     ThrottlerModule.forRoot([{ ttl: 60000, limit: 10 }]),
     ProjectModule,
     EnvironmentModule,
+    UsersModule,
   ],
   controllers: [AppController],
   providers: [AppService, { provide: APP_GUARD, useClass: ThrottlerGuard }],
