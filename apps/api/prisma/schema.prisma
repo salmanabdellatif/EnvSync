@@ -30,6 +30,9 @@ model User {
   twoFactorEnabled Boolean  @default(false)
   twoFactorSecret  String?  // TOTP secret for authenticator apps
   
+  // E2E Encryption
+  publicKey        String?  // User's public key (RSA/ECC) for E2E encryption
+  
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
   
@@ -86,6 +89,7 @@ model ProjectMember {
   role      Role     @default(MEMBER)
   joinedAt  DateTime @default(now())
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  wrappedKey String?  // Project key encrypted with user's public key (E2E)
   project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
   @@unique([userId, projectId]) // User can only be member once per project
 }

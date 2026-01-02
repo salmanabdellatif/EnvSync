@@ -1130,6 +1130,7 @@ export const UserScalarFieldEnum = {
   resetTokenExp: 'resetTokenExp',
   twoFactorEnabled: 'twoFactorEnabled',
   twoFactorSecret: 'twoFactorSecret',
+  publicKey: 'publicKey',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -1166,7 +1167,8 @@ export const ProjectMemberScalarFieldEnum = {
   userId: 'userId',
   projectId: 'projectId',
   role: 'role',
-  joinedAt: 'joinedAt'
+  joinedAt: 'joinedAt',
+  wrappedKey: 'wrappedKey'
 } as const
 
 export type ProjectMemberScalarFieldEnum = (typeof ProjectMemberScalarFieldEnum)[keyof typeof ProjectMemberScalarFieldEnum]

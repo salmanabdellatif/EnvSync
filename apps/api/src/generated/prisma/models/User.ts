@@ -37,6 +37,7 @@ export type UserMinAggregateOutputType = {
   resetTokenExp: Date | null
   twoFactorEnabled: boolean | null
   twoFactorSecret: string | null
+  publicKey: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -54,6 +55,7 @@ export type UserMaxAggregateOutputType = {
   resetTokenExp: Date | null
   twoFactorEnabled: boolean | null
   twoFactorSecret: string | null
+  publicKey: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -71,6 +73,7 @@ export type UserCountAggregateOutputType = {
   resetTokenExp: number
   twoFactorEnabled: number
   twoFactorSecret: number
+  publicKey: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -90,6 +93,7 @@ export type UserMinAggregateInputType = {
   resetTokenExp?: true
   twoFactorEnabled?: true
   twoFactorSecret?: true
+  publicKey?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -107,6 +111,7 @@ export type UserMaxAggregateInputType = {
   resetTokenExp?: true
   twoFactorEnabled?: true
   twoFactorSecret?: true
+  publicKey?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -124,6 +129,7 @@ export type UserCountAggregateInputType = {
   resetTokenExp?: true
   twoFactorEnabled?: true
   twoFactorSecret?: true
+  publicKey?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -214,6 +220,7 @@ export type UserGroupByOutputType = {
   resetTokenExp: Date | null
   twoFactorEnabled: boolean
   twoFactorSecret: string | null
+  publicKey: string | null
   createdAt: Date
   updatedAt: Date
   _count: UserCountAggregateOutputType | null
@@ -252,6 +259,7 @@ export type UserWhereInput = {
   resetTokenExp?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   twoFactorEnabled?: Prisma.BoolFilter<"User"> | boolean
   twoFactorSecret?: Prisma.StringNullableFilter<"User"> | string | null
+  publicKey?: Prisma.StringNullableFilter<"User"> | string | null
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   oauthProviders?: Prisma.OAuthProviderListRelationFilter
@@ -275,6 +283,7 @@ export type UserOrderByWithRelationInput = {
   resetTokenExp?: Prisma.SortOrderInput | Prisma.SortOrder
   twoFactorEnabled?: Prisma.SortOrder
   twoFactorSecret?: Prisma.SortOrderInput | Prisma.SortOrder
+  publicKey?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   oauthProviders?: Prisma.OAuthProviderOrderByRelationAggregateInput
@@ -301,6 +310,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   resetTokenExp?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   twoFactorEnabled?: Prisma.BoolFilter<"User"> | boolean
   twoFactorSecret?: Prisma.StringNullableFilter<"User"> | string | null
+  publicKey?: Prisma.StringNullableFilter<"User"> | string | null
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   oauthProviders?: Prisma.OAuthProviderListRelationFilter
@@ -324,6 +334,7 @@ export type UserOrderByWithAggregationInput = {
   resetTokenExp?: Prisma.SortOrderInput | Prisma.SortOrder
   twoFactorEnabled?: Prisma.SortOrder
   twoFactorSecret?: Prisma.SortOrderInput | Prisma.SortOrder
+  publicKey?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.UserCountOrderByAggregateInput
@@ -347,6 +358,7 @@ export type UserScalarWhereWithAggregatesInput = {
   resetTokenExp?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
   twoFactorEnabled?: Prisma.BoolWithAggregatesFilter<"User"> | boolean
   twoFactorSecret?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
+  publicKey?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
 }
@@ -364,6 +376,7 @@ export type UserCreateInput = {
   resetTokenExp?: Date | string | null
   twoFactorEnabled?: boolean
   twoFactorSecret?: string | null
+  publicKey?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   oauthProviders?: Prisma.OAuthProviderCreateNestedManyWithoutUserInput
@@ -387,6 +400,7 @@ export type UserUncheckedCreateInput = {
   resetTokenExp?: Date | string | null
   twoFactorEnabled?: boolean
   twoFactorSecret?: string | null
+  publicKey?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   oauthProviders?: Prisma.OAuthProviderUncheckedCreateNestedManyWithoutUserInput
@@ -410,6 +424,7 @@ export type UserUpdateInput = {
   resetTokenExp?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  publicKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   oauthProviders?: Prisma.OAuthProviderUpdateManyWithoutUserNestedInput
@@ -433,6 +448,7 @@ export type UserUncheckedUpdateInput = {
   resetTokenExp?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  publicKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   oauthProviders?: Prisma.OAuthProviderUncheckedUpdateManyWithoutUserNestedInput
@@ -456,6 +472,7 @@ export type UserCreateManyInput = {
   resetTokenExp?: Date | string | null
   twoFactorEnabled?: boolean
   twoFactorSecret?: string | null
+  publicKey?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -473,6 +490,7 @@ export type UserUpdateManyMutationInput = {
   resetTokenExp?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  publicKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -490,6 +508,7 @@ export type UserUncheckedUpdateManyInput = {
   resetTokenExp?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  publicKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -507,6 +526,7 @@ export type UserCountOrderByAggregateInput = {
   resetTokenExp?: Prisma.SortOrder
   twoFactorEnabled?: Prisma.SortOrder
   twoFactorSecret?: Prisma.SortOrder
+  publicKey?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -524,6 +544,7 @@ export type UserMaxOrderByAggregateInput = {
   resetTokenExp?: Prisma.SortOrder
   twoFactorEnabled?: Prisma.SortOrder
   twoFactorSecret?: Prisma.SortOrder
+  publicKey?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -541,6 +562,7 @@ export type UserMinOrderByAggregateInput = {
   resetTokenExp?: Prisma.SortOrder
   twoFactorEnabled?: Prisma.SortOrder
   twoFactorSecret?: Prisma.SortOrder
+  publicKey?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -674,6 +696,7 @@ export type UserCreateWithoutOauthProvidersInput = {
   resetTokenExp?: Date | string | null
   twoFactorEnabled?: boolean
   twoFactorSecret?: string | null
+  publicKey?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   ownedProjects?: Prisma.ProjectCreateNestedManyWithoutOwnerInput
@@ -696,6 +719,7 @@ export type UserUncheckedCreateWithoutOauthProvidersInput = {
   resetTokenExp?: Date | string | null
   twoFactorEnabled?: boolean
   twoFactorSecret?: string | null
+  publicKey?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   ownedProjects?: Prisma.ProjectUncheckedCreateNestedManyWithoutOwnerInput
@@ -734,6 +758,7 @@ export type UserUpdateWithoutOauthProvidersInput = {
   resetTokenExp?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  publicKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   ownedProjects?: Prisma.ProjectUpdateManyWithoutOwnerNestedInput
@@ -756,6 +781,7 @@ export type UserUncheckedUpdateWithoutOauthProvidersInput = {
   resetTokenExp?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  publicKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   ownedProjects?: Prisma.ProjectUncheckedUpdateManyWithoutOwnerNestedInput
@@ -778,6 +804,7 @@ export type UserCreateWithoutOwnedProjectsInput = {
   resetTokenExp?: Date | string | null
   twoFactorEnabled?: boolean
   twoFactorSecret?: string | null
+  publicKey?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   oauthProviders?: Prisma.OAuthProviderCreateNestedManyWithoutUserInput
@@ -800,6 +827,7 @@ export type UserUncheckedCreateWithoutOwnedProjectsInput = {
   resetTokenExp?: Date | string | null
   twoFactorEnabled?: boolean
   twoFactorSecret?: string | null
+  publicKey?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   oauthProviders?: Prisma.OAuthProviderUncheckedCreateNestedManyWithoutUserInput
@@ -838,6 +866,7 @@ export type UserUpdateWithoutOwnedProjectsInput = {
   resetTokenExp?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  publicKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   oauthProviders?: Prisma.OAuthProviderUpdateManyWithoutUserNestedInput
@@ -860,6 +889,7 @@ export type UserUncheckedUpdateWithoutOwnedProjectsInput = {
   resetTokenExp?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  publicKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   oauthProviders?: Prisma.OAuthProviderUncheckedUpdateManyWithoutUserNestedInput
@@ -882,6 +912,7 @@ export type UserCreateWithoutMembershipsInput = {
   resetTokenExp?: Date | string | null
   twoFactorEnabled?: boolean
   twoFactorSecret?: string | null
+  publicKey?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   oauthProviders?: Prisma.OAuthProviderCreateNestedManyWithoutUserInput
@@ -904,6 +935,7 @@ export type UserUncheckedCreateWithoutMembershipsInput = {
   resetTokenExp?: Date | string | null
   twoFactorEnabled?: boolean
   twoFactorSecret?: string | null
+  publicKey?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   oauthProviders?: Prisma.OAuthProviderUncheckedCreateNestedManyWithoutUserInput
@@ -942,6 +974,7 @@ export type UserUpdateWithoutMembershipsInput = {
   resetTokenExp?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  publicKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   oauthProviders?: Prisma.OAuthProviderUpdateManyWithoutUserNestedInput
@@ -964,6 +997,7 @@ export type UserUncheckedUpdateWithoutMembershipsInput = {
   resetTokenExp?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  publicKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   oauthProviders?: Prisma.OAuthProviderUncheckedUpdateManyWithoutUserNestedInput
@@ -986,6 +1020,7 @@ export type UserCreateWithoutSentInvitesInput = {
   resetTokenExp?: Date | string | null
   twoFactorEnabled?: boolean
   twoFactorSecret?: string | null
+  publicKey?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   oauthProviders?: Prisma.OAuthProviderCreateNestedManyWithoutUserInput
@@ -1008,6 +1043,7 @@ export type UserUncheckedCreateWithoutSentInvitesInput = {
   resetTokenExp?: Date | string | null
   twoFactorEnabled?: boolean
   twoFactorSecret?: string | null
+  publicKey?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   oauthProviders?: Prisma.OAuthProviderUncheckedCreateNestedManyWithoutUserInput
@@ -1035,6 +1071,7 @@ export type UserCreateWithoutReceivedInvitesInput = {
   resetTokenExp?: Date | string | null
   twoFactorEnabled?: boolean
   twoFactorSecret?: string | null
+  publicKey?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   oauthProviders?: Prisma.OAuthProviderCreateNestedManyWithoutUserInput
@@ -1057,6 +1094,7 @@ export type UserUncheckedCreateWithoutReceivedInvitesInput = {
   resetTokenExp?: Date | string | null
   twoFactorEnabled?: boolean
   twoFactorSecret?: string | null
+  publicKey?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   oauthProviders?: Prisma.OAuthProviderUncheckedCreateNestedManyWithoutUserInput
@@ -1095,6 +1133,7 @@ export type UserUpdateWithoutSentInvitesInput = {
   resetTokenExp?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  publicKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   oauthProviders?: Prisma.OAuthProviderUpdateManyWithoutUserNestedInput
@@ -1117,6 +1156,7 @@ export type UserUncheckedUpdateWithoutSentInvitesInput = {
   resetTokenExp?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  publicKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   oauthProviders?: Prisma.OAuthProviderUncheckedUpdateManyWithoutUserNestedInput
@@ -1150,6 +1190,7 @@ export type UserUpdateWithoutReceivedInvitesInput = {
   resetTokenExp?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  publicKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   oauthProviders?: Prisma.OAuthProviderUpdateManyWithoutUserNestedInput
@@ -1172,6 +1213,7 @@ export type UserUncheckedUpdateWithoutReceivedInvitesInput = {
   resetTokenExp?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  publicKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   oauthProviders?: Prisma.OAuthProviderUncheckedUpdateManyWithoutUserNestedInput
@@ -1194,6 +1236,7 @@ export type UserCreateWithoutApiKeysInput = {
   resetTokenExp?: Date | string | null
   twoFactorEnabled?: boolean
   twoFactorSecret?: string | null
+  publicKey?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   oauthProviders?: Prisma.OAuthProviderCreateNestedManyWithoutUserInput
@@ -1216,6 +1259,7 @@ export type UserUncheckedCreateWithoutApiKeysInput = {
   resetTokenExp?: Date | string | null
   twoFactorEnabled?: boolean
   twoFactorSecret?: string | null
+  publicKey?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   oauthProviders?: Prisma.OAuthProviderUncheckedCreateNestedManyWithoutUserInput
@@ -1254,6 +1298,7 @@ export type UserUpdateWithoutApiKeysInput = {
   resetTokenExp?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  publicKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   oauthProviders?: Prisma.OAuthProviderUpdateManyWithoutUserNestedInput
@@ -1276,6 +1321,7 @@ export type UserUncheckedUpdateWithoutApiKeysInput = {
   resetTokenExp?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  publicKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   oauthProviders?: Prisma.OAuthProviderUncheckedUpdateManyWithoutUserNestedInput
@@ -1374,6 +1420,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   resetTokenExp?: boolean
   twoFactorEnabled?: boolean
   twoFactorSecret?: boolean
+  publicKey?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   oauthProviders?: boolean | Prisma.User$oauthProvidersArgs<ExtArgs>
@@ -1398,6 +1445,7 @@ export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   resetTokenExp?: boolean
   twoFactorEnabled?: boolean
   twoFactorSecret?: boolean
+  publicKey?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["user"]>
@@ -1415,6 +1463,7 @@ export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   resetTokenExp?: boolean
   twoFactorEnabled?: boolean
   twoFactorSecret?: boolean
+  publicKey?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["user"]>
@@ -1432,11 +1481,12 @@ export type UserSelectScalar = {
   resetTokenExp?: boolean
   twoFactorEnabled?: boolean
   twoFactorSecret?: boolean
+  publicKey?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "password" | "name" | "avatar" | "emailVerified" | "verifyToken" | "verifyTokenExp" | "resetToken" | "resetTokenExp" | "twoFactorEnabled" | "twoFactorSecret" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
+export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "password" | "name" | "avatar" | "emailVerified" | "verifyToken" | "verifyTokenExp" | "resetToken" | "resetTokenExp" | "twoFactorEnabled" | "twoFactorSecret" | "publicKey" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   oauthProviders?: boolean | Prisma.User$oauthProvidersArgs<ExtArgs>
   ownedProjects?: boolean | Prisma.User$ownedProjectsArgs<ExtArgs>
@@ -1472,6 +1522,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     resetTokenExp: Date | null
     twoFactorEnabled: boolean
     twoFactorSecret: string | null
+    publicKey: string | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["user"]>
@@ -1915,6 +1966,7 @@ export interface UserFieldRefs {
   readonly resetTokenExp: Prisma.FieldRef<"User", 'DateTime'>
   readonly twoFactorEnabled: Prisma.FieldRef<"User", 'Boolean'>
   readonly twoFactorSecret: Prisma.FieldRef<"User", 'String'>
+  readonly publicKey: Prisma.FieldRef<"User", 'String'>
   readonly createdAt: Prisma.FieldRef<"User", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"User", 'DateTime'>
 }
