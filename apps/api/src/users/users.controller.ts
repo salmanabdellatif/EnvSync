@@ -8,6 +8,9 @@ import {
   UseGuards,
   Request,
   ConflictException,
+  NotFoundException,
+  Query,
+  BadRequestException,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -18,6 +21,25 @@ import { SetupKeysDto } from './dto/setup-keys.dto';
 @UseGuards(JwtAuthGuard)
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
+
+  @Get('lookup')
+  async lookup(@Query('email') email: string, @Request() req) {
+    if (!email) {
+      throw new BadRequestException('Email query parameter is required');
+    }
+
+    if (email === req.user.email) {
+      throw new BadRequestException('Use /users/me for your own profile');
+    }
+
+    const user = await this.usersService.findByEmail(email);
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    return user;
+  }
 
   @Get('me')
   async getProfile(@Request() req) {

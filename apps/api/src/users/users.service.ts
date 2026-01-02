@@ -7,6 +7,19 @@ import { SetupKeysDto } from './dto/setup-keys.dto';
 export class UsersService {
   constructor(private prisma: PrismaService) {}
 
+  async findByEmail(email: string) {
+    return this.prisma.user.findUnique({
+      where: { email },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        avatar: true,
+        publicKey: true,
+      },
+    });
+  }
+
   async findOne(userId: string) {
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
