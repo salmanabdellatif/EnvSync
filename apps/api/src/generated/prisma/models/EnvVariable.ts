@@ -30,6 +30,7 @@ export type EnvVariableMinAggregateOutputType = {
   encryptedValue: string | null
   iv: string | null
   authTag: string | null
+  comment: string | null
   environmentId: string | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -43,6 +44,7 @@ export type EnvVariableMaxAggregateOutputType = {
   encryptedValue: string | null
   iv: string | null
   authTag: string | null
+  comment: string | null
   environmentId: string | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -56,6 +58,7 @@ export type EnvVariableCountAggregateOutputType = {
   encryptedValue: number
   iv: number
   authTag: number
+  comment: number
   environmentId: number
   createdAt: number
   updatedAt: number
@@ -71,6 +74,7 @@ export type EnvVariableMinAggregateInputType = {
   encryptedValue?: true
   iv?: true
   authTag?: true
+  comment?: true
   environmentId?: true
   createdAt?: true
   updatedAt?: true
@@ -84,6 +88,7 @@ export type EnvVariableMaxAggregateInputType = {
   encryptedValue?: true
   iv?: true
   authTag?: true
+  comment?: true
   environmentId?: true
   createdAt?: true
   updatedAt?: true
@@ -97,6 +102,7 @@ export type EnvVariableCountAggregateInputType = {
   encryptedValue?: true
   iv?: true
   authTag?: true
+  comment?: true
   environmentId?: true
   createdAt?: true
   updatedAt?: true
@@ -183,6 +189,7 @@ export type EnvVariableGroupByOutputType = {
   encryptedValue: string
   iv: string
   authTag: string
+  comment: string | null
   environmentId: string
   createdAt: Date
   updatedAt: Date
@@ -217,12 +224,15 @@ export type EnvVariableWhereInput = {
   encryptedValue?: Prisma.StringFilter<"EnvVariable"> | string
   iv?: Prisma.StringFilter<"EnvVariable"> | string
   authTag?: Prisma.StringFilter<"EnvVariable"> | string
+  comment?: Prisma.StringNullableFilter<"EnvVariable"> | string | null
   environmentId?: Prisma.StringFilter<"EnvVariable"> | string
   createdAt?: Prisma.DateTimeFilter<"EnvVariable"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"EnvVariable"> | Date | string
   createdBy?: Prisma.StringFilter<"EnvVariable"> | string
   updatedBy?: Prisma.StringFilter<"EnvVariable"> | string
   environment?: Prisma.XOR<Prisma.EnvironmentScalarRelationFilter, Prisma.EnvironmentWhereInput>
+  createdUser?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  updatedUser?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
 }
 
 export type EnvVariableOrderByWithRelationInput = {
@@ -231,12 +241,15 @@ export type EnvVariableOrderByWithRelationInput = {
   encryptedValue?: Prisma.SortOrder
   iv?: Prisma.SortOrder
   authTag?: Prisma.SortOrder
+  comment?: Prisma.SortOrderInput | Prisma.SortOrder
   environmentId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   createdBy?: Prisma.SortOrder
   updatedBy?: Prisma.SortOrder
   environment?: Prisma.EnvironmentOrderByWithRelationInput
+  createdUser?: Prisma.UserOrderByWithRelationInput
+  updatedUser?: Prisma.UserOrderByWithRelationInput
 }
 
 export type EnvVariableWhereUniqueInput = Prisma.AtLeast<{
@@ -249,12 +262,15 @@ export type EnvVariableWhereUniqueInput = Prisma.AtLeast<{
   encryptedValue?: Prisma.StringFilter<"EnvVariable"> | string
   iv?: Prisma.StringFilter<"EnvVariable"> | string
   authTag?: Prisma.StringFilter<"EnvVariable"> | string
+  comment?: Prisma.StringNullableFilter<"EnvVariable"> | string | null
   environmentId?: Prisma.StringFilter<"EnvVariable"> | string
   createdAt?: Prisma.DateTimeFilter<"EnvVariable"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"EnvVariable"> | Date | string
   createdBy?: Prisma.StringFilter<"EnvVariable"> | string
   updatedBy?: Prisma.StringFilter<"EnvVariable"> | string
   environment?: Prisma.XOR<Prisma.EnvironmentScalarRelationFilter, Prisma.EnvironmentWhereInput>
+  createdUser?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  updatedUser?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
 }, "id" | "environmentId_key">
 
 export type EnvVariableOrderByWithAggregationInput = {
@@ -263,6 +279,7 @@ export type EnvVariableOrderByWithAggregationInput = {
   encryptedValue?: Prisma.SortOrder
   iv?: Prisma.SortOrder
   authTag?: Prisma.SortOrder
+  comment?: Prisma.SortOrderInput | Prisma.SortOrder
   environmentId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -282,6 +299,7 @@ export type EnvVariableScalarWhereWithAggregatesInput = {
   encryptedValue?: Prisma.StringWithAggregatesFilter<"EnvVariable"> | string
   iv?: Prisma.StringWithAggregatesFilter<"EnvVariable"> | string
   authTag?: Prisma.StringWithAggregatesFilter<"EnvVariable"> | string
+  comment?: Prisma.StringNullableWithAggregatesFilter<"EnvVariable"> | string | null
   environmentId?: Prisma.StringWithAggregatesFilter<"EnvVariable"> | string
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"EnvVariable"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"EnvVariable"> | Date | string
@@ -295,11 +313,12 @@ export type EnvVariableCreateInput = {
   encryptedValue: string
   iv: string
   authTag: string
+  comment?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  createdBy: string
-  updatedBy: string
   environment: Prisma.EnvironmentCreateNestedOneWithoutVariablesInput
+  createdUser: Prisma.UserCreateNestedOneWithoutCreatedVariablesInput
+  updatedUser: Prisma.UserCreateNestedOneWithoutUpdatedVariablesInput
 }
 
 export type EnvVariableUncheckedCreateInput = {
@@ -308,6 +327,7 @@ export type EnvVariableUncheckedCreateInput = {
   encryptedValue: string
   iv: string
   authTag: string
+  comment?: string | null
   environmentId: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -321,11 +341,12 @@ export type EnvVariableUpdateInput = {
   encryptedValue?: Prisma.StringFieldUpdateOperationsInput | string
   iv?: Prisma.StringFieldUpdateOperationsInput | string
   authTag?: Prisma.StringFieldUpdateOperationsInput | string
+  comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  createdBy?: Prisma.StringFieldUpdateOperationsInput | string
-  updatedBy?: Prisma.StringFieldUpdateOperationsInput | string
   environment?: Prisma.EnvironmentUpdateOneRequiredWithoutVariablesNestedInput
+  createdUser?: Prisma.UserUpdateOneRequiredWithoutCreatedVariablesNestedInput
+  updatedUser?: Prisma.UserUpdateOneRequiredWithoutUpdatedVariablesNestedInput
 }
 
 export type EnvVariableUncheckedUpdateInput = {
@@ -334,6 +355,7 @@ export type EnvVariableUncheckedUpdateInput = {
   encryptedValue?: Prisma.StringFieldUpdateOperationsInput | string
   iv?: Prisma.StringFieldUpdateOperationsInput | string
   authTag?: Prisma.StringFieldUpdateOperationsInput | string
+  comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   environmentId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -347,6 +369,7 @@ export type EnvVariableCreateManyInput = {
   encryptedValue: string
   iv: string
   authTag: string
+  comment?: string | null
   environmentId: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -360,10 +383,9 @@ export type EnvVariableUpdateManyMutationInput = {
   encryptedValue?: Prisma.StringFieldUpdateOperationsInput | string
   iv?: Prisma.StringFieldUpdateOperationsInput | string
   authTag?: Prisma.StringFieldUpdateOperationsInput | string
+  comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  createdBy?: Prisma.StringFieldUpdateOperationsInput | string
-  updatedBy?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type EnvVariableUncheckedUpdateManyInput = {
@@ -372,6 +394,7 @@ export type EnvVariableUncheckedUpdateManyInput = {
   encryptedValue?: Prisma.StringFieldUpdateOperationsInput | string
   iv?: Prisma.StringFieldUpdateOperationsInput | string
   authTag?: Prisma.StringFieldUpdateOperationsInput | string
+  comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   environmentId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -400,6 +423,7 @@ export type EnvVariableCountOrderByAggregateInput = {
   encryptedValue?: Prisma.SortOrder
   iv?: Prisma.SortOrder
   authTag?: Prisma.SortOrder
+  comment?: Prisma.SortOrder
   environmentId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -413,6 +437,7 @@ export type EnvVariableMaxOrderByAggregateInput = {
   encryptedValue?: Prisma.SortOrder
   iv?: Prisma.SortOrder
   authTag?: Prisma.SortOrder
+  comment?: Prisma.SortOrder
   environmentId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -426,11 +451,96 @@ export type EnvVariableMinOrderByAggregateInput = {
   encryptedValue?: Prisma.SortOrder
   iv?: Prisma.SortOrder
   authTag?: Prisma.SortOrder
+  comment?: Prisma.SortOrder
   environmentId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   createdBy?: Prisma.SortOrder
   updatedBy?: Prisma.SortOrder
+}
+
+export type EnvVariableCreateNestedManyWithoutCreatedUserInput = {
+  create?: Prisma.XOR<Prisma.EnvVariableCreateWithoutCreatedUserInput, Prisma.EnvVariableUncheckedCreateWithoutCreatedUserInput> | Prisma.EnvVariableCreateWithoutCreatedUserInput[] | Prisma.EnvVariableUncheckedCreateWithoutCreatedUserInput[]
+  connectOrCreate?: Prisma.EnvVariableCreateOrConnectWithoutCreatedUserInput | Prisma.EnvVariableCreateOrConnectWithoutCreatedUserInput[]
+  createMany?: Prisma.EnvVariableCreateManyCreatedUserInputEnvelope
+  connect?: Prisma.EnvVariableWhereUniqueInput | Prisma.EnvVariableWhereUniqueInput[]
+}
+
+export type EnvVariableCreateNestedManyWithoutUpdatedUserInput = {
+  create?: Prisma.XOR<Prisma.EnvVariableCreateWithoutUpdatedUserInput, Prisma.EnvVariableUncheckedCreateWithoutUpdatedUserInput> | Prisma.EnvVariableCreateWithoutUpdatedUserInput[] | Prisma.EnvVariableUncheckedCreateWithoutUpdatedUserInput[]
+  connectOrCreate?: Prisma.EnvVariableCreateOrConnectWithoutUpdatedUserInput | Prisma.EnvVariableCreateOrConnectWithoutUpdatedUserInput[]
+  createMany?: Prisma.EnvVariableCreateManyUpdatedUserInputEnvelope
+  connect?: Prisma.EnvVariableWhereUniqueInput | Prisma.EnvVariableWhereUniqueInput[]
+}
+
+export type EnvVariableUncheckedCreateNestedManyWithoutCreatedUserInput = {
+  create?: Prisma.XOR<Prisma.EnvVariableCreateWithoutCreatedUserInput, Prisma.EnvVariableUncheckedCreateWithoutCreatedUserInput> | Prisma.EnvVariableCreateWithoutCreatedUserInput[] | Prisma.EnvVariableUncheckedCreateWithoutCreatedUserInput[]
+  connectOrCreate?: Prisma.EnvVariableCreateOrConnectWithoutCreatedUserInput | Prisma.EnvVariableCreateOrConnectWithoutCreatedUserInput[]
+  createMany?: Prisma.EnvVariableCreateManyCreatedUserInputEnvelope
+  connect?: Prisma.EnvVariableWhereUniqueInput | Prisma.EnvVariableWhereUniqueInput[]
+}
+
+export type EnvVariableUncheckedCreateNestedManyWithoutUpdatedUserInput = {
+  create?: Prisma.XOR<Prisma.EnvVariableCreateWithoutUpdatedUserInput, Prisma.EnvVariableUncheckedCreateWithoutUpdatedUserInput> | Prisma.EnvVariableCreateWithoutUpdatedUserInput[] | Prisma.EnvVariableUncheckedCreateWithoutUpdatedUserInput[]
+  connectOrCreate?: Prisma.EnvVariableCreateOrConnectWithoutUpdatedUserInput | Prisma.EnvVariableCreateOrConnectWithoutUpdatedUserInput[]
+  createMany?: Prisma.EnvVariableCreateManyUpdatedUserInputEnvelope
+  connect?: Prisma.EnvVariableWhereUniqueInput | Prisma.EnvVariableWhereUniqueInput[]
+}
+
+export type EnvVariableUpdateManyWithoutCreatedUserNestedInput = {
+  create?: Prisma.XOR<Prisma.EnvVariableCreateWithoutCreatedUserInput, Prisma.EnvVariableUncheckedCreateWithoutCreatedUserInput> | Prisma.EnvVariableCreateWithoutCreatedUserInput[] | Prisma.EnvVariableUncheckedCreateWithoutCreatedUserInput[]
+  connectOrCreate?: Prisma.EnvVariableCreateOrConnectWithoutCreatedUserInput | Prisma.EnvVariableCreateOrConnectWithoutCreatedUserInput[]
+  upsert?: Prisma.EnvVariableUpsertWithWhereUniqueWithoutCreatedUserInput | Prisma.EnvVariableUpsertWithWhereUniqueWithoutCreatedUserInput[]
+  createMany?: Prisma.EnvVariableCreateManyCreatedUserInputEnvelope
+  set?: Prisma.EnvVariableWhereUniqueInput | Prisma.EnvVariableWhereUniqueInput[]
+  disconnect?: Prisma.EnvVariableWhereUniqueInput | Prisma.EnvVariableWhereUniqueInput[]
+  delete?: Prisma.EnvVariableWhereUniqueInput | Prisma.EnvVariableWhereUniqueInput[]
+  connect?: Prisma.EnvVariableWhereUniqueInput | Prisma.EnvVariableWhereUniqueInput[]
+  update?: Prisma.EnvVariableUpdateWithWhereUniqueWithoutCreatedUserInput | Prisma.EnvVariableUpdateWithWhereUniqueWithoutCreatedUserInput[]
+  updateMany?: Prisma.EnvVariableUpdateManyWithWhereWithoutCreatedUserInput | Prisma.EnvVariableUpdateManyWithWhereWithoutCreatedUserInput[]
+  deleteMany?: Prisma.EnvVariableScalarWhereInput | Prisma.EnvVariableScalarWhereInput[]
+}
+
+export type EnvVariableUpdateManyWithoutUpdatedUserNestedInput = {
+  create?: Prisma.XOR<Prisma.EnvVariableCreateWithoutUpdatedUserInput, Prisma.EnvVariableUncheckedCreateWithoutUpdatedUserInput> | Prisma.EnvVariableCreateWithoutUpdatedUserInput[] | Prisma.EnvVariableUncheckedCreateWithoutUpdatedUserInput[]
+  connectOrCreate?: Prisma.EnvVariableCreateOrConnectWithoutUpdatedUserInput | Prisma.EnvVariableCreateOrConnectWithoutUpdatedUserInput[]
+  upsert?: Prisma.EnvVariableUpsertWithWhereUniqueWithoutUpdatedUserInput | Prisma.EnvVariableUpsertWithWhereUniqueWithoutUpdatedUserInput[]
+  createMany?: Prisma.EnvVariableCreateManyUpdatedUserInputEnvelope
+  set?: Prisma.EnvVariableWhereUniqueInput | Prisma.EnvVariableWhereUniqueInput[]
+  disconnect?: Prisma.EnvVariableWhereUniqueInput | Prisma.EnvVariableWhereUniqueInput[]
+  delete?: Prisma.EnvVariableWhereUniqueInput | Prisma.EnvVariableWhereUniqueInput[]
+  connect?: Prisma.EnvVariableWhereUniqueInput | Prisma.EnvVariableWhereUniqueInput[]
+  update?: Prisma.EnvVariableUpdateWithWhereUniqueWithoutUpdatedUserInput | Prisma.EnvVariableUpdateWithWhereUniqueWithoutUpdatedUserInput[]
+  updateMany?: Prisma.EnvVariableUpdateManyWithWhereWithoutUpdatedUserInput | Prisma.EnvVariableUpdateManyWithWhereWithoutUpdatedUserInput[]
+  deleteMany?: Prisma.EnvVariableScalarWhereInput | Prisma.EnvVariableScalarWhereInput[]
+}
+
+export type EnvVariableUncheckedUpdateManyWithoutCreatedUserNestedInput = {
+  create?: Prisma.XOR<Prisma.EnvVariableCreateWithoutCreatedUserInput, Prisma.EnvVariableUncheckedCreateWithoutCreatedUserInput> | Prisma.EnvVariableCreateWithoutCreatedUserInput[] | Prisma.EnvVariableUncheckedCreateWithoutCreatedUserInput[]
+  connectOrCreate?: Prisma.EnvVariableCreateOrConnectWithoutCreatedUserInput | Prisma.EnvVariableCreateOrConnectWithoutCreatedUserInput[]
+  upsert?: Prisma.EnvVariableUpsertWithWhereUniqueWithoutCreatedUserInput | Prisma.EnvVariableUpsertWithWhereUniqueWithoutCreatedUserInput[]
+  createMany?: Prisma.EnvVariableCreateManyCreatedUserInputEnvelope
+  set?: Prisma.EnvVariableWhereUniqueInput | Prisma.EnvVariableWhereUniqueInput[]
+  disconnect?: Prisma.EnvVariableWhereUniqueInput | Prisma.EnvVariableWhereUniqueInput[]
+  delete?: Prisma.EnvVariableWhereUniqueInput | Prisma.EnvVariableWhereUniqueInput[]
+  connect?: Prisma.EnvVariableWhereUniqueInput | Prisma.EnvVariableWhereUniqueInput[]
+  update?: Prisma.EnvVariableUpdateWithWhereUniqueWithoutCreatedUserInput | Prisma.EnvVariableUpdateWithWhereUniqueWithoutCreatedUserInput[]
+  updateMany?: Prisma.EnvVariableUpdateManyWithWhereWithoutCreatedUserInput | Prisma.EnvVariableUpdateManyWithWhereWithoutCreatedUserInput[]
+  deleteMany?: Prisma.EnvVariableScalarWhereInput | Prisma.EnvVariableScalarWhereInput[]
+}
+
+export type EnvVariableUncheckedUpdateManyWithoutUpdatedUserNestedInput = {
+  create?: Prisma.XOR<Prisma.EnvVariableCreateWithoutUpdatedUserInput, Prisma.EnvVariableUncheckedCreateWithoutUpdatedUserInput> | Prisma.EnvVariableCreateWithoutUpdatedUserInput[] | Prisma.EnvVariableUncheckedCreateWithoutUpdatedUserInput[]
+  connectOrCreate?: Prisma.EnvVariableCreateOrConnectWithoutUpdatedUserInput | Prisma.EnvVariableCreateOrConnectWithoutUpdatedUserInput[]
+  upsert?: Prisma.EnvVariableUpsertWithWhereUniqueWithoutUpdatedUserInput | Prisma.EnvVariableUpsertWithWhereUniqueWithoutUpdatedUserInput[]
+  createMany?: Prisma.EnvVariableCreateManyUpdatedUserInputEnvelope
+  set?: Prisma.EnvVariableWhereUniqueInput | Prisma.EnvVariableWhereUniqueInput[]
+  disconnect?: Prisma.EnvVariableWhereUniqueInput | Prisma.EnvVariableWhereUniqueInput[]
+  delete?: Prisma.EnvVariableWhereUniqueInput | Prisma.EnvVariableWhereUniqueInput[]
+  connect?: Prisma.EnvVariableWhereUniqueInput | Prisma.EnvVariableWhereUniqueInput[]
+  update?: Prisma.EnvVariableUpdateWithWhereUniqueWithoutUpdatedUserInput | Prisma.EnvVariableUpdateWithWhereUniqueWithoutUpdatedUserInput[]
+  updateMany?: Prisma.EnvVariableUpdateManyWithWhereWithoutUpdatedUserInput | Prisma.EnvVariableUpdateManyWithWhereWithoutUpdatedUserInput[]
+  deleteMany?: Prisma.EnvVariableScalarWhereInput | Prisma.EnvVariableScalarWhereInput[]
 }
 
 export type EnvVariableCreateNestedManyWithoutEnvironmentInput = {
@@ -475,16 +585,138 @@ export type EnvVariableUncheckedUpdateManyWithoutEnvironmentNestedInput = {
   deleteMany?: Prisma.EnvVariableScalarWhereInput | Prisma.EnvVariableScalarWhereInput[]
 }
 
+export type EnvVariableCreateWithoutCreatedUserInput = {
+  id?: string
+  key: string
+  encryptedValue: string
+  iv: string
+  authTag: string
+  comment?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  environment: Prisma.EnvironmentCreateNestedOneWithoutVariablesInput
+  updatedUser: Prisma.UserCreateNestedOneWithoutUpdatedVariablesInput
+}
+
+export type EnvVariableUncheckedCreateWithoutCreatedUserInput = {
+  id?: string
+  key: string
+  encryptedValue: string
+  iv: string
+  authTag: string
+  comment?: string | null
+  environmentId: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  updatedBy: string
+}
+
+export type EnvVariableCreateOrConnectWithoutCreatedUserInput = {
+  where: Prisma.EnvVariableWhereUniqueInput
+  create: Prisma.XOR<Prisma.EnvVariableCreateWithoutCreatedUserInput, Prisma.EnvVariableUncheckedCreateWithoutCreatedUserInput>
+}
+
+export type EnvVariableCreateManyCreatedUserInputEnvelope = {
+  data: Prisma.EnvVariableCreateManyCreatedUserInput | Prisma.EnvVariableCreateManyCreatedUserInput[]
+  skipDuplicates?: boolean
+}
+
+export type EnvVariableCreateWithoutUpdatedUserInput = {
+  id?: string
+  key: string
+  encryptedValue: string
+  iv: string
+  authTag: string
+  comment?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  environment: Prisma.EnvironmentCreateNestedOneWithoutVariablesInput
+  createdUser: Prisma.UserCreateNestedOneWithoutCreatedVariablesInput
+}
+
+export type EnvVariableUncheckedCreateWithoutUpdatedUserInput = {
+  id?: string
+  key: string
+  encryptedValue: string
+  iv: string
+  authTag: string
+  comment?: string | null
+  environmentId: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  createdBy: string
+}
+
+export type EnvVariableCreateOrConnectWithoutUpdatedUserInput = {
+  where: Prisma.EnvVariableWhereUniqueInput
+  create: Prisma.XOR<Prisma.EnvVariableCreateWithoutUpdatedUserInput, Prisma.EnvVariableUncheckedCreateWithoutUpdatedUserInput>
+}
+
+export type EnvVariableCreateManyUpdatedUserInputEnvelope = {
+  data: Prisma.EnvVariableCreateManyUpdatedUserInput | Prisma.EnvVariableCreateManyUpdatedUserInput[]
+  skipDuplicates?: boolean
+}
+
+export type EnvVariableUpsertWithWhereUniqueWithoutCreatedUserInput = {
+  where: Prisma.EnvVariableWhereUniqueInput
+  update: Prisma.XOR<Prisma.EnvVariableUpdateWithoutCreatedUserInput, Prisma.EnvVariableUncheckedUpdateWithoutCreatedUserInput>
+  create: Prisma.XOR<Prisma.EnvVariableCreateWithoutCreatedUserInput, Prisma.EnvVariableUncheckedCreateWithoutCreatedUserInput>
+}
+
+export type EnvVariableUpdateWithWhereUniqueWithoutCreatedUserInput = {
+  where: Prisma.EnvVariableWhereUniqueInput
+  data: Prisma.XOR<Prisma.EnvVariableUpdateWithoutCreatedUserInput, Prisma.EnvVariableUncheckedUpdateWithoutCreatedUserInput>
+}
+
+export type EnvVariableUpdateManyWithWhereWithoutCreatedUserInput = {
+  where: Prisma.EnvVariableScalarWhereInput
+  data: Prisma.XOR<Prisma.EnvVariableUpdateManyMutationInput, Prisma.EnvVariableUncheckedUpdateManyWithoutCreatedUserInput>
+}
+
+export type EnvVariableScalarWhereInput = {
+  AND?: Prisma.EnvVariableScalarWhereInput | Prisma.EnvVariableScalarWhereInput[]
+  OR?: Prisma.EnvVariableScalarWhereInput[]
+  NOT?: Prisma.EnvVariableScalarWhereInput | Prisma.EnvVariableScalarWhereInput[]
+  id?: Prisma.StringFilter<"EnvVariable"> | string
+  key?: Prisma.StringFilter<"EnvVariable"> | string
+  encryptedValue?: Prisma.StringFilter<"EnvVariable"> | string
+  iv?: Prisma.StringFilter<"EnvVariable"> | string
+  authTag?: Prisma.StringFilter<"EnvVariable"> | string
+  comment?: Prisma.StringNullableFilter<"EnvVariable"> | string | null
+  environmentId?: Prisma.StringFilter<"EnvVariable"> | string
+  createdAt?: Prisma.DateTimeFilter<"EnvVariable"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"EnvVariable"> | Date | string
+  createdBy?: Prisma.StringFilter<"EnvVariable"> | string
+  updatedBy?: Prisma.StringFilter<"EnvVariable"> | string
+}
+
+export type EnvVariableUpsertWithWhereUniqueWithoutUpdatedUserInput = {
+  where: Prisma.EnvVariableWhereUniqueInput
+  update: Prisma.XOR<Prisma.EnvVariableUpdateWithoutUpdatedUserInput, Prisma.EnvVariableUncheckedUpdateWithoutUpdatedUserInput>
+  create: Prisma.XOR<Prisma.EnvVariableCreateWithoutUpdatedUserInput, Prisma.EnvVariableUncheckedCreateWithoutUpdatedUserInput>
+}
+
+export type EnvVariableUpdateWithWhereUniqueWithoutUpdatedUserInput = {
+  where: Prisma.EnvVariableWhereUniqueInput
+  data: Prisma.XOR<Prisma.EnvVariableUpdateWithoutUpdatedUserInput, Prisma.EnvVariableUncheckedUpdateWithoutUpdatedUserInput>
+}
+
+export type EnvVariableUpdateManyWithWhereWithoutUpdatedUserInput = {
+  where: Prisma.EnvVariableScalarWhereInput
+  data: Prisma.XOR<Prisma.EnvVariableUpdateManyMutationInput, Prisma.EnvVariableUncheckedUpdateManyWithoutUpdatedUserInput>
+}
+
 export type EnvVariableCreateWithoutEnvironmentInput = {
   id?: string
   key: string
   encryptedValue: string
   iv: string
   authTag: string
+  comment?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  createdBy: string
-  updatedBy: string
+  createdUser: Prisma.UserCreateNestedOneWithoutCreatedVariablesInput
+  updatedUser: Prisma.UserCreateNestedOneWithoutUpdatedVariablesInput
 }
 
 export type EnvVariableUncheckedCreateWithoutEnvironmentInput = {
@@ -493,6 +725,7 @@ export type EnvVariableUncheckedCreateWithoutEnvironmentInput = {
   encryptedValue: string
   iv: string
   authTag: string
+  comment?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   createdBy: string
@@ -525,20 +758,108 @@ export type EnvVariableUpdateManyWithWhereWithoutEnvironmentInput = {
   data: Prisma.XOR<Prisma.EnvVariableUpdateManyMutationInput, Prisma.EnvVariableUncheckedUpdateManyWithoutEnvironmentInput>
 }
 
-export type EnvVariableScalarWhereInput = {
-  AND?: Prisma.EnvVariableScalarWhereInput | Prisma.EnvVariableScalarWhereInput[]
-  OR?: Prisma.EnvVariableScalarWhereInput[]
-  NOT?: Prisma.EnvVariableScalarWhereInput | Prisma.EnvVariableScalarWhereInput[]
-  id?: Prisma.StringFilter<"EnvVariable"> | string
-  key?: Prisma.StringFilter<"EnvVariable"> | string
-  encryptedValue?: Prisma.StringFilter<"EnvVariable"> | string
-  iv?: Prisma.StringFilter<"EnvVariable"> | string
-  authTag?: Prisma.StringFilter<"EnvVariable"> | string
-  environmentId?: Prisma.StringFilter<"EnvVariable"> | string
-  createdAt?: Prisma.DateTimeFilter<"EnvVariable"> | Date | string
-  updatedAt?: Prisma.DateTimeFilter<"EnvVariable"> | Date | string
-  createdBy?: Prisma.StringFilter<"EnvVariable"> | string
-  updatedBy?: Prisma.StringFilter<"EnvVariable"> | string
+export type EnvVariableCreateManyCreatedUserInput = {
+  id?: string
+  key: string
+  encryptedValue: string
+  iv: string
+  authTag: string
+  comment?: string | null
+  environmentId: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  updatedBy: string
+}
+
+export type EnvVariableCreateManyUpdatedUserInput = {
+  id?: string
+  key: string
+  encryptedValue: string
+  iv: string
+  authTag: string
+  comment?: string | null
+  environmentId: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  createdBy: string
+}
+
+export type EnvVariableUpdateWithoutCreatedUserInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  key?: Prisma.StringFieldUpdateOperationsInput | string
+  encryptedValue?: Prisma.StringFieldUpdateOperationsInput | string
+  iv?: Prisma.StringFieldUpdateOperationsInput | string
+  authTag?: Prisma.StringFieldUpdateOperationsInput | string
+  comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  environment?: Prisma.EnvironmentUpdateOneRequiredWithoutVariablesNestedInput
+  updatedUser?: Prisma.UserUpdateOneRequiredWithoutUpdatedVariablesNestedInput
+}
+
+export type EnvVariableUncheckedUpdateWithoutCreatedUserInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  key?: Prisma.StringFieldUpdateOperationsInput | string
+  encryptedValue?: Prisma.StringFieldUpdateOperationsInput | string
+  iv?: Prisma.StringFieldUpdateOperationsInput | string
+  authTag?: Prisma.StringFieldUpdateOperationsInput | string
+  comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  environmentId?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedBy?: Prisma.StringFieldUpdateOperationsInput | string
+}
+
+export type EnvVariableUncheckedUpdateManyWithoutCreatedUserInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  key?: Prisma.StringFieldUpdateOperationsInput | string
+  encryptedValue?: Prisma.StringFieldUpdateOperationsInput | string
+  iv?: Prisma.StringFieldUpdateOperationsInput | string
+  authTag?: Prisma.StringFieldUpdateOperationsInput | string
+  comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  environmentId?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedBy?: Prisma.StringFieldUpdateOperationsInput | string
+}
+
+export type EnvVariableUpdateWithoutUpdatedUserInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  key?: Prisma.StringFieldUpdateOperationsInput | string
+  encryptedValue?: Prisma.StringFieldUpdateOperationsInput | string
+  iv?: Prisma.StringFieldUpdateOperationsInput | string
+  authTag?: Prisma.StringFieldUpdateOperationsInput | string
+  comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  environment?: Prisma.EnvironmentUpdateOneRequiredWithoutVariablesNestedInput
+  createdUser?: Prisma.UserUpdateOneRequiredWithoutCreatedVariablesNestedInput
+}
+
+export type EnvVariableUncheckedUpdateWithoutUpdatedUserInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  key?: Prisma.StringFieldUpdateOperationsInput | string
+  encryptedValue?: Prisma.StringFieldUpdateOperationsInput | string
+  iv?: Prisma.StringFieldUpdateOperationsInput | string
+  authTag?: Prisma.StringFieldUpdateOperationsInput | string
+  comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  environmentId?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdBy?: Prisma.StringFieldUpdateOperationsInput | string
+}
+
+export type EnvVariableUncheckedUpdateManyWithoutUpdatedUserInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  key?: Prisma.StringFieldUpdateOperationsInput | string
+  encryptedValue?: Prisma.StringFieldUpdateOperationsInput | string
+  iv?: Prisma.StringFieldUpdateOperationsInput | string
+  authTag?: Prisma.StringFieldUpdateOperationsInput | string
+  comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  environmentId?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdBy?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type EnvVariableCreateManyEnvironmentInput = {
@@ -547,6 +868,7 @@ export type EnvVariableCreateManyEnvironmentInput = {
   encryptedValue: string
   iv: string
   authTag: string
+  comment?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   createdBy: string
@@ -559,10 +881,11 @@ export type EnvVariableUpdateWithoutEnvironmentInput = {
   encryptedValue?: Prisma.StringFieldUpdateOperationsInput | string
   iv?: Prisma.StringFieldUpdateOperationsInput | string
   authTag?: Prisma.StringFieldUpdateOperationsInput | string
+  comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  createdBy?: Prisma.StringFieldUpdateOperationsInput | string
-  updatedBy?: Prisma.StringFieldUpdateOperationsInput | string
+  createdUser?: Prisma.UserUpdateOneRequiredWithoutCreatedVariablesNestedInput
+  updatedUser?: Prisma.UserUpdateOneRequiredWithoutUpdatedVariablesNestedInput
 }
 
 export type EnvVariableUncheckedUpdateWithoutEnvironmentInput = {
@@ -571,6 +894,7 @@ export type EnvVariableUncheckedUpdateWithoutEnvironmentInput = {
   encryptedValue?: Prisma.StringFieldUpdateOperationsInput | string
   iv?: Prisma.StringFieldUpdateOperationsInput | string
   authTag?: Prisma.StringFieldUpdateOperationsInput | string
+  comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdBy?: Prisma.StringFieldUpdateOperationsInput | string
@@ -583,6 +907,7 @@ export type EnvVariableUncheckedUpdateManyWithoutEnvironmentInput = {
   encryptedValue?: Prisma.StringFieldUpdateOperationsInput | string
   iv?: Prisma.StringFieldUpdateOperationsInput | string
   authTag?: Prisma.StringFieldUpdateOperationsInput | string
+  comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdBy?: Prisma.StringFieldUpdateOperationsInput | string
@@ -597,12 +922,15 @@ export type EnvVariableSelect<ExtArgs extends runtime.Types.Extensions.InternalA
   encryptedValue?: boolean
   iv?: boolean
   authTag?: boolean
+  comment?: boolean
   environmentId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   createdBy?: boolean
   updatedBy?: boolean
   environment?: boolean | Prisma.EnvironmentDefaultArgs<ExtArgs>
+  createdUser?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  updatedUser?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["envVariable"]>
 
 export type EnvVariableSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -611,12 +939,15 @@ export type EnvVariableSelectCreateManyAndReturn<ExtArgs extends runtime.Types.E
   encryptedValue?: boolean
   iv?: boolean
   authTag?: boolean
+  comment?: boolean
   environmentId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   createdBy?: boolean
   updatedBy?: boolean
   environment?: boolean | Prisma.EnvironmentDefaultArgs<ExtArgs>
+  createdUser?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  updatedUser?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["envVariable"]>
 
 export type EnvVariableSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -625,12 +956,15 @@ export type EnvVariableSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.E
   encryptedValue?: boolean
   iv?: boolean
   authTag?: boolean
+  comment?: boolean
   environmentId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   createdBy?: boolean
   updatedBy?: boolean
   environment?: boolean | Prisma.EnvironmentDefaultArgs<ExtArgs>
+  createdUser?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  updatedUser?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["envVariable"]>
 
 export type EnvVariableSelectScalar = {
@@ -639,6 +973,7 @@ export type EnvVariableSelectScalar = {
   encryptedValue?: boolean
   iv?: boolean
   authTag?: boolean
+  comment?: boolean
   environmentId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -646,21 +981,29 @@ export type EnvVariableSelectScalar = {
   updatedBy?: boolean
 }
 
-export type EnvVariableOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "key" | "encryptedValue" | "iv" | "authTag" | "environmentId" | "createdAt" | "updatedAt" | "createdBy" | "updatedBy", ExtArgs["result"]["envVariable"]>
+export type EnvVariableOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "key" | "encryptedValue" | "iv" | "authTag" | "comment" | "environmentId" | "createdAt" | "updatedAt" | "createdBy" | "updatedBy", ExtArgs["result"]["envVariable"]>
 export type EnvVariableInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   environment?: boolean | Prisma.EnvironmentDefaultArgs<ExtArgs>
+  createdUser?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  updatedUser?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
 export type EnvVariableIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   environment?: boolean | Prisma.EnvironmentDefaultArgs<ExtArgs>
+  createdUser?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  updatedUser?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
 export type EnvVariableIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   environment?: boolean | Prisma.EnvironmentDefaultArgs<ExtArgs>
+  createdUser?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  updatedUser?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
 
 export type $EnvVariablePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "EnvVariable"
   objects: {
     environment: Prisma.$EnvironmentPayload<ExtArgs>
+    createdUser: Prisma.$UserPayload<ExtArgs>
+    updatedUser: Prisma.$UserPayload<ExtArgs>
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -668,6 +1011,7 @@ export type $EnvVariablePayload<ExtArgs extends runtime.Types.Extensions.Interna
     encryptedValue: string
     iv: string
     authTag: string
+    comment: string | null
     environmentId: string
     createdAt: Date
     updatedAt: Date
@@ -1068,6 +1412,8 @@ readonly fields: EnvVariableFieldRefs;
 export interface Prisma__EnvVariableClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   environment<T extends Prisma.EnvironmentDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.EnvironmentDefaultArgs<ExtArgs>>): Prisma.Prisma__EnvironmentClient<runtime.Types.Result.GetResult<Prisma.$EnvironmentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  createdUser<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  updatedUser<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1102,6 +1448,7 @@ export interface EnvVariableFieldRefs {
   readonly encryptedValue: Prisma.FieldRef<"EnvVariable", 'String'>
   readonly iv: Prisma.FieldRef<"EnvVariable", 'String'>
   readonly authTag: Prisma.FieldRef<"EnvVariable", 'String'>
+  readonly comment: Prisma.FieldRef<"EnvVariable", 'String'>
   readonly environmentId: Prisma.FieldRef<"EnvVariable", 'String'>
   readonly createdAt: Prisma.FieldRef<"EnvVariable", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"EnvVariable", 'DateTime'>

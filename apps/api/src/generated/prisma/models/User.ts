@@ -300,6 +300,8 @@ export type UserWhereInput = {
   apiKeys?: Prisma.ApiKeyListRelationFilter
   sentInvites?: Prisma.InvitationListRelationFilter
   receivedInvites?: Prisma.InvitationListRelationFilter
+  createdVariables?: Prisma.EnvVariableListRelationFilter
+  updatedVariables?: Prisma.EnvVariableListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
@@ -328,6 +330,8 @@ export type UserOrderByWithRelationInput = {
   apiKeys?: Prisma.ApiKeyOrderByRelationAggregateInput
   sentInvites?: Prisma.InvitationOrderByRelationAggregateInput
   receivedInvites?: Prisma.InvitationOrderByRelationAggregateInput
+  createdVariables?: Prisma.EnvVariableOrderByRelationAggregateInput
+  updatedVariables?: Prisma.EnvVariableOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -359,6 +363,8 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   apiKeys?: Prisma.ApiKeyListRelationFilter
   sentInvites?: Prisma.InvitationListRelationFilter
   receivedInvites?: Prisma.InvitationListRelationFilter
+  createdVariables?: Prisma.EnvVariableListRelationFilter
+  updatedVariables?: Prisma.EnvVariableListRelationFilter
 }, "id" | "email" | "verifyToken" | "resetToken">
 
 export type UserOrderByWithAggregationInput = {
@@ -437,6 +443,8 @@ export type UserCreateInput = {
   apiKeys?: Prisma.ApiKeyCreateNestedManyWithoutUserInput
   sentInvites?: Prisma.InvitationCreateNestedManyWithoutInvitedByInput
   receivedInvites?: Prisma.InvitationCreateNestedManyWithoutInviteeInput
+  createdVariables?: Prisma.EnvVariableCreateNestedManyWithoutCreatedUserInput
+  updatedVariables?: Prisma.EnvVariableCreateNestedManyWithoutUpdatedUserInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -465,6 +473,8 @@ export type UserUncheckedCreateInput = {
   apiKeys?: Prisma.ApiKeyUncheckedCreateNestedManyWithoutUserInput
   sentInvites?: Prisma.InvitationUncheckedCreateNestedManyWithoutInvitedByInput
   receivedInvites?: Prisma.InvitationUncheckedCreateNestedManyWithoutInviteeInput
+  createdVariables?: Prisma.EnvVariableUncheckedCreateNestedManyWithoutCreatedUserInput
+  updatedVariables?: Prisma.EnvVariableUncheckedCreateNestedManyWithoutUpdatedUserInput
 }
 
 export type UserUpdateInput = {
@@ -493,6 +503,8 @@ export type UserUpdateInput = {
   apiKeys?: Prisma.ApiKeyUpdateManyWithoutUserNestedInput
   sentInvites?: Prisma.InvitationUpdateManyWithoutInvitedByNestedInput
   receivedInvites?: Prisma.InvitationUpdateManyWithoutInviteeNestedInput
+  createdVariables?: Prisma.EnvVariableUpdateManyWithoutCreatedUserNestedInput
+  updatedVariables?: Prisma.EnvVariableUpdateManyWithoutUpdatedUserNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -521,6 +533,8 @@ export type UserUncheckedUpdateInput = {
   apiKeys?: Prisma.ApiKeyUncheckedUpdateManyWithoutUserNestedInput
   sentInvites?: Prisma.InvitationUncheckedUpdateManyWithoutInvitedByNestedInput
   receivedInvites?: Prisma.InvitationUncheckedUpdateManyWithoutInviteeNestedInput
+  createdVariables?: Prisma.EnvVariableUncheckedUpdateManyWithoutCreatedUserNestedInput
+  updatedVariables?: Prisma.EnvVariableUncheckedUpdateManyWithoutUpdatedUserNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -727,6 +741,34 @@ export type UserUpdateOneRequiredWithoutMembershipsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutMembershipsInput, Prisma.UserUpdateWithoutMembershipsInput>, Prisma.UserUncheckedUpdateWithoutMembershipsInput>
 }
 
+export type UserCreateNestedOneWithoutCreatedVariablesInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutCreatedVariablesInput, Prisma.UserUncheckedCreateWithoutCreatedVariablesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutCreatedVariablesInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserCreateNestedOneWithoutUpdatedVariablesInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutUpdatedVariablesInput, Prisma.UserUncheckedCreateWithoutUpdatedVariablesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutUpdatedVariablesInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutCreatedVariablesNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutCreatedVariablesInput, Prisma.UserUncheckedCreateWithoutCreatedVariablesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutCreatedVariablesInput
+  upsert?: Prisma.UserUpsertWithoutCreatedVariablesInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutCreatedVariablesInput, Prisma.UserUpdateWithoutCreatedVariablesInput>, Prisma.UserUncheckedUpdateWithoutCreatedVariablesInput>
+}
+
+export type UserUpdateOneRequiredWithoutUpdatedVariablesNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutUpdatedVariablesInput, Prisma.UserUncheckedCreateWithoutUpdatedVariablesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutUpdatedVariablesInput
+  upsert?: Prisma.UserUpsertWithoutUpdatedVariablesInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutUpdatedVariablesInput, Prisma.UserUpdateWithoutUpdatedVariablesInput>, Prisma.UserUncheckedUpdateWithoutUpdatedVariablesInput>
+}
+
 export type UserCreateNestedOneWithoutSentInvitesInput = {
   create?: Prisma.XOR<Prisma.UserCreateWithoutSentInvitesInput, Prisma.UserUncheckedCreateWithoutSentInvitesInput>
   connectOrCreate?: Prisma.UserCreateOrConnectWithoutSentInvitesInput
@@ -796,6 +838,8 @@ export type UserCreateWithoutOauthProvidersInput = {
   apiKeys?: Prisma.ApiKeyCreateNestedManyWithoutUserInput
   sentInvites?: Prisma.InvitationCreateNestedManyWithoutInvitedByInput
   receivedInvites?: Prisma.InvitationCreateNestedManyWithoutInviteeInput
+  createdVariables?: Prisma.EnvVariableCreateNestedManyWithoutCreatedUserInput
+  updatedVariables?: Prisma.EnvVariableCreateNestedManyWithoutUpdatedUserInput
 }
 
 export type UserUncheckedCreateWithoutOauthProvidersInput = {
@@ -823,6 +867,8 @@ export type UserUncheckedCreateWithoutOauthProvidersInput = {
   apiKeys?: Prisma.ApiKeyUncheckedCreateNestedManyWithoutUserInput
   sentInvites?: Prisma.InvitationUncheckedCreateNestedManyWithoutInvitedByInput
   receivedInvites?: Prisma.InvitationUncheckedCreateNestedManyWithoutInviteeInput
+  createdVariables?: Prisma.EnvVariableUncheckedCreateNestedManyWithoutCreatedUserInput
+  updatedVariables?: Prisma.EnvVariableUncheckedCreateNestedManyWithoutUpdatedUserInput
 }
 
 export type UserCreateOrConnectWithoutOauthProvidersInput = {
@@ -866,6 +912,8 @@ export type UserUpdateWithoutOauthProvidersInput = {
   apiKeys?: Prisma.ApiKeyUpdateManyWithoutUserNestedInput
   sentInvites?: Prisma.InvitationUpdateManyWithoutInvitedByNestedInput
   receivedInvites?: Prisma.InvitationUpdateManyWithoutInviteeNestedInput
+  createdVariables?: Prisma.EnvVariableUpdateManyWithoutCreatedUserNestedInput
+  updatedVariables?: Prisma.EnvVariableUpdateManyWithoutUpdatedUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutOauthProvidersInput = {
@@ -893,6 +941,8 @@ export type UserUncheckedUpdateWithoutOauthProvidersInput = {
   apiKeys?: Prisma.ApiKeyUncheckedUpdateManyWithoutUserNestedInput
   sentInvites?: Prisma.InvitationUncheckedUpdateManyWithoutInvitedByNestedInput
   receivedInvites?: Prisma.InvitationUncheckedUpdateManyWithoutInviteeNestedInput
+  createdVariables?: Prisma.EnvVariableUncheckedUpdateManyWithoutCreatedUserNestedInput
+  updatedVariables?: Prisma.EnvVariableUncheckedUpdateManyWithoutUpdatedUserNestedInput
 }
 
 export type UserCreateWithoutOwnedProjectsInput = {
@@ -920,6 +970,8 @@ export type UserCreateWithoutOwnedProjectsInput = {
   apiKeys?: Prisma.ApiKeyCreateNestedManyWithoutUserInput
   sentInvites?: Prisma.InvitationCreateNestedManyWithoutInvitedByInput
   receivedInvites?: Prisma.InvitationCreateNestedManyWithoutInviteeInput
+  createdVariables?: Prisma.EnvVariableCreateNestedManyWithoutCreatedUserInput
+  updatedVariables?: Prisma.EnvVariableCreateNestedManyWithoutUpdatedUserInput
 }
 
 export type UserUncheckedCreateWithoutOwnedProjectsInput = {
@@ -947,6 +999,8 @@ export type UserUncheckedCreateWithoutOwnedProjectsInput = {
   apiKeys?: Prisma.ApiKeyUncheckedCreateNestedManyWithoutUserInput
   sentInvites?: Prisma.InvitationUncheckedCreateNestedManyWithoutInvitedByInput
   receivedInvites?: Prisma.InvitationUncheckedCreateNestedManyWithoutInviteeInput
+  createdVariables?: Prisma.EnvVariableUncheckedCreateNestedManyWithoutCreatedUserInput
+  updatedVariables?: Prisma.EnvVariableUncheckedCreateNestedManyWithoutUpdatedUserInput
 }
 
 export type UserCreateOrConnectWithoutOwnedProjectsInput = {
@@ -990,6 +1044,8 @@ export type UserUpdateWithoutOwnedProjectsInput = {
   apiKeys?: Prisma.ApiKeyUpdateManyWithoutUserNestedInput
   sentInvites?: Prisma.InvitationUpdateManyWithoutInvitedByNestedInput
   receivedInvites?: Prisma.InvitationUpdateManyWithoutInviteeNestedInput
+  createdVariables?: Prisma.EnvVariableUpdateManyWithoutCreatedUserNestedInput
+  updatedVariables?: Prisma.EnvVariableUpdateManyWithoutUpdatedUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutOwnedProjectsInput = {
@@ -1017,6 +1073,8 @@ export type UserUncheckedUpdateWithoutOwnedProjectsInput = {
   apiKeys?: Prisma.ApiKeyUncheckedUpdateManyWithoutUserNestedInput
   sentInvites?: Prisma.InvitationUncheckedUpdateManyWithoutInvitedByNestedInput
   receivedInvites?: Prisma.InvitationUncheckedUpdateManyWithoutInviteeNestedInput
+  createdVariables?: Prisma.EnvVariableUncheckedUpdateManyWithoutCreatedUserNestedInput
+  updatedVariables?: Prisma.EnvVariableUncheckedUpdateManyWithoutUpdatedUserNestedInput
 }
 
 export type UserCreateWithoutMembershipsInput = {
@@ -1044,6 +1102,8 @@ export type UserCreateWithoutMembershipsInput = {
   apiKeys?: Prisma.ApiKeyCreateNestedManyWithoutUserInput
   sentInvites?: Prisma.InvitationCreateNestedManyWithoutInvitedByInput
   receivedInvites?: Prisma.InvitationCreateNestedManyWithoutInviteeInput
+  createdVariables?: Prisma.EnvVariableCreateNestedManyWithoutCreatedUserInput
+  updatedVariables?: Prisma.EnvVariableCreateNestedManyWithoutUpdatedUserInput
 }
 
 export type UserUncheckedCreateWithoutMembershipsInput = {
@@ -1071,6 +1131,8 @@ export type UserUncheckedCreateWithoutMembershipsInput = {
   apiKeys?: Prisma.ApiKeyUncheckedCreateNestedManyWithoutUserInput
   sentInvites?: Prisma.InvitationUncheckedCreateNestedManyWithoutInvitedByInput
   receivedInvites?: Prisma.InvitationUncheckedCreateNestedManyWithoutInviteeInput
+  createdVariables?: Prisma.EnvVariableUncheckedCreateNestedManyWithoutCreatedUserInput
+  updatedVariables?: Prisma.EnvVariableUncheckedCreateNestedManyWithoutUpdatedUserInput
 }
 
 export type UserCreateOrConnectWithoutMembershipsInput = {
@@ -1114,6 +1176,8 @@ export type UserUpdateWithoutMembershipsInput = {
   apiKeys?: Prisma.ApiKeyUpdateManyWithoutUserNestedInput
   sentInvites?: Prisma.InvitationUpdateManyWithoutInvitedByNestedInput
   receivedInvites?: Prisma.InvitationUpdateManyWithoutInviteeNestedInput
+  createdVariables?: Prisma.EnvVariableUpdateManyWithoutCreatedUserNestedInput
+  updatedVariables?: Prisma.EnvVariableUpdateManyWithoutUpdatedUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutMembershipsInput = {
@@ -1141,6 +1205,272 @@ export type UserUncheckedUpdateWithoutMembershipsInput = {
   apiKeys?: Prisma.ApiKeyUncheckedUpdateManyWithoutUserNestedInput
   sentInvites?: Prisma.InvitationUncheckedUpdateManyWithoutInvitedByNestedInput
   receivedInvites?: Prisma.InvitationUncheckedUpdateManyWithoutInviteeNestedInput
+  createdVariables?: Prisma.EnvVariableUncheckedUpdateManyWithoutCreatedUserNestedInput
+  updatedVariables?: Prisma.EnvVariableUncheckedUpdateManyWithoutUpdatedUserNestedInput
+}
+
+export type UserCreateWithoutCreatedVariablesInput = {
+  id?: string
+  email: string
+  password?: string | null
+  name: string
+  avatar?: string | null
+  emailVerified?: boolean
+  verifyToken?: string | null
+  verifyTokenExp?: Date | string | null
+  resetToken?: string | null
+  resetTokenExp?: Date | string | null
+  twoFactorEnabled?: boolean
+  twoFactorSecret?: string | null
+  publicKey?: string | null
+  encryptedPrivateKey?: string | null
+  encryptionSalt?: string | null
+  encryptionIV?: string | null
+  encryptionAuthTag?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  oauthProviders?: Prisma.OAuthProviderCreateNestedManyWithoutUserInput
+  ownedProjects?: Prisma.ProjectCreateNestedManyWithoutOwnerInput
+  memberships?: Prisma.ProjectMemberCreateNestedManyWithoutUserInput
+  apiKeys?: Prisma.ApiKeyCreateNestedManyWithoutUserInput
+  sentInvites?: Prisma.InvitationCreateNestedManyWithoutInvitedByInput
+  receivedInvites?: Prisma.InvitationCreateNestedManyWithoutInviteeInput
+  updatedVariables?: Prisma.EnvVariableCreateNestedManyWithoutUpdatedUserInput
+}
+
+export type UserUncheckedCreateWithoutCreatedVariablesInput = {
+  id?: string
+  email: string
+  password?: string | null
+  name: string
+  avatar?: string | null
+  emailVerified?: boolean
+  verifyToken?: string | null
+  verifyTokenExp?: Date | string | null
+  resetToken?: string | null
+  resetTokenExp?: Date | string | null
+  twoFactorEnabled?: boolean
+  twoFactorSecret?: string | null
+  publicKey?: string | null
+  encryptedPrivateKey?: string | null
+  encryptionSalt?: string | null
+  encryptionIV?: string | null
+  encryptionAuthTag?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  oauthProviders?: Prisma.OAuthProviderUncheckedCreateNestedManyWithoutUserInput
+  ownedProjects?: Prisma.ProjectUncheckedCreateNestedManyWithoutOwnerInput
+  memberships?: Prisma.ProjectMemberUncheckedCreateNestedManyWithoutUserInput
+  apiKeys?: Prisma.ApiKeyUncheckedCreateNestedManyWithoutUserInput
+  sentInvites?: Prisma.InvitationUncheckedCreateNestedManyWithoutInvitedByInput
+  receivedInvites?: Prisma.InvitationUncheckedCreateNestedManyWithoutInviteeInput
+  updatedVariables?: Prisma.EnvVariableUncheckedCreateNestedManyWithoutUpdatedUserInput
+}
+
+export type UserCreateOrConnectWithoutCreatedVariablesInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutCreatedVariablesInput, Prisma.UserUncheckedCreateWithoutCreatedVariablesInput>
+}
+
+export type UserCreateWithoutUpdatedVariablesInput = {
+  id?: string
+  email: string
+  password?: string | null
+  name: string
+  avatar?: string | null
+  emailVerified?: boolean
+  verifyToken?: string | null
+  verifyTokenExp?: Date | string | null
+  resetToken?: string | null
+  resetTokenExp?: Date | string | null
+  twoFactorEnabled?: boolean
+  twoFactorSecret?: string | null
+  publicKey?: string | null
+  encryptedPrivateKey?: string | null
+  encryptionSalt?: string | null
+  encryptionIV?: string | null
+  encryptionAuthTag?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  oauthProviders?: Prisma.OAuthProviderCreateNestedManyWithoutUserInput
+  ownedProjects?: Prisma.ProjectCreateNestedManyWithoutOwnerInput
+  memberships?: Prisma.ProjectMemberCreateNestedManyWithoutUserInput
+  apiKeys?: Prisma.ApiKeyCreateNestedManyWithoutUserInput
+  sentInvites?: Prisma.InvitationCreateNestedManyWithoutInvitedByInput
+  receivedInvites?: Prisma.InvitationCreateNestedManyWithoutInviteeInput
+  createdVariables?: Prisma.EnvVariableCreateNestedManyWithoutCreatedUserInput
+}
+
+export type UserUncheckedCreateWithoutUpdatedVariablesInput = {
+  id?: string
+  email: string
+  password?: string | null
+  name: string
+  avatar?: string | null
+  emailVerified?: boolean
+  verifyToken?: string | null
+  verifyTokenExp?: Date | string | null
+  resetToken?: string | null
+  resetTokenExp?: Date | string | null
+  twoFactorEnabled?: boolean
+  twoFactorSecret?: string | null
+  publicKey?: string | null
+  encryptedPrivateKey?: string | null
+  encryptionSalt?: string | null
+  encryptionIV?: string | null
+  encryptionAuthTag?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  oauthProviders?: Prisma.OAuthProviderUncheckedCreateNestedManyWithoutUserInput
+  ownedProjects?: Prisma.ProjectUncheckedCreateNestedManyWithoutOwnerInput
+  memberships?: Prisma.ProjectMemberUncheckedCreateNestedManyWithoutUserInput
+  apiKeys?: Prisma.ApiKeyUncheckedCreateNestedManyWithoutUserInput
+  sentInvites?: Prisma.InvitationUncheckedCreateNestedManyWithoutInvitedByInput
+  receivedInvites?: Prisma.InvitationUncheckedCreateNestedManyWithoutInviteeInput
+  createdVariables?: Prisma.EnvVariableUncheckedCreateNestedManyWithoutCreatedUserInput
+}
+
+export type UserCreateOrConnectWithoutUpdatedVariablesInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutUpdatedVariablesInput, Prisma.UserUncheckedCreateWithoutUpdatedVariablesInput>
+}
+
+export type UserUpsertWithoutCreatedVariablesInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutCreatedVariablesInput, Prisma.UserUncheckedUpdateWithoutCreatedVariablesInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutCreatedVariablesInput, Prisma.UserUncheckedCreateWithoutCreatedVariablesInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutCreatedVariablesInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutCreatedVariablesInput, Prisma.UserUncheckedUpdateWithoutCreatedVariablesInput>
+}
+
+export type UserUpdateWithoutCreatedVariablesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  avatar?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  verifyToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  verifyTokenExp?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resetToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetTokenExp?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  publicKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  encryptedPrivateKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  encryptionSalt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  encryptionIV?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  encryptionAuthTag?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  oauthProviders?: Prisma.OAuthProviderUpdateManyWithoutUserNestedInput
+  ownedProjects?: Prisma.ProjectUpdateManyWithoutOwnerNestedInput
+  memberships?: Prisma.ProjectMemberUpdateManyWithoutUserNestedInput
+  apiKeys?: Prisma.ApiKeyUpdateManyWithoutUserNestedInput
+  sentInvites?: Prisma.InvitationUpdateManyWithoutInvitedByNestedInput
+  receivedInvites?: Prisma.InvitationUpdateManyWithoutInviteeNestedInput
+  updatedVariables?: Prisma.EnvVariableUpdateManyWithoutUpdatedUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutCreatedVariablesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  avatar?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  verifyToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  verifyTokenExp?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resetToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetTokenExp?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  publicKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  encryptedPrivateKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  encryptionSalt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  encryptionIV?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  encryptionAuthTag?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  oauthProviders?: Prisma.OAuthProviderUncheckedUpdateManyWithoutUserNestedInput
+  ownedProjects?: Prisma.ProjectUncheckedUpdateManyWithoutOwnerNestedInput
+  memberships?: Prisma.ProjectMemberUncheckedUpdateManyWithoutUserNestedInput
+  apiKeys?: Prisma.ApiKeyUncheckedUpdateManyWithoutUserNestedInput
+  sentInvites?: Prisma.InvitationUncheckedUpdateManyWithoutInvitedByNestedInput
+  receivedInvites?: Prisma.InvitationUncheckedUpdateManyWithoutInviteeNestedInput
+  updatedVariables?: Prisma.EnvVariableUncheckedUpdateManyWithoutUpdatedUserNestedInput
+}
+
+export type UserUpsertWithoutUpdatedVariablesInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutUpdatedVariablesInput, Prisma.UserUncheckedUpdateWithoutUpdatedVariablesInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutUpdatedVariablesInput, Prisma.UserUncheckedCreateWithoutUpdatedVariablesInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutUpdatedVariablesInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutUpdatedVariablesInput, Prisma.UserUncheckedUpdateWithoutUpdatedVariablesInput>
+}
+
+export type UserUpdateWithoutUpdatedVariablesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  avatar?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  verifyToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  verifyTokenExp?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resetToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetTokenExp?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  publicKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  encryptedPrivateKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  encryptionSalt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  encryptionIV?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  encryptionAuthTag?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  oauthProviders?: Prisma.OAuthProviderUpdateManyWithoutUserNestedInput
+  ownedProjects?: Prisma.ProjectUpdateManyWithoutOwnerNestedInput
+  memberships?: Prisma.ProjectMemberUpdateManyWithoutUserNestedInput
+  apiKeys?: Prisma.ApiKeyUpdateManyWithoutUserNestedInput
+  sentInvites?: Prisma.InvitationUpdateManyWithoutInvitedByNestedInput
+  receivedInvites?: Prisma.InvitationUpdateManyWithoutInviteeNestedInput
+  createdVariables?: Prisma.EnvVariableUpdateManyWithoutCreatedUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutUpdatedVariablesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  avatar?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  verifyToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  verifyTokenExp?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resetToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetTokenExp?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  publicKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  encryptedPrivateKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  encryptionSalt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  encryptionIV?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  encryptionAuthTag?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  oauthProviders?: Prisma.OAuthProviderUncheckedUpdateManyWithoutUserNestedInput
+  ownedProjects?: Prisma.ProjectUncheckedUpdateManyWithoutOwnerNestedInput
+  memberships?: Prisma.ProjectMemberUncheckedUpdateManyWithoutUserNestedInput
+  apiKeys?: Prisma.ApiKeyUncheckedUpdateManyWithoutUserNestedInput
+  sentInvites?: Prisma.InvitationUncheckedUpdateManyWithoutInvitedByNestedInput
+  receivedInvites?: Prisma.InvitationUncheckedUpdateManyWithoutInviteeNestedInput
+  createdVariables?: Prisma.EnvVariableUncheckedUpdateManyWithoutCreatedUserNestedInput
 }
 
 export type UserCreateWithoutSentInvitesInput = {
@@ -1168,6 +1498,8 @@ export type UserCreateWithoutSentInvitesInput = {
   memberships?: Prisma.ProjectMemberCreateNestedManyWithoutUserInput
   apiKeys?: Prisma.ApiKeyCreateNestedManyWithoutUserInput
   receivedInvites?: Prisma.InvitationCreateNestedManyWithoutInviteeInput
+  createdVariables?: Prisma.EnvVariableCreateNestedManyWithoutCreatedUserInput
+  updatedVariables?: Prisma.EnvVariableCreateNestedManyWithoutUpdatedUserInput
 }
 
 export type UserUncheckedCreateWithoutSentInvitesInput = {
@@ -1195,6 +1527,8 @@ export type UserUncheckedCreateWithoutSentInvitesInput = {
   memberships?: Prisma.ProjectMemberUncheckedCreateNestedManyWithoutUserInput
   apiKeys?: Prisma.ApiKeyUncheckedCreateNestedManyWithoutUserInput
   receivedInvites?: Prisma.InvitationUncheckedCreateNestedManyWithoutInviteeInput
+  createdVariables?: Prisma.EnvVariableUncheckedCreateNestedManyWithoutCreatedUserInput
+  updatedVariables?: Prisma.EnvVariableUncheckedCreateNestedManyWithoutUpdatedUserInput
 }
 
 export type UserCreateOrConnectWithoutSentInvitesInput = {
@@ -1227,6 +1561,8 @@ export type UserCreateWithoutReceivedInvitesInput = {
   memberships?: Prisma.ProjectMemberCreateNestedManyWithoutUserInput
   apiKeys?: Prisma.ApiKeyCreateNestedManyWithoutUserInput
   sentInvites?: Prisma.InvitationCreateNestedManyWithoutInvitedByInput
+  createdVariables?: Prisma.EnvVariableCreateNestedManyWithoutCreatedUserInput
+  updatedVariables?: Prisma.EnvVariableCreateNestedManyWithoutUpdatedUserInput
 }
 
 export type UserUncheckedCreateWithoutReceivedInvitesInput = {
@@ -1254,6 +1590,8 @@ export type UserUncheckedCreateWithoutReceivedInvitesInput = {
   memberships?: Prisma.ProjectMemberUncheckedCreateNestedManyWithoutUserInput
   apiKeys?: Prisma.ApiKeyUncheckedCreateNestedManyWithoutUserInput
   sentInvites?: Prisma.InvitationUncheckedCreateNestedManyWithoutInvitedByInput
+  createdVariables?: Prisma.EnvVariableUncheckedCreateNestedManyWithoutCreatedUserInput
+  updatedVariables?: Prisma.EnvVariableUncheckedCreateNestedManyWithoutUpdatedUserInput
 }
 
 export type UserCreateOrConnectWithoutReceivedInvitesInput = {
@@ -1297,6 +1635,8 @@ export type UserUpdateWithoutSentInvitesInput = {
   memberships?: Prisma.ProjectMemberUpdateManyWithoutUserNestedInput
   apiKeys?: Prisma.ApiKeyUpdateManyWithoutUserNestedInput
   receivedInvites?: Prisma.InvitationUpdateManyWithoutInviteeNestedInput
+  createdVariables?: Prisma.EnvVariableUpdateManyWithoutCreatedUserNestedInput
+  updatedVariables?: Prisma.EnvVariableUpdateManyWithoutUpdatedUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutSentInvitesInput = {
@@ -1324,6 +1664,8 @@ export type UserUncheckedUpdateWithoutSentInvitesInput = {
   memberships?: Prisma.ProjectMemberUncheckedUpdateManyWithoutUserNestedInput
   apiKeys?: Prisma.ApiKeyUncheckedUpdateManyWithoutUserNestedInput
   receivedInvites?: Prisma.InvitationUncheckedUpdateManyWithoutInviteeNestedInput
+  createdVariables?: Prisma.EnvVariableUncheckedUpdateManyWithoutCreatedUserNestedInput
+  updatedVariables?: Prisma.EnvVariableUncheckedUpdateManyWithoutUpdatedUserNestedInput
 }
 
 export type UserUpsertWithoutReceivedInvitesInput = {
@@ -1362,6 +1704,8 @@ export type UserUpdateWithoutReceivedInvitesInput = {
   memberships?: Prisma.ProjectMemberUpdateManyWithoutUserNestedInput
   apiKeys?: Prisma.ApiKeyUpdateManyWithoutUserNestedInput
   sentInvites?: Prisma.InvitationUpdateManyWithoutInvitedByNestedInput
+  createdVariables?: Prisma.EnvVariableUpdateManyWithoutCreatedUserNestedInput
+  updatedVariables?: Prisma.EnvVariableUpdateManyWithoutUpdatedUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutReceivedInvitesInput = {
@@ -1389,6 +1733,8 @@ export type UserUncheckedUpdateWithoutReceivedInvitesInput = {
   memberships?: Prisma.ProjectMemberUncheckedUpdateManyWithoutUserNestedInput
   apiKeys?: Prisma.ApiKeyUncheckedUpdateManyWithoutUserNestedInput
   sentInvites?: Prisma.InvitationUncheckedUpdateManyWithoutInvitedByNestedInput
+  createdVariables?: Prisma.EnvVariableUncheckedUpdateManyWithoutCreatedUserNestedInput
+  updatedVariables?: Prisma.EnvVariableUncheckedUpdateManyWithoutUpdatedUserNestedInput
 }
 
 export type UserCreateWithoutApiKeysInput = {
@@ -1416,6 +1762,8 @@ export type UserCreateWithoutApiKeysInput = {
   memberships?: Prisma.ProjectMemberCreateNestedManyWithoutUserInput
   sentInvites?: Prisma.InvitationCreateNestedManyWithoutInvitedByInput
   receivedInvites?: Prisma.InvitationCreateNestedManyWithoutInviteeInput
+  createdVariables?: Prisma.EnvVariableCreateNestedManyWithoutCreatedUserInput
+  updatedVariables?: Prisma.EnvVariableCreateNestedManyWithoutUpdatedUserInput
 }
 
 export type UserUncheckedCreateWithoutApiKeysInput = {
@@ -1443,6 +1791,8 @@ export type UserUncheckedCreateWithoutApiKeysInput = {
   memberships?: Prisma.ProjectMemberUncheckedCreateNestedManyWithoutUserInput
   sentInvites?: Prisma.InvitationUncheckedCreateNestedManyWithoutInvitedByInput
   receivedInvites?: Prisma.InvitationUncheckedCreateNestedManyWithoutInviteeInput
+  createdVariables?: Prisma.EnvVariableUncheckedCreateNestedManyWithoutCreatedUserInput
+  updatedVariables?: Prisma.EnvVariableUncheckedCreateNestedManyWithoutUpdatedUserInput
 }
 
 export type UserCreateOrConnectWithoutApiKeysInput = {
@@ -1486,6 +1836,8 @@ export type UserUpdateWithoutApiKeysInput = {
   memberships?: Prisma.ProjectMemberUpdateManyWithoutUserNestedInput
   sentInvites?: Prisma.InvitationUpdateManyWithoutInvitedByNestedInput
   receivedInvites?: Prisma.InvitationUpdateManyWithoutInviteeNestedInput
+  createdVariables?: Prisma.EnvVariableUpdateManyWithoutCreatedUserNestedInput
+  updatedVariables?: Prisma.EnvVariableUpdateManyWithoutUpdatedUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutApiKeysInput = {
@@ -1513,6 +1865,8 @@ export type UserUncheckedUpdateWithoutApiKeysInput = {
   memberships?: Prisma.ProjectMemberUncheckedUpdateManyWithoutUserNestedInput
   sentInvites?: Prisma.InvitationUncheckedUpdateManyWithoutInvitedByNestedInput
   receivedInvites?: Prisma.InvitationUncheckedUpdateManyWithoutInviteeNestedInput
+  createdVariables?: Prisma.EnvVariableUncheckedUpdateManyWithoutCreatedUserNestedInput
+  updatedVariables?: Prisma.EnvVariableUncheckedUpdateManyWithoutUpdatedUserNestedInput
 }
 
 
@@ -1527,6 +1881,8 @@ export type UserCountOutputType = {
   apiKeys: number
   sentInvites: number
   receivedInvites: number
+  createdVariables: number
+  updatedVariables: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1536,6 +1892,8 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   apiKeys?: boolean | UserCountOutputTypeCountApiKeysArgs
   sentInvites?: boolean | UserCountOutputTypeCountSentInvitesArgs
   receivedInvites?: boolean | UserCountOutputTypeCountReceivedInvitesArgs
+  createdVariables?: boolean | UserCountOutputTypeCountCreatedVariablesArgs
+  updatedVariables?: boolean | UserCountOutputTypeCountUpdatedVariablesArgs
 }
 
 /**
@@ -1590,6 +1948,20 @@ export type UserCountOutputTypeCountReceivedInvitesArgs<ExtArgs extends runtime.
   where?: Prisma.InvitationWhereInput
 }
 
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountCreatedVariablesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.EnvVariableWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountUpdatedVariablesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.EnvVariableWhereInput
+}
+
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -1617,6 +1989,8 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   apiKeys?: boolean | Prisma.User$apiKeysArgs<ExtArgs>
   sentInvites?: boolean | Prisma.User$sentInvitesArgs<ExtArgs>
   receivedInvites?: boolean | Prisma.User$receivedInvitesArgs<ExtArgs>
+  createdVariables?: boolean | Prisma.User$createdVariablesArgs<ExtArgs>
+  updatedVariables?: boolean | Prisma.User$updatedVariablesArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -1694,6 +2068,8 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   apiKeys?: boolean | Prisma.User$apiKeysArgs<ExtArgs>
   sentInvites?: boolean | Prisma.User$sentInvitesArgs<ExtArgs>
   receivedInvites?: boolean | Prisma.User$receivedInvitesArgs<ExtArgs>
+  createdVariables?: boolean | Prisma.User$createdVariablesArgs<ExtArgs>
+  updatedVariables?: boolean | Prisma.User$updatedVariablesArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -1708,6 +2084,8 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     apiKeys: Prisma.$ApiKeyPayload<ExtArgs>[]
     sentInvites: Prisma.$InvitationPayload<ExtArgs>[]
     receivedInvites: Prisma.$InvitationPayload<ExtArgs>[]
+    createdVariables: Prisma.$EnvVariablePayload<ExtArgs>[]
+    updatedVariables: Prisma.$EnvVariablePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -2129,6 +2507,8 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   apiKeys<T extends Prisma.User$apiKeysArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$apiKeysArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ApiKeyPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   sentInvites<T extends Prisma.User$sentInvitesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$sentInvitesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$InvitationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   receivedInvites<T extends Prisma.User$receivedInvitesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$receivedInvitesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$InvitationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  createdVariables<T extends Prisma.User$createdVariablesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$createdVariablesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EnvVariablePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  updatedVariables<T extends Prisma.User$updatedVariablesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$updatedVariablesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EnvVariablePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2706,6 +3086,54 @@ export type User$receivedInvitesArgs<ExtArgs extends runtime.Types.Extensions.In
   take?: number
   skip?: number
   distinct?: Prisma.InvitationScalarFieldEnum | Prisma.InvitationScalarFieldEnum[]
+}
+
+/**
+ * User.createdVariables
+ */
+export type User$createdVariablesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the EnvVariable
+   */
+  select?: Prisma.EnvVariableSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the EnvVariable
+   */
+  omit?: Prisma.EnvVariableOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.EnvVariableInclude<ExtArgs> | null
+  where?: Prisma.EnvVariableWhereInput
+  orderBy?: Prisma.EnvVariableOrderByWithRelationInput | Prisma.EnvVariableOrderByWithRelationInput[]
+  cursor?: Prisma.EnvVariableWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.EnvVariableScalarFieldEnum | Prisma.EnvVariableScalarFieldEnum[]
+}
+
+/**
+ * User.updatedVariables
+ */
+export type User$updatedVariablesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the EnvVariable
+   */
+  select?: Prisma.EnvVariableSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the EnvVariable
+   */
+  omit?: Prisma.EnvVariableOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.EnvVariableInclude<ExtArgs> | null
+  where?: Prisma.EnvVariableWhereInput
+  orderBy?: Prisma.EnvVariableOrderByWithRelationInput | Prisma.EnvVariableOrderByWithRelationInput[]
+  cursor?: Prisma.EnvVariableWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.EnvVariableScalarFieldEnum | Prisma.EnvVariableScalarFieldEnum[]
 }
 
 /**

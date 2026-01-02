@@ -48,6 +48,8 @@ model User {
   apiKeys         ApiKey[]
   sentInvites     Invitation[]    @relation("InviteSender")
   receivedInvites Invitation[]  @relation("InviteReceiver")
+  createdVariables EnvVariable[] @relation("CreatedVars")
+  updatedVariables EnvVariable[] @relation("UpdatedVars")
 }
 
 model OAuthProvider {
@@ -117,12 +119,21 @@ model EnvVariable {
   encryptedValue String      // AES-256-GCM ciphertext (base64)
   iv             String      // Initialization vector (base64)
   authTag        String      // GCM authentication tag (base64) - tamper detection
+  
+  comment    String?         // "# Database connection"
+
   environmentId  String
+  environment    Environment @relation(fields: [environmentId], references: [id], onDelete: Cascade)
+  
   createdAt      DateTime    @default(now())
   updatedAt      DateTime    @updatedAt
+  
   createdBy      String      // User ID
+  createdUser    User        @relation("CreatedVars", fields: [createdBy], references: [id])
+
   updatedBy      String      // User ID
-  environment    Environment @relation(fields: [environmentId], references: [id], onDelete: Cascade)
+  updatedUser    User        @relation("UpdatedVars", fields: [updatedBy], references: [id])
+  
   @@unique([environmentId, key]) // One API_KEY per environment
 }
 

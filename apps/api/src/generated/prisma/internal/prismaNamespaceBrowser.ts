@@ -156,6 +156,7 @@ export const EnvVariableScalarFieldEnum = {
   encryptedValue: 'encryptedValue',
   iv: 'iv',
   authTag: 'authTag',
+  comment: 'comment',
   environmentId: 'environmentId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
