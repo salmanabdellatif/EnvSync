@@ -10,6 +10,7 @@ import { ProjectModule } from './project/project.module';
 import { EnvironmentModule } from './environment/environment.module';
 import { UsersModule } from './users/users.module';
 import { VariableModule } from './variable/variable.module';
+import { MemberModule } from './member/member.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { VariableModule } from './variable/variable.module';
     EnvironmentModule,
     UsersModule,
     VariableModule,
+    MemberModule,
   ],
   controllers: [AppController],
   providers: [AppService, { provide: APP_GUARD, useClass: ThrottlerGuard }],
