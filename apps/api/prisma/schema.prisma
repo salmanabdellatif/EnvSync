@@ -32,7 +32,13 @@ model User {
   
   // E2E Encryption
   publicKey        String?  // User's public key (RSA/ECC) for E2E encryption
-  
+
+  // The Backup Package (For the user's eyes only)
+  encryptedPrivateKey String? 
+  encryptionSalt      String?  // Salt B
+  encryptionIV        String?  // Needed for AES decryption
+  encryptionAuthTag   String?  // GCM auth tag for integrity
+
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
   

@@ -38,6 +38,10 @@ export type UserMinAggregateOutputType = {
   twoFactorEnabled: boolean | null
   twoFactorSecret: string | null
   publicKey: string | null
+  encryptedPrivateKey: string | null
+  encryptionSalt: string | null
+  encryptionIV: string | null
+  encryptionAuthTag: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -56,6 +60,10 @@ export type UserMaxAggregateOutputType = {
   twoFactorEnabled: boolean | null
   twoFactorSecret: string | null
   publicKey: string | null
+  encryptedPrivateKey: string | null
+  encryptionSalt: string | null
+  encryptionIV: string | null
+  encryptionAuthTag: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -74,6 +82,10 @@ export type UserCountAggregateOutputType = {
   twoFactorEnabled: number
   twoFactorSecret: number
   publicKey: number
+  encryptedPrivateKey: number
+  encryptionSalt: number
+  encryptionIV: number
+  encryptionAuthTag: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -94,6 +106,10 @@ export type UserMinAggregateInputType = {
   twoFactorEnabled?: true
   twoFactorSecret?: true
   publicKey?: true
+  encryptedPrivateKey?: true
+  encryptionSalt?: true
+  encryptionIV?: true
+  encryptionAuthTag?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -112,6 +128,10 @@ export type UserMaxAggregateInputType = {
   twoFactorEnabled?: true
   twoFactorSecret?: true
   publicKey?: true
+  encryptedPrivateKey?: true
+  encryptionSalt?: true
+  encryptionIV?: true
+  encryptionAuthTag?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -130,6 +150,10 @@ export type UserCountAggregateInputType = {
   twoFactorEnabled?: true
   twoFactorSecret?: true
   publicKey?: true
+  encryptedPrivateKey?: true
+  encryptionSalt?: true
+  encryptionIV?: true
+  encryptionAuthTag?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -221,6 +245,10 @@ export type UserGroupByOutputType = {
   twoFactorEnabled: boolean
   twoFactorSecret: string | null
   publicKey: string | null
+  encryptedPrivateKey: string | null
+  encryptionSalt: string | null
+  encryptionIV: string | null
+  encryptionAuthTag: string | null
   createdAt: Date
   updatedAt: Date
   _count: UserCountAggregateOutputType | null
@@ -260,6 +288,10 @@ export type UserWhereInput = {
   twoFactorEnabled?: Prisma.BoolFilter<"User"> | boolean
   twoFactorSecret?: Prisma.StringNullableFilter<"User"> | string | null
   publicKey?: Prisma.StringNullableFilter<"User"> | string | null
+  encryptedPrivateKey?: Prisma.StringNullableFilter<"User"> | string | null
+  encryptionSalt?: Prisma.StringNullableFilter<"User"> | string | null
+  encryptionIV?: Prisma.StringNullableFilter<"User"> | string | null
+  encryptionAuthTag?: Prisma.StringNullableFilter<"User"> | string | null
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   oauthProviders?: Prisma.OAuthProviderListRelationFilter
@@ -284,6 +316,10 @@ export type UserOrderByWithRelationInput = {
   twoFactorEnabled?: Prisma.SortOrder
   twoFactorSecret?: Prisma.SortOrderInput | Prisma.SortOrder
   publicKey?: Prisma.SortOrderInput | Prisma.SortOrder
+  encryptedPrivateKey?: Prisma.SortOrderInput | Prisma.SortOrder
+  encryptionSalt?: Prisma.SortOrderInput | Prisma.SortOrder
+  encryptionIV?: Prisma.SortOrderInput | Prisma.SortOrder
+  encryptionAuthTag?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   oauthProviders?: Prisma.OAuthProviderOrderByRelationAggregateInput
@@ -311,6 +347,10 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   twoFactorEnabled?: Prisma.BoolFilter<"User"> | boolean
   twoFactorSecret?: Prisma.StringNullableFilter<"User"> | string | null
   publicKey?: Prisma.StringNullableFilter<"User"> | string | null
+  encryptedPrivateKey?: Prisma.StringNullableFilter<"User"> | string | null
+  encryptionSalt?: Prisma.StringNullableFilter<"User"> | string | null
+  encryptionIV?: Prisma.StringNullableFilter<"User"> | string | null
+  encryptionAuthTag?: Prisma.StringNullableFilter<"User"> | string | null
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   oauthProviders?: Prisma.OAuthProviderListRelationFilter
@@ -335,6 +375,10 @@ export type UserOrderByWithAggregationInput = {
   twoFactorEnabled?: Prisma.SortOrder
   twoFactorSecret?: Prisma.SortOrderInput | Prisma.SortOrder
   publicKey?: Prisma.SortOrderInput | Prisma.SortOrder
+  encryptedPrivateKey?: Prisma.SortOrderInput | Prisma.SortOrder
+  encryptionSalt?: Prisma.SortOrderInput | Prisma.SortOrder
+  encryptionIV?: Prisma.SortOrderInput | Prisma.SortOrder
+  encryptionAuthTag?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.UserCountOrderByAggregateInput
@@ -359,6 +403,10 @@ export type UserScalarWhereWithAggregatesInput = {
   twoFactorEnabled?: Prisma.BoolWithAggregatesFilter<"User"> | boolean
   twoFactorSecret?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   publicKey?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
+  encryptedPrivateKey?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
+  encryptionSalt?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
+  encryptionIV?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
+  encryptionAuthTag?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
 }
@@ -377,6 +425,10 @@ export type UserCreateInput = {
   twoFactorEnabled?: boolean
   twoFactorSecret?: string | null
   publicKey?: string | null
+  encryptedPrivateKey?: string | null
+  encryptionSalt?: string | null
+  encryptionIV?: string | null
+  encryptionAuthTag?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   oauthProviders?: Prisma.OAuthProviderCreateNestedManyWithoutUserInput
@@ -401,6 +453,10 @@ export type UserUncheckedCreateInput = {
   twoFactorEnabled?: boolean
   twoFactorSecret?: string | null
   publicKey?: string | null
+  encryptedPrivateKey?: string | null
+  encryptionSalt?: string | null
+  encryptionIV?: string | null
+  encryptionAuthTag?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   oauthProviders?: Prisma.OAuthProviderUncheckedCreateNestedManyWithoutUserInput
@@ -425,6 +481,10 @@ export type UserUpdateInput = {
   twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   publicKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  encryptedPrivateKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  encryptionSalt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  encryptionIV?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  encryptionAuthTag?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   oauthProviders?: Prisma.OAuthProviderUpdateManyWithoutUserNestedInput
@@ -449,6 +509,10 @@ export type UserUncheckedUpdateInput = {
   twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   publicKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  encryptedPrivateKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  encryptionSalt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  encryptionIV?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  encryptionAuthTag?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   oauthProviders?: Prisma.OAuthProviderUncheckedUpdateManyWithoutUserNestedInput
@@ -473,6 +537,10 @@ export type UserCreateManyInput = {
   twoFactorEnabled?: boolean
   twoFactorSecret?: string | null
   publicKey?: string | null
+  encryptedPrivateKey?: string | null
+  encryptionSalt?: string | null
+  encryptionIV?: string | null
+  encryptionAuthTag?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -491,6 +559,10 @@ export type UserUpdateManyMutationInput = {
   twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   publicKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  encryptedPrivateKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  encryptionSalt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  encryptionIV?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  encryptionAuthTag?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -509,6 +581,10 @@ export type UserUncheckedUpdateManyInput = {
   twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   publicKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  encryptedPrivateKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  encryptionSalt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  encryptionIV?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  encryptionAuthTag?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -527,6 +603,10 @@ export type UserCountOrderByAggregateInput = {
   twoFactorEnabled?: Prisma.SortOrder
   twoFactorSecret?: Prisma.SortOrder
   publicKey?: Prisma.SortOrder
+  encryptedPrivateKey?: Prisma.SortOrder
+  encryptionSalt?: Prisma.SortOrder
+  encryptionIV?: Prisma.SortOrder
+  encryptionAuthTag?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -545,6 +625,10 @@ export type UserMaxOrderByAggregateInput = {
   twoFactorEnabled?: Prisma.SortOrder
   twoFactorSecret?: Prisma.SortOrder
   publicKey?: Prisma.SortOrder
+  encryptedPrivateKey?: Prisma.SortOrder
+  encryptionSalt?: Prisma.SortOrder
+  encryptionIV?: Prisma.SortOrder
+  encryptionAuthTag?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -563,6 +647,10 @@ export type UserMinOrderByAggregateInput = {
   twoFactorEnabled?: Prisma.SortOrder
   twoFactorSecret?: Prisma.SortOrder
   publicKey?: Prisma.SortOrder
+  encryptedPrivateKey?: Prisma.SortOrder
+  encryptionSalt?: Prisma.SortOrder
+  encryptionIV?: Prisma.SortOrder
+  encryptionAuthTag?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -697,6 +785,10 @@ export type UserCreateWithoutOauthProvidersInput = {
   twoFactorEnabled?: boolean
   twoFactorSecret?: string | null
   publicKey?: string | null
+  encryptedPrivateKey?: string | null
+  encryptionSalt?: string | null
+  encryptionIV?: string | null
+  encryptionAuthTag?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   ownedProjects?: Prisma.ProjectCreateNestedManyWithoutOwnerInput
@@ -720,6 +812,10 @@ export type UserUncheckedCreateWithoutOauthProvidersInput = {
   twoFactorEnabled?: boolean
   twoFactorSecret?: string | null
   publicKey?: string | null
+  encryptedPrivateKey?: string | null
+  encryptionSalt?: string | null
+  encryptionIV?: string | null
+  encryptionAuthTag?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   ownedProjects?: Prisma.ProjectUncheckedCreateNestedManyWithoutOwnerInput
@@ -759,6 +855,10 @@ export type UserUpdateWithoutOauthProvidersInput = {
   twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   publicKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  encryptedPrivateKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  encryptionSalt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  encryptionIV?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  encryptionAuthTag?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   ownedProjects?: Prisma.ProjectUpdateManyWithoutOwnerNestedInput
@@ -782,6 +882,10 @@ export type UserUncheckedUpdateWithoutOauthProvidersInput = {
   twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   publicKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  encryptedPrivateKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  encryptionSalt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  encryptionIV?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  encryptionAuthTag?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   ownedProjects?: Prisma.ProjectUncheckedUpdateManyWithoutOwnerNestedInput
@@ -805,6 +909,10 @@ export type UserCreateWithoutOwnedProjectsInput = {
   twoFactorEnabled?: boolean
   twoFactorSecret?: string | null
   publicKey?: string | null
+  encryptedPrivateKey?: string | null
+  encryptionSalt?: string | null
+  encryptionIV?: string | null
+  encryptionAuthTag?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   oauthProviders?: Prisma.OAuthProviderCreateNestedManyWithoutUserInput
@@ -828,6 +936,10 @@ export type UserUncheckedCreateWithoutOwnedProjectsInput = {
   twoFactorEnabled?: boolean
   twoFactorSecret?: string | null
   publicKey?: string | null
+  encryptedPrivateKey?: string | null
+  encryptionSalt?: string | null
+  encryptionIV?: string | null
+  encryptionAuthTag?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   oauthProviders?: Prisma.OAuthProviderUncheckedCreateNestedManyWithoutUserInput
@@ -867,6 +979,10 @@ export type UserUpdateWithoutOwnedProjectsInput = {
   twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   publicKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  encryptedPrivateKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  encryptionSalt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  encryptionIV?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  encryptionAuthTag?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   oauthProviders?: Prisma.OAuthProviderUpdateManyWithoutUserNestedInput
@@ -890,6 +1006,10 @@ export type UserUncheckedUpdateWithoutOwnedProjectsInput = {
   twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   publicKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  encryptedPrivateKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  encryptionSalt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  encryptionIV?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  encryptionAuthTag?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   oauthProviders?: Prisma.OAuthProviderUncheckedUpdateManyWithoutUserNestedInput
@@ -913,6 +1033,10 @@ export type UserCreateWithoutMembershipsInput = {
   twoFactorEnabled?: boolean
   twoFactorSecret?: string | null
   publicKey?: string | null
+  encryptedPrivateKey?: string | null
+  encryptionSalt?: string | null
+  encryptionIV?: string | null
+  encryptionAuthTag?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   oauthProviders?: Prisma.OAuthProviderCreateNestedManyWithoutUserInput
@@ -936,6 +1060,10 @@ export type UserUncheckedCreateWithoutMembershipsInput = {
   twoFactorEnabled?: boolean
   twoFactorSecret?: string | null
   publicKey?: string | null
+  encryptedPrivateKey?: string | null
+  encryptionSalt?: string | null
+  encryptionIV?: string | null
+  encryptionAuthTag?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   oauthProviders?: Prisma.OAuthProviderUncheckedCreateNestedManyWithoutUserInput
@@ -975,6 +1103,10 @@ export type UserUpdateWithoutMembershipsInput = {
   twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   publicKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  encryptedPrivateKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  encryptionSalt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  encryptionIV?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  encryptionAuthTag?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   oauthProviders?: Prisma.OAuthProviderUpdateManyWithoutUserNestedInput
@@ -998,6 +1130,10 @@ export type UserUncheckedUpdateWithoutMembershipsInput = {
   twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   publicKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  encryptedPrivateKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  encryptionSalt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  encryptionIV?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  encryptionAuthTag?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   oauthProviders?: Prisma.OAuthProviderUncheckedUpdateManyWithoutUserNestedInput
@@ -1021,6 +1157,10 @@ export type UserCreateWithoutSentInvitesInput = {
   twoFactorEnabled?: boolean
   twoFactorSecret?: string | null
   publicKey?: string | null
+  encryptedPrivateKey?: string | null
+  encryptionSalt?: string | null
+  encryptionIV?: string | null
+  encryptionAuthTag?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   oauthProviders?: Prisma.OAuthProviderCreateNestedManyWithoutUserInput
@@ -1044,6 +1184,10 @@ export type UserUncheckedCreateWithoutSentInvitesInput = {
   twoFactorEnabled?: boolean
   twoFactorSecret?: string | null
   publicKey?: string | null
+  encryptedPrivateKey?: string | null
+  encryptionSalt?: string | null
+  encryptionIV?: string | null
+  encryptionAuthTag?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   oauthProviders?: Prisma.OAuthProviderUncheckedCreateNestedManyWithoutUserInput
@@ -1072,6 +1216,10 @@ export type UserCreateWithoutReceivedInvitesInput = {
   twoFactorEnabled?: boolean
   twoFactorSecret?: string | null
   publicKey?: string | null
+  encryptedPrivateKey?: string | null
+  encryptionSalt?: string | null
+  encryptionIV?: string | null
+  encryptionAuthTag?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   oauthProviders?: Prisma.OAuthProviderCreateNestedManyWithoutUserInput
@@ -1095,6 +1243,10 @@ export type UserUncheckedCreateWithoutReceivedInvitesInput = {
   twoFactorEnabled?: boolean
   twoFactorSecret?: string | null
   publicKey?: string | null
+  encryptedPrivateKey?: string | null
+  encryptionSalt?: string | null
+  encryptionIV?: string | null
+  encryptionAuthTag?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   oauthProviders?: Prisma.OAuthProviderUncheckedCreateNestedManyWithoutUserInput
@@ -1134,6 +1286,10 @@ export type UserUpdateWithoutSentInvitesInput = {
   twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   publicKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  encryptedPrivateKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  encryptionSalt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  encryptionIV?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  encryptionAuthTag?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   oauthProviders?: Prisma.OAuthProviderUpdateManyWithoutUserNestedInput
@@ -1157,6 +1313,10 @@ export type UserUncheckedUpdateWithoutSentInvitesInput = {
   twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   publicKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  encryptedPrivateKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  encryptionSalt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  encryptionIV?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  encryptionAuthTag?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   oauthProviders?: Prisma.OAuthProviderUncheckedUpdateManyWithoutUserNestedInput
@@ -1191,6 +1351,10 @@ export type UserUpdateWithoutReceivedInvitesInput = {
   twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   publicKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  encryptedPrivateKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  encryptionSalt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  encryptionIV?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  encryptionAuthTag?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   oauthProviders?: Prisma.OAuthProviderUpdateManyWithoutUserNestedInput
@@ -1214,6 +1378,10 @@ export type UserUncheckedUpdateWithoutReceivedInvitesInput = {
   twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   publicKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  encryptedPrivateKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  encryptionSalt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  encryptionIV?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  encryptionAuthTag?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   oauthProviders?: Prisma.OAuthProviderUncheckedUpdateManyWithoutUserNestedInput
@@ -1237,6 +1405,10 @@ export type UserCreateWithoutApiKeysInput = {
   twoFactorEnabled?: boolean
   twoFactorSecret?: string | null
   publicKey?: string | null
+  encryptedPrivateKey?: string | null
+  encryptionSalt?: string | null
+  encryptionIV?: string | null
+  encryptionAuthTag?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   oauthProviders?: Prisma.OAuthProviderCreateNestedManyWithoutUserInput
@@ -1260,6 +1432,10 @@ export type UserUncheckedCreateWithoutApiKeysInput = {
   twoFactorEnabled?: boolean
   twoFactorSecret?: string | null
   publicKey?: string | null
+  encryptedPrivateKey?: string | null
+  encryptionSalt?: string | null
+  encryptionIV?: string | null
+  encryptionAuthTag?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   oauthProviders?: Prisma.OAuthProviderUncheckedCreateNestedManyWithoutUserInput
@@ -1299,6 +1475,10 @@ export type UserUpdateWithoutApiKeysInput = {
   twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   publicKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  encryptedPrivateKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  encryptionSalt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  encryptionIV?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  encryptionAuthTag?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   oauthProviders?: Prisma.OAuthProviderUpdateManyWithoutUserNestedInput
@@ -1322,6 +1502,10 @@ export type UserUncheckedUpdateWithoutApiKeysInput = {
   twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   publicKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  encryptedPrivateKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  encryptionSalt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  encryptionIV?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  encryptionAuthTag?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   oauthProviders?: Prisma.OAuthProviderUncheckedUpdateManyWithoutUserNestedInput
@@ -1421,6 +1605,10 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   twoFactorEnabled?: boolean
   twoFactorSecret?: boolean
   publicKey?: boolean
+  encryptedPrivateKey?: boolean
+  encryptionSalt?: boolean
+  encryptionIV?: boolean
+  encryptionAuthTag?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   oauthProviders?: boolean | Prisma.User$oauthProvidersArgs<ExtArgs>
@@ -1446,6 +1634,10 @@ export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   twoFactorEnabled?: boolean
   twoFactorSecret?: boolean
   publicKey?: boolean
+  encryptedPrivateKey?: boolean
+  encryptionSalt?: boolean
+  encryptionIV?: boolean
+  encryptionAuthTag?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["user"]>
@@ -1464,6 +1656,10 @@ export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   twoFactorEnabled?: boolean
   twoFactorSecret?: boolean
   publicKey?: boolean
+  encryptedPrivateKey?: boolean
+  encryptionSalt?: boolean
+  encryptionIV?: boolean
+  encryptionAuthTag?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["user"]>
@@ -1482,11 +1678,15 @@ export type UserSelectScalar = {
   twoFactorEnabled?: boolean
   twoFactorSecret?: boolean
   publicKey?: boolean
+  encryptedPrivateKey?: boolean
+  encryptionSalt?: boolean
+  encryptionIV?: boolean
+  encryptionAuthTag?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "password" | "name" | "avatar" | "emailVerified" | "verifyToken" | "verifyTokenExp" | "resetToken" | "resetTokenExp" | "twoFactorEnabled" | "twoFactorSecret" | "publicKey" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
+export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "password" | "name" | "avatar" | "emailVerified" | "verifyToken" | "verifyTokenExp" | "resetToken" | "resetTokenExp" | "twoFactorEnabled" | "twoFactorSecret" | "publicKey" | "encryptedPrivateKey" | "encryptionSalt" | "encryptionIV" | "encryptionAuthTag" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   oauthProviders?: boolean | Prisma.User$oauthProvidersArgs<ExtArgs>
   ownedProjects?: boolean | Prisma.User$ownedProjectsArgs<ExtArgs>
@@ -1523,6 +1723,10 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     twoFactorEnabled: boolean
     twoFactorSecret: string | null
     publicKey: string | null
+    encryptedPrivateKey: string | null
+    encryptionSalt: string | null
+    encryptionIV: string | null
+    encryptionAuthTag: string | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["user"]>
@@ -1967,6 +2171,10 @@ export interface UserFieldRefs {
   readonly twoFactorEnabled: Prisma.FieldRef<"User", 'Boolean'>
   readonly twoFactorSecret: Prisma.FieldRef<"User", 'String'>
   readonly publicKey: Prisma.FieldRef<"User", 'String'>
+  readonly encryptedPrivateKey: Prisma.FieldRef<"User", 'String'>
+  readonly encryptionSalt: Prisma.FieldRef<"User", 'String'>
+  readonly encryptionIV: Prisma.FieldRef<"User", 'String'>
+  readonly encryptionAuthTag: Prisma.FieldRef<"User", 'String'>
   readonly createdAt: Prisma.FieldRef<"User", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"User", 'DateTime'>
 }

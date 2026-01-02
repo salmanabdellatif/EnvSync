@@ -92,6 +92,10 @@ export const UserScalarFieldEnum = {
   twoFactorEnabled: 'twoFactorEnabled',
   twoFactorSecret: 'twoFactorSecret',
   publicKey: 'publicKey',
+  encryptedPrivateKey: 'encryptedPrivateKey',
+  encryptionSalt: 'encryptionSalt',
+  encryptionIV: 'encryptionIV',
+  encryptionAuthTag: 'encryptionAuthTag',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
