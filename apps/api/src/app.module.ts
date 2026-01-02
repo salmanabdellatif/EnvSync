@@ -9,6 +9,7 @@ import { ConfigModule } from '@nestjs/config';
 import { ProjectModule } from './project/project.module';
 import { EnvironmentModule } from './environment/environment.module';
 import { UsersModule } from './users/users.module';
+import { VariableModule } from './variable/variable.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { UsersModule } from './users/users.module';
     ProjectModule,
     EnvironmentModule,
     UsersModule,
+    VariableModule,
   ],
   controllers: [AppController],
   providers: [AppService, { provide: APP_GUARD, useClass: ThrottlerGuard }],
