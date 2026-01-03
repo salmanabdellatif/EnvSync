@@ -30,12 +30,13 @@ export class AuthController {
     private configService: ConfigService,
   ) {}
 
-  // @Throttle({ default: { limit: 3, ttl: 60000 } })
+  @Throttle({ default: { limit: 5, ttl: 60000 } })
   @Post('register')
   register(@Body() registerDto: RegisterDto) {
     return this.authService.register(registerDto);
   }
 
+  @Throttle({ default: { limit: 5, ttl: 60000 } })
   @Post('login')
   @UseGuards(LocalAuthGuard) // if valid user -> returns the whole user in the req
   login(@Body() loginDto: LoginDto, @Request() req) {
@@ -84,11 +85,13 @@ export class AuthController {
     return this.authService.resendVerification(dto.email);
   }
 
+  @Throttle({ default: { limit: 2, ttl: 60000 } })
   @Post('forgot-password')
   forgotPassword(@Body() dto: ForgotPasswordDto) {
     return this.authService.forgotPassword(dto);
   }
 
+  @Throttle({ default: { limit: 2, ttl: 60000 } })
   @Post('reset-password')
   resetPassword(@Body() dto: ResetPasswordDto) {
     return this.authService.resetPassword(dto);

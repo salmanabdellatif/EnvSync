@@ -13,12 +13,14 @@ import { ProjectService } from './project.service';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { Throttle } from '@nestjs/throttler';
 
 @Controller('projects')
 @UseGuards(JwtAuthGuard)
 export class ProjectController {
   constructor(private readonly projectService: ProjectService) {}
 
+  @Throttle({ default: { limit: 10, ttl: 60000 } })
   @Post()
   create(@Request() req, @Body() createProjectDto: CreateProjectDto) {
     return this.projectService.create(req.user.id, createProjectDto);

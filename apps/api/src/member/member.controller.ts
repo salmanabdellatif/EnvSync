@@ -16,12 +16,14 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { ProjectRoleGuard } from '../common/guards/project-role.guard';
 import { RequireRole } from '../common/decorators/require-role.decorator';
 import { ProjectRole } from '../common/enums/project-role.enum';
+import { Throttle } from '@nestjs/throttler';
 
 @Controller('projects/:projectId/members')
 @UseGuards(JwtAuthGuard, ProjectRoleGuard)
 export class MemberController {
   constructor(private readonly membersService: MemberService) {}
 
+  @Throttle({ default: { limit: 10, ttl: 60000 } })
   @Post()
   @RequireRole(ProjectRole.ADMIN) // Only Admins can add
   addMember(@Param('projectId') projectId: string, @Body() dto: AddMemberDto) {

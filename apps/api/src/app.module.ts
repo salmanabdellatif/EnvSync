@@ -20,7 +20,7 @@ import { MemberModule } from './member/member.module';
     }),
     PrismaModule,
     AuthModule,
-    ThrottlerModule.forRoot([{ ttl: 60000, limit: 10 }]),
+    ThrottlerModule.forRoot([{ ttl: 60000, limit: 100 }]),
     ProjectModule,
     EnvironmentModule,
     UsersModule,
