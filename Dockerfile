@@ -26,7 +26,7 @@ RUN pnpm run build
 
 # This creates a folder at /prod/api containing ONLY the production deps (no symlinks)
 WORKDIR /app
-RUN pnpm --filter=api --prod deploy /prod/api
+RUN pnpm --filter=api --prod deploy --legacy /prod/api
 
 # ----------------------------------------
 # 2. Production Runner Stage
