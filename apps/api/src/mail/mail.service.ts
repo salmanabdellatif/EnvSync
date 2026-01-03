@@ -16,7 +16,7 @@ export class MailService {
     this.fromEmail = this.configService.getOrThrow<string>('FROM_EMAIL');
     this.appName = this.configService.get<string>('APP_NAME', 'EnvSync');
     this.appUrl = this.configService.get<string>(
-      'APP_URL',
+      'API_URL',
       'http://localhost:3000',
     );
   }
