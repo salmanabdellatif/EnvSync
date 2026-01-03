@@ -1,0 +1,73 @@
+name: Deploy API
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "apps/api/**" # Trigger if API code changes
+      - "libs/**" # Trigger if shared libs change
+      - "Dockerfile" # Trigger if build logic changes
+      - ".github/workflows/deploy-api.yml"
+
+env:
+  # Change 'your-github-username' to your actual username
+  IMAGE_NAME: ghcr.io/${{ github.repository_owner }}/envsync-api:latest
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 1. Log in to GitHub Container Registry
+      - name: Log in to the Container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # 2. Build and Push (Context is Root ".")
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: . # ✅ Builds from root
+          file: ./Dockerfile # ✅ Uses root Dockerfile
+          push: true
+          tags: ${{ env.IMAGE_NAME }}
+
+      # 3. Deploy to AWS EC2
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.AWS_HOST }}
+          username: ubuntu
+          key: ${{ secrets.AWS_SSH_KEY }}
+          envs: GITHUB_TOKEN,IMAGE_NAME
+          script: |
+            # Login to GHCR inside EC2
+            echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+            # Pull the new image
+            docker pull ${{ env.IMAGE_NAME }}
+
+            # Stop & Remove old container
+            docker stop envsync-api || true
+            docker rm envsync-api || true
+
+            # Run new container
+            # It reads the .env file from /home/ubuntu/EnvSync/.env
+            docker run -d \
+              --env-file /home/ubuntu/EnvSync/.env \
+              -p 3000:3000 \
+              --name envsync-api \
+              --restart unless-stopped \
+              ${{ env.IMAGE_NAME }}
+
+            # Clean up old images to save space
+            docker image prune -f
