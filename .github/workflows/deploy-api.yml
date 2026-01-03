@@ -2,7 +2,7 @@ name: Deploy API
 
 on:
   push:
-    branches: [main]
+    branches: [master]
     paths:
       - "apps/api/**" # Trigger if API code changes
       - "libs/**" # Trigger if shared libs change
