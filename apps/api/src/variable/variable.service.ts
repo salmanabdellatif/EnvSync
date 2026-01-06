@@ -63,6 +63,30 @@ export class VariableService {
     });
   }
 
+  async findAllMetadata(projectId: string, environmentId: string) {
+    await this.validateEnv(projectId, environmentId);
+
+    // Return only metadata - NO encrypted values (for web UI)
+    return this.prisma.envVariable.findMany({
+      where: { environmentId },
+      select: {
+        id: true,
+        key: true,
+        comment: true,
+        createdAt: true,
+        updatedAt: true,
+        updatedUser: {
+          select: { name: true, avatar: true, email: true },
+        },
+        createdUser: {
+          select: { name: true, avatar: true, email: true },
+        },
+        // Explicitly exclude: encryptedValue, iv, authTag
+      },
+      orderBy: { key: 'asc' },
+    });
+  }
+
   async findOne(projectId: string, environmentId: string, id: string) {
     // 1. Security Check (Ensure Env is valid)
     await this.validateEnv(projectId, environmentId);

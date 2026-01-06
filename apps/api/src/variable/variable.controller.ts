@@ -8,6 +8,8 @@ import {
   Delete,
   UseGuards,
   Request,
+  Query,
+  ParseBoolPipe,
 } from '@nestjs/common';
 import { VariableService } from './variable.service';
 import { CreateVariableDto } from './dto/create-variable.dto';
@@ -38,7 +40,14 @@ export class VariableController {
   findAll(
     @Param('projectId') projectId: string,
     @Param('envId') envId: string,
+    @Query('metadataOnly', new ParseBoolPipe({ optional: true }))
+    metadataOnly?: boolean,
   ) {
+    // If metadataOnly=true, return safe data for web UI (no encrypted values)
+    // Otherwise, return full data for CLI (includes encryptedValue, iv, authTag)
+    if (metadataOnly) {
+      return this.variableService.findAllMetadata(projectId, envId);
+    }
     return this.variableService.findAll(projectId, envId);
   }
 
