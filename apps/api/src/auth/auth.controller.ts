@@ -30,6 +30,41 @@ export class AuthController {
     private configService: ConfigService,
   ) {}
 
+  /**
+   * Handles auth redirect for both CLI and Web flows
+   * CLI: redirect to localhost with token
+   * Web: set cookie and redirect to dashboard
+   */
+  private handleAuthRedirect(res: Response, token: string, state?: string) {
+    // 1. CLI FLOW: Check for (State)
+    if (state) {
+      try {
+        const decoded = JSON.parse(
+          Buffer.from(state, 'base64').toString('utf-8'),
+        );
+        if (decoded.port) {
+          // Redirect to localhost (CLI)
+          const redirectUrl = `http://localhost:${decoded.port}/callback?token=${encodeURIComponent(token)}&state=${encodeURIComponent(decoded.secret || '')}`;
+          return res.redirect(redirectUrl);
+        }
+      } catch (e) {}
+    }
+
+    // 2. WEB FLOW: Set Cookie & Redirect
+    const frontendUrl = this.configService.getOrThrow<string>('FRONTEND_URL');
+
+    res.cookie('access_token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: Number(this.configService.getOrThrow('AUTH_COOKIE_MAX_AGE')),
+      domain:
+        process.env.NODE_ENV === 'production' ? '.envsync.tech' : undefined,
+    });
+
+    return res.redirect(`${frontendUrl}/dashboard`);
+  }
+
   @Throttle({ default: { limit: 5, ttl: 60000 } })
   @Post('register')
   register(@Body() registerDto: RegisterDto) {
@@ -39,8 +74,23 @@ export class AuthController {
   @Throttle({ default: { limit: 5, ttl: 60000 } })
   @Post('login')
   @UseGuards(LocalAuthGuard) // if valid user -> returns the whole user in the req
-  login(@Body() loginDto: LoginDto, @Request() req) {
-    return this.authService.login(req.user);
+  async login(
+    @Body() loginDto: LoginDto,
+    @Request() req,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const { user, access_token } = await this.authService.login(req.user);
+
+    res.cookie('access_token', access_token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: Number(this.configService.getOrThrow('AUTH_COOKIE_MAX_AGE')),
+      domain:
+        process.env.NODE_ENV === 'production' ? '.envsync.tech' : undefined,
+    });
+
+    return { user, access_token };
   }
 
   @UseGuards(JwtAuthGuard)
@@ -55,11 +105,13 @@ export class AuthController {
 
   @Get('github/callback')
   @UseGuards(GithubAuthGuard)
-  async githubCallback(@Req() req, @Res() res: Response) {
+  async githubCallback(
+    @Req() req,
+    @Res() res: Response,
+    @Query('state') state: string,
+  ) {
     const { access_token } = await this.authService.login(req.user);
-    // Redirect to Frontend with Token
-    const frontendUrl = this.configService.getOrThrow<string>('FRONTEND_URL');
-    res.redirect(`${frontendUrl}/dashboard?token=${access_token}`);
+    return this.handleAuthRedirect(res, access_token, state);
   }
 
   @UseGuards(GoogleAuthGuard)
@@ -68,10 +120,13 @@ export class AuthController {
 
   @Get('google/callback')
   @UseGuards(GoogleAuthGuard)
-  async googleCallback(@Req() req, @Res() res: Response) {
+  async googleCallback(
+    @Req() req,
+    @Res() res: Response,
+    @Query('state') state: string,
+  ) {
     const { access_token } = await this.authService.login(req.user);
-    const frontendUrl = this.configService.getOrThrow<string>('FRONTEND_URL');
-    res.redirect(`${frontendUrl}/dashboard?token=${access_token}`);
+    return this.handleAuthRedirect(res, access_token, state);
   }
 
   @Get('verify-email')
