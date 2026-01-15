@@ -11,8 +11,6 @@ export const logoutCommand = new Command("logout")
       return;
     }
 
-    configManager.clear();
-
     const email = configManager.getUserEmail();
     configManager.clear();
     console.log(chalk.green(`\nLogged out from ${email}.`));
