@@ -1,113 +1,184 @@
 import { Command } from "commander";
 import chalk from "chalk";
 import inquirer from "inquirer";
+import ora from "ora";
 import fs from "node:fs";
 import path from "node:path";
-import ora from "ora";
 import { configManager } from "../lib/config.js";
-import { getProjects } from "../lib/api.js";
-import { logger } from "../utils/logger.js";
+import { ensureUserKeys } from "../lib/keys.js";
+import { startBrowserLogin } from "./login.js";
+import {
+  getProjects,
+  createProject,
+  getProjectKey,
+  initializeProjectKey,
+} from "../lib/api.js";
+import { generateProjectKey, encryptAsymmetric } from "../lib/crypto.js";
 
-const CONFIG_FILE = "envsync.json";
+// --- Types ---
+
+interface ProjectAnswer {
+  projectId: string;
+}
+
+interface NewProjectAnswer {
+  name: string;
+}
+
+// --- Command ---
 
 export const initCommand = new Command("init")
-  .description("Link current directory to an EnvSync project")
+  .description("Initialize Envsync in this directory")
   .action(async () => {
-    // 1. Auth Check
-    if (!configManager.isAuthenticated()) {
-      logger.error(chalk.red("You must login first."));
-      console.log(`Run ${chalk.cyan("envsync login")} to get started.`);
-      return;
-    }
-
-    const configPath = path.join(process.cwd(), CONFIG_FILE);
-
-    // 2. Overwrite Check (Prevent accidental data loss)
-    if (fs.existsSync(configPath)) {
-      const { overwrite } = await inquirer.prompt([
-        {
-          type: "confirm",
-          name: "overwrite",
-          message: `${CONFIG_FILE} already exists. Do you want to overwrite it?`,
-          default: false,
-        },
-      ]);
-
-      if (!overwrite) {
-        console.log(chalk.gray("Init cancelled."));
-        return;
-      }
-    }
-
-    const spinner = ora("Fetching your projects...").start();
+    console.log(chalk.bold.blue("\nEnvsync Initialization\n"));
 
     try {
-      // 3. API Call (Needs src/lib/api.ts to work)
-      const projects = await getProjects();
-      spinner.succeed(`Found ${projects.length} project(s)`);
+      // Step 1: Authentication
+      if (!configManager.isAuthenticated()) {
+        console.log(chalk.yellow("Not logged in."));
 
-      if (projects.length === 0) {
-        console.log(chalk.yellow("You don't have any projects yet."));
-        console.log(
-          `Visit ${chalk.cyan("https://envsync.tech/dashboard")} to create one.`
-        );
-        return;
+        const { proceed } = await inquirer.prompt([
+          {
+            type: "confirm",
+            name: "proceed",
+            message: "Open browser to login?",
+            default: true,
+          },
+        ]);
+
+        if (!proceed) {
+          console.log(chalk.gray("Cancelled."));
+          return;
+        }
+
+        // Trigger browser login flow
+        const success = await startBrowserLogin();
+        if (!success) {
+          return;
+        }
+      } else {
+        const user = configManager.getUser();
+        console.log(chalk.green(`Logged in as ${chalk.bold(user?.email)}`));
       }
 
-      // 4. User Selection
-      const choices = projects.map((p: any) => ({
-        name: String(p.name),
-        value: { id: p.id, name: p.name },
-      }));
+      // Step 2: Identity (RSA Keys)
+      await ensureUserKeys();
 
-      const { selectedProject } = await inquirer.prompt([
+      // Step 3: Check existing config
+      const configPath = path.join(process.cwd(), "envsync.json");
+      if (fs.existsSync(configPath)) {
+        const existingConfig = JSON.parse(fs.readFileSync(configPath, "utf-8"));
+        const linkedProject =
+          existingConfig.projectName || existingConfig.projectId;
+
+        console.log(
+          chalk.yellow(`\nAlready linked to: ${chalk.bold(linkedProject)}`)
+        );
+
+        const { overwrite } = await inquirer.prompt([
+          {
+            type: "confirm",
+            name: "overwrite",
+            message: "Link to a different project?",
+            default: false,
+          },
+        ]);
+
+        if (!overwrite) {
+          console.log(chalk.gray("Cancelled."));
+          return;
+        }
+      }
+
+      // Step 4: Project selection
+      const fetchSpinner = ora("Fetching projects...").start();
+      const projects = await getProjects();
+      fetchSpinner.stop();
+
+      const { projectId } = await inquirer.prompt<ProjectAnswer>([
         {
           type: "rawlist",
-          name: "selectedProject",
-          message: "Select the project to link:",
-          choices,
+          name: "projectId",
+          message: "Select a project:",
+          choices: [
+            ...projects.map((p) => ({ name: p.name, value: p.id })),
+            { name: "+ Create new project", value: "NEW" },
+          ],
         },
       ]);
 
-      // 5. Write Metadata (Safe to commit to Git)
-      const configData = {
-        projectId: selectedProject.id,
-        name: selectedProject.name,
-      };
+      let finalProjectId = projectId;
+      let finalProjectName =
+        projects.find((p) => p.id === projectId)?.name || "";
 
-      fs.writeFileSync(configPath, JSON.stringify(configData, null, 2));
+      // Step 4a: Create new project
+      if (projectId === "NEW") {
+        const { name } = await inquirer.prompt<NewProjectAnswer>([
+          {
+            type: "input",
+            name: "name",
+            message: "Project name:",
+            validate: (input: string) =>
+              (input.length > 2 && /^[a-zA-Z0-9-_]+$/.test(input)) ||
+              "Must be 3+ chars, alphanumeric only.",
+          },
+        ]);
 
-      console.log(
-        chalk.green(`\nLinked to project: ${chalk.bold(selectedProject.name)}`)
-      );
-      console.log(chalk.gray(`Created ${CONFIG_FILE}`));
-
-      // 6. Security Check (.gitignore)
-      checkGitIgnore();
-    } catch (error: any) {
-      spinner.fail("Failed to fetch projects");
-      if (error.response?.status === 401) {
-        console.log(chalk.red("Your session has expired."));
-        console.log(chalk.yellow("Please run 'envsync login' again."));
-      } else {
-        console.error(chalk.red(`Failed to fetch projects: ${error.message}`));
+        const createSpinner = ora("Creating project...").start();
+        const newProject = await createProject(name);
+        finalProjectId = newProject.id;
+        finalProjectName = newProject.name;
+        createSpinner.succeed(`Created ${chalk.bold(name)}`);
       }
+
+      // Step 5: Write config file
+      const configContent = {
+        projectId: finalProjectId,
+        projectName: finalProjectName,
+        linkedAt: new Date().toISOString(),
+      };
+      fs.writeFileSync(configPath, JSON.stringify(configContent, null, 2));
+      console.log(chalk.green(`\nLinked to ${chalk.bold(finalProjectName)}`));
+
+      // Step 6: Project encryption (E2E handshake)
+      const keySpinner = ora("Verifying encryption...").start();
+
+      try {
+        const keyResponse = await getProjectKey(finalProjectId);
+
+        // Check if key exists (not just 404, but also null value)
+        if (!keyResponse.encryptedKey) {
+          throw { response: { status: 404 } }; // Trigger initialization
+        }
+
+        keySpinner.succeed("Encryption verified.");
+      } catch (error: any) {
+        // 404 or null key = New project, needs key initialization
+        if (error.response?.status === 404) {
+          keySpinner.text = "Initializing encryption...";
+
+          const masterKeyHex = generateProjectKey();
+          const myPublicKey = configManager.getPublicKey();
+
+          if (!myPublicKey) {
+            keySpinner.fail("Public key missing.");
+            return;
+          }
+
+          const encryptedKey = encryptAsymmetric(masterKeyHex, myPublicKey);
+          await initializeProjectKey(finalProjectId, encryptedKey);
+          keySpinner.succeed("Encryption initialized.");
+        } else {
+          keySpinner.fail("Encryption verification failed.");
+          throw error;
+        }
+      }
+
+      // Done
+      console.log(chalk.bold.green("\nInitialized successfully!"));
+      console.log(`Run ${chalk.cyan("envsync push")} to sync secrets.`);
+    } catch (error: any) {
+      console.error(chalk.red("\nInitialization failed:"));
+      console.error(error.message || error);
     }
   });
-
-function checkGitIgnore() {
-  const gitIgnorePath = path.join(process.cwd(), ".gitignore");
-
-  if (!fs.existsSync(gitIgnorePath)) return;
-
-  const content = fs.readFileSync(gitIgnorePath, "utf-8");
-
-  if (!content.includes(".env")) {
-    console.log(
-      chalk.yellow("\nWarning: .env is not in your .gitignore file!")
-    );
-    console.log(
-      chalk.gray("We highly recommend adding it to prevent leaking secrets.")
-    );
-  }
-}
