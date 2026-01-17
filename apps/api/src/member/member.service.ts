@@ -140,4 +140,27 @@ export class MemberService {
       throw error;
     }
   }
+
+  async getProjectKey(projectId: string, userId: string) {
+    const member = await this.prisma.projectMember.findUnique({
+      where: { userId_projectId: { projectId, userId } },
+      select: { wrappedKey: true },
+    });
+
+    if (!member)
+      throw new ForbiddenException('You are not a member of this project');
+
+    return { encryptedKey: member.wrappedKey };
+  }
+
+  async updateProjectKey(
+    projectId: string,
+    userId: string,
+    encryptedKey: string,
+  ) {
+    return this.prisma.projectMember.update({
+      where: { userId_projectId: { projectId, userId } },
+      data: { wrappedKey: encryptedKey },
+    });
+  }
 }

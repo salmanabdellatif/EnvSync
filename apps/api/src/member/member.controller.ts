@@ -60,4 +60,24 @@ export class MemberController {
   ) {
     return this.membersService.removeMember(projectId, userId);
   }
+
+  @Get('key')
+  @RequireRole(ProjectRole.VIEWER)
+  async getKey(@Param('projectId') projectId: string, @Request() req) {
+    return this.membersService.getProjectKey(projectId, req.user.id);
+  }
+
+  @Post('key')
+  @RequireRole(ProjectRole.OWNER)
+  async setKey(
+    @Param('projectId') projectId: string,
+    @Body('encryptedKey') encryptedKey: string,
+    @Request() req,
+  ) {
+    return this.membersService.updateProjectKey(
+      projectId,
+      req.user.id,
+      encryptedKey,
+    );
+  }
 }
