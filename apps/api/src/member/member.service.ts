@@ -22,10 +22,7 @@ export class MemberService {
       throw new NotFoundException('User not found.');
     }
 
-    // Safety Check: Ensure the user actually has keys before adding
-    if (!user.publicKey) {
-      throw new BadRequestException('User has not set up their CLI keys yet.');
-    }
+    // Note: User may not have publicKey yet. Grant will fail until they set up CLI.
 
     try {
       return await this.prisma.projectMember.create({

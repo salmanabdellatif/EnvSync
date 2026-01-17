@@ -1,4 +1,4 @@
-import { IsEmail, IsEnum, IsString, IsNotEmpty } from 'class-validator';
+import { IsEmail, IsEnum, IsString, IsOptional } from 'class-validator';
 import { Role } from '../../generated/prisma/client';
 
 export class AddMemberDto {
@@ -9,6 +9,6 @@ export class AddMemberDto {
   role: Role;
 
   @IsString()
-  @IsNotEmpty()
-  wrappedKey: string; // Project key encrypted with member's public key
+  @IsOptional()
+  wrappedKey?: string; // Optional: granted later via CLI
 }
