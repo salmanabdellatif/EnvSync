@@ -5,8 +5,9 @@ import {
 } from '@nestjs/common';
 import { CreateVariableDto } from './dto/create-variable.dto';
 import { UpdateVariableDto } from './dto/update-variable.dto';
-import { Prisma } from '../generated/prisma/client';
+import { AuditAction, Prisma } from '../generated/prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
+import { BatchVariablesDto } from './dto/batch-variables.dto';
 
 @Injectable()
 export class VariableService {
@@ -167,5 +168,92 @@ export class VariableService {
       }
       throw error;
     }
+  }
+
+  async batchSync(
+    projectId: string,
+    environmentId: string,
+    userId: string,
+    dto: BatchVariablesDto,
+  ) {
+    await this.validateEnv(projectId, environmentId);
+
+    const creates = dto.changes.creates || [];
+    const updates = dto.changes.updates || [];
+    const deletes = dto.changes.deletes || [];
+
+    return this.prisma.$transaction(async (tx) => {
+      const results = { created: 0, updated: 0, deleted: 0 };
+
+      // 1. Creates
+      if (creates.length > 0) {
+        const createResult = await tx.envVariable.createMany({
+          data: creates.map((secret) => ({
+            key: secret.key,
+            encryptedValue: secret.encryptedValue,
+            iv: secret.iv,
+            authTag: secret.authTag,
+            comment: secret.comment,
+            environmentId,
+            createdBy: userId,
+            updatedBy: userId,
+          })),
+          skipDuplicates: true,
+        });
+        results.created = createResult.count;
+      }
+
+      // 2. Updates
+      if (updates.length > 0) {
+        for (const secret of updates) {
+          try {
+            await tx.envVariable.update({
+              where: {
+                environmentId_key: { environmentId, key: secret.key },
+              },
+              data: {
+                encryptedValue: secret.encryptedValue,
+                iv: secret.iv,
+                authTag: secret.authTag,
+                comment: secret.comment,
+                updatedBy: userId,
+              },
+            });
+            results.updated++;
+          } catch (e) {
+            console.warn(`Failed to update key: ${secret.key}`);
+          }
+        }
+      }
+
+      // 3. Deletes
+      if (deletes.length > 0) {
+        const deleteResult = await tx.envVariable.deleteMany({
+          where: {
+            environmentId,
+            key: { in: deletes },
+          },
+        });
+        results.deleted = deleteResult.count;
+      }
+
+      await tx.auditLog.create({
+        data: {
+          action: AuditAction.VARIABLE_UPDATED,
+          projectId,
+          userId,
+          metadata: {
+            type: 'BATCH_SYNC',
+            envId: environmentId,
+            summary: results,
+          },
+        },
+      });
+
+      return {
+        ...results,
+        message: `Synced: +${results.created} ~${results.updated} -${results.deleted}`,
+      };
+    });
   }
 }

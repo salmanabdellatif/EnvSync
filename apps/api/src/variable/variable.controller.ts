@@ -18,6 +18,7 @@ import { ProjectRole } from '../common/enums/project-role.enum';
 import { RequireRole } from '../common/decorators/require-role.decorator';
 import { ProjectRoleGuard } from '../common/guards/project-role.guard';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { BatchVariablesDto } from './dto/batch-variables.dto';
 
 @Controller('projects/:projectId/environments/:envId/variables')
 @UseGuards(JwtAuthGuard, ProjectRoleGuard)
@@ -81,5 +82,16 @@ export class VariableController {
     @Param('id') id: string,
   ) {
     return this.variableService.remove(projectId, envId, id);
+  }
+
+  @Post('batch')
+  @RequireRole(ProjectRole.MEMBER)
+  batchSync(
+    @Param('projectId') projectId: string,
+    @Param('envId') envId: string,
+    @Body() dto: BatchVariablesDto,
+    @Request() req,
+  ) {
+    return this.variableService.batchSync(projectId, envId, req.user.id, dto);
   }
 }
