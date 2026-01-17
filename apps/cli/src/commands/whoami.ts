@@ -11,10 +11,13 @@ export const whoamiCommand = new Command("whoami")
       return;
     }
 
-    const email = configManager.getUserEmail();
+    const user = configManager.getUser();
 
     console.log("\nCurrently logged in as:");
-    console.log(chalk.green(`  ${email}`));
+    console.log(chalk.green(`  ${user?.email}`));
+    if (user?.name) {
+      console.log(chalk.gray(`  (${user.name})`));
+    }
 
     console.log(chalk.gray(`\n(Config: ${configManager.getPath()})`));
   });
