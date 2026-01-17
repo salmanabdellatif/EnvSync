@@ -1,31 +1,84 @@
 import Conf from "conf";
 
+// --- Types ---
+
+export interface UserProfile {
+  id: string;
+  email: string;
+  name: string;
+}
+
+export interface KeyPair {
+  publicKey: string;
+  privateKey: string;
+}
+
 interface ProjectConfig {
   token?: string;
-  userEmail?: string;
+  user?: UserProfile;
+  publicKey?: string;
+  privateKey?: string;
 }
+
+// --- Configuration ---
 
 const config = new Conf<ProjectConfig>({
   projectName: "envsync",
   schema: {
     token: { type: "string" },
-    userEmail: { type: "string" },
+    user: {
+      type: "object",
+      properties: {
+        id: { type: "string" },
+        email: { type: "string" },
+        name: { type: "string" },
+      },
+    },
+    publicKey: { type: "string" },
+    privateKey: { type: "string" },
   },
 });
 
+// --- Manager ---
+
 export const configManager = {
-  getToken: () => config.get("token"),
-  getUserEmail: () => config.get("userEmail"),
-
-  isAuthenticated: (): boolean => {
-    return config.has("token") && config.has("userEmail");
+  // 1. Authentication
+  setAuth(token: string, user: UserProfile) {
+    config.set("token", token);
+    config.set("user", user);
   },
 
-  setSession: (payload: { token: string; email: string }) => {
-    config.set("token", payload.token);
-    config.set("userEmail", payload.email);
+  getToken(): string | undefined {
+    return config.get("token");
   },
 
+  getUser(): UserProfile | undefined {
+    return config.get("user");
+  },
+
+  isAuthenticated(): boolean {
+    return config.has("token") && config.has("user");
+  },
+
+  logout() {
+    config.clear();
+  },
+
+  // 2. Encryption Keys (Identity)
+  setKeyPair(keys: KeyPair) {
+    config.set("publicKey", keys.publicKey);
+    config.set("privateKey", keys.privateKey);
+  },
+
+  getPublicKey(): string | undefined {
+    return config.get("publicKey");
+  },
+
+  getPrivateKey(): string | undefined {
+    return config.get("privateKey");
+  },
+
+  // 3. Debugging / Utils
   clear: () => config.clear(),
   getPath: () => config.path,
 };
