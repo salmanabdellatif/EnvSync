@@ -1,31 +1,190 @@
 import axios from "axios";
 import { configManager } from "./config.js";
+import { BackupPayload } from "./crypto.js";
+
 const API_URL = "http://localhost:3000/api/v1";
 
-function getAuthHeaders() {
-  const token = configManager.getToken();
-  return { Authorization: `Bearer ${token}` };
-}
+const apiClient = axios.create({
+  baseURL: API_URL,
+  timeout: 15000,
+});
 
-export async function verifyToken(token: string) {
-  try {
-    const response = await axios.get(`${API_URL}/auth/me`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+// --- Interceptors ---
 
-    return response.data;
-  } catch (error) {
-    throw new Error(
-      "Token validation failed. The token received was invalid or expired."
-    );
+apiClient.interceptors.request.use((config) => {
+  if (configManager.isAuthenticated()) {
+    const token = configManager.getToken();
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
   }
+  return config;
+});
+
+apiClient.interceptors.response.use(
+  (response) => response.data,
+  (error) => {
+    if (error.response?.status === 401) {
+      if (!error.config.url?.includes("/auth/login")) {
+        configManager.clear();
+      }
+    }
+    return Promise.reject(error);
+  }
+);
+
+// --- Response Types ---
+
+export interface UserProfile {
+  id: string;
+  email: string;
+  name: string;
+  publicKey?: string;
 }
 
-export async function getProjects() {
-  const response = await axios.get(`${API_URL}/projects`, {
-    headers: getAuthHeaders(),
-  });
-  return response.data;
+export interface LoginResponse {
+  token: string;
+  user: UserProfile;
+}
+
+export interface PublicKeyResponse {
+  publicKey: string | null;
+}
+
+export interface Project {
+  id: string;
+  name: string;
+  slug: string;
+  description?: string;
+}
+
+export interface Environment {
+  id: string;
+  name: string;
+  projectId: string;
+}
+
+export interface ProjectKeyResponse {
+  encryptedKey: string | null;
+}
+
+export interface BatchResult {
+  created: number;
+  updated: number;
+  deleted: number;
+  message: string;
+}
+
+// --- Variable Types ---
+
+export interface EnvVariable {
+  key: string;
+  encryptedValue: string;
+  iv: string;
+  authTag: string;
+  comment?: string;
+}
+
+export interface BatchChanges {
+  creates?: EnvVariable[];
+  updates?: EnvVariable[];
+  deletes?: string[];
+}
+
+export interface BatchPayload {
+  changes: BatchChanges;
+}
+
+// --- 1. Auth & Identity ---
+
+export async function verifyToken(token?: string): Promise<UserProfile> {
+  const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
+  return apiClient.get("/users/me", config);
+}
+
+// Public Key
+export async function uploadPublicKey(
+  publicKey: string
+): Promise<{ message: string }> {
+  return apiClient.post("/users/key", { publicKey });
+}
+
+export async function getMyPublicKey(): Promise<PublicKeyResponse> {
+  return apiClient.get("/users/key");
+}
+
+// Private Key Backup
+export async function uploadBackup(
+  payload: BackupPayload
+): Promise<{ message: string }> {
+  return apiClient.post("/users/backup", payload);
+}
+
+export async function downloadBackup(): Promise<BackupPayload> {
+  return apiClient.get("/users/backup");
+}
+
+// --- 2. Projects ---
+
+export async function getProjects(): Promise<Project[]> {
+  return apiClient.get("/projects");
+}
+
+export async function getProject(projectId: string): Promise<Project> {
+  return apiClient.get(`/projects/${projectId}`);
+}
+
+export async function createProject(name: string): Promise<Project> {
+  return apiClient.post("/projects", { name });
+}
+
+// Project Master Key (stored per-member with E2E encryption)
+export async function getProjectKey(
+  projectId: string
+): Promise<ProjectKeyResponse> {
+  return apiClient.get(`/projects/${projectId}/members/key`);
+}
+
+export async function initializeProjectKey(
+  projectId: string,
+  encryptedKey: string
+): Promise<{ message: string }> {
+  return apiClient.post(`/projects/${projectId}/members/key`, { encryptedKey });
+}
+
+// --- 3. Environments & Secrets ---
+
+export async function getEnvironments(
+  projectId: string
+): Promise<Environment[]> {
+  return apiClient.get(`/projects/${projectId}/environments`);
+}
+
+export async function getEnvironment(
+  projectId: string,
+  slug: string
+): Promise<Environment | undefined> {
+  const envs = await getEnvironments(projectId);
+  return envs.find((e) => e.name.toLowerCase() === slug.toLowerCase());
+}
+
+export async function getSecrets(
+  projectId: string,
+  envId: string
+): Promise<EnvVariable[]> {
+  return apiClient.get(
+    `/projects/${projectId}/environments/${envId}/variables`
+  );
+}
+
+export async function pushBatch(
+  projectId: string,
+  envId: string,
+  changes: BatchChanges
+): Promise<BatchResult> {
+  const payload: BatchPayload = { changes };
+  return apiClient.post(
+    `/projects/${projectId}/environments/${envId}/variables/batch`,
+    payload
+  );
 }
