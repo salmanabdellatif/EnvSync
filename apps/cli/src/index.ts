@@ -4,6 +4,8 @@ import { loginCommand } from "./commands/login.js";
 import { logoutCommand } from "./commands/logout.js";
 import { whoamiCommand } from "./commands/whoami.js";
 import { initCommand } from "./commands/init.js";
+import { pushCommand } from "./commands/push.js";
+import { pullCommand } from "./commands/pull.js";
 
 const program = new Command();
 
@@ -17,5 +19,7 @@ program.addCommand(loginCommand);
 program.addCommand(logoutCommand);
 program.addCommand(whoamiCommand);
 program.addCommand(initCommand);
+program.addCommand(pushCommand);
+program.addCommand(pullCommand);
 
 program.parse(process.argv);

@@ -1,9 +1,7 @@
 import { Command } from "commander";
 import chalk from "chalk";
-import inquirer from "inquirer";
 import ora from "ora";
 import fs from "node:fs";
-import path from "node:path";
 import { configManager } from "../lib/config.js";
 import { ensureUserKeys } from "../lib/keys.js";
 import { startBrowserLogin } from "./login.js";
@@ -15,15 +13,15 @@ import {
 } from "../lib/api.js";
 import { generateProjectKey, encryptAsymmetric } from "../lib/crypto.js";
 
-// --- Types ---
-
-interface ProjectAnswer {
-  projectId: string;
-}
-
-interface NewProjectAnswer {
-  name: string;
-}
+// Utils
+import { logger } from "../utils/logger.js";
+import { promptConfirm, promptSelectOrCreateProject } from "../utils/ui.js";
+import {
+  getConfigPath,
+  loadProjectConfig,
+  saveProjectConfig,
+} from "../utils/config-file.js";
+import { ProjectConfig } from "../types/index.js";
 
 // --- Command ---
 
@@ -35,19 +33,12 @@ export const initCommand = new Command("init")
     try {
       // Step 1: Authentication
       if (!configManager.isAuthenticated()) {
-        console.log(chalk.yellow("Not logged in."));
+        logger.warning("Not logged in.");
 
-        const { proceed } = await inquirer.prompt([
-          {
-            type: "confirm",
-            name: "proceed",
-            message: "Open browser to login?",
-            default: true,
-          },
-        ]);
+        const proceed = await promptConfirm("Open browser to login?", true);
 
         if (!proceed) {
-          console.log(chalk.gray("Cancelled."));
+          logger.info("Cancelled.");
           return;
         }
 
@@ -58,34 +49,27 @@ export const initCommand = new Command("init")
         }
       } else {
         const user = configManager.getUser();
-        console.log(chalk.green(`Logged in as ${chalk.bold(user?.email)}`));
+        logger.success(`Logged in as ${chalk.bold(user?.email)}`);
       }
 
       // Step 2: Identity (RSA Keys)
       await ensureUserKeys();
 
       // Step 3: Check existing config
-      const configPath = path.join(process.cwd(), "envsync.json");
-      if (fs.existsSync(configPath)) {
-        const existingConfig = JSON.parse(fs.readFileSync(configPath, "utf-8"));
+      const existingConfig = loadProjectConfig();
+      if (existingConfig) {
         const linkedProject =
           existingConfig.projectName || existingConfig.projectId;
 
-        console.log(
-          chalk.yellow(`\nAlready linked to: ${chalk.bold(linkedProject)}`)
+        logger.warning(`Already linked to: ${chalk.bold(linkedProject)}`);
+
+        const overwrite = await promptConfirm(
+          "Link to a different project?",
+          false
         );
 
-        const { overwrite } = await inquirer.prompt([
-          {
-            type: "confirm",
-            name: "overwrite",
-            message: "Link to a different project?",
-            default: false,
-          },
-        ]);
-
         if (!overwrite) {
-          console.log(chalk.gray("Cancelled."));
+          logger.info("Cancelled.");
           return;
         }
       }
@@ -95,50 +79,34 @@ export const initCommand = new Command("init")
       const projects = await getProjects();
       fetchSpinner.stop();
 
-      const { projectId } = await inquirer.prompt<ProjectAnswer>([
-        {
-          type: "rawlist",
-          name: "projectId",
-          message: "Select a project:",
-          choices: [
-            ...projects.map((p) => ({ name: p.name, value: p.id })),
-            { name: "+ Create new project", value: "NEW" },
-          ],
-        },
-      ]);
-
-      let finalProjectId = projectId;
-      let finalProjectName =
-        projects.find((p) => p.id === projectId)?.name || "";
+      const result = await promptSelectOrCreateProject(projects);
+      let finalProjectId: string;
+      let finalProjectName: string;
 
       // Step 4a: Create new project
-      if (projectId === "NEW") {
-        const { name } = await inquirer.prompt<NewProjectAnswer>([
-          {
-            type: "input",
-            name: "name",
-            message: "Project name:",
-            validate: (input: string) =>
-              (input.length > 2 && /^[a-zA-Z0-9-_]+$/.test(input)) ||
-              "Must be 3+ chars, alphanumeric only.",
-          },
-        ]);
-
+      if (result.createNew && result.newName) {
         const createSpinner = ora("Creating project...").start();
-        const newProject = await createProject(name);
+        const newProject = await createProject(result.newName);
         finalProjectId = newProject.id;
         finalProjectName = newProject.name;
-        createSpinner.succeed(`Created ${chalk.bold(name)}`);
+        createSpinner.succeed(`Created ${chalk.bold(result.newName)}`);
+      } else if (result.project) {
+        finalProjectId = result.project.id;
+        finalProjectName = result.project.name;
+      } else {
+        return; // Should not happen
       }
 
       // Step 5: Write config file
-      const configContent = {
+      const configContent: ProjectConfig = {
         projectId: finalProjectId,
         projectName: finalProjectName,
         linkedAt: new Date().toISOString(),
+        mapping: {},
       };
-      fs.writeFileSync(configPath, JSON.stringify(configContent, null, 2));
-      console.log(chalk.green(`\nLinked to ${chalk.bold(finalProjectName)}`));
+
+      saveProjectConfig(configContent);
+      logger.success(`Linked to ${chalk.bold(finalProjectName)}`);
 
       // Step 6: Project encryption (E2E handshake)
       const keySpinner = ora("Verifying encryption...").start();
@@ -175,10 +143,10 @@ export const initCommand = new Command("init")
       }
 
       // Done
-      console.log(chalk.bold.green("\nInitialized successfully!"));
-      console.log(`Run ${chalk.cyan("envsync push")} to sync secrets.`);
+      logger.success("\nInitialized successfully!");
+      logger.info(`Run ${chalk.cyan("envsync push")} to sync secrets.`);
     } catch (error: any) {
-      console.error(chalk.red("\nInitialization failed:"));
-      console.error(error.message || error);
+      logger.error("\nInitialization failed:");
+      logger.error(error.message || error);
     }
   });

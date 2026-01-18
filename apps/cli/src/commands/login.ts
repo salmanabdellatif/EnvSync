@@ -9,6 +9,7 @@ import {
   buildLoginUrl,
 } from "../lib/server.js";
 import { verifyToken } from "../lib/api.js";
+import { logger } from "../utils/logger.js";
 
 /**
  * Reusable browser login flow.
@@ -49,11 +50,9 @@ export const loginCommand = new Command("login")
   .action(async (options) => {
     if (configManager.isAuthenticated() && !options.force) {
       const email = configManager.getUser()?.email;
-      console.log(chalk.green(`Already logged in as ${chalk.bold(email)}`));
-      console.log(
-        chalk.gray(
-          'Use "--force" to re-login or "envsync logout" to switch accounts.'
-        )
+      logger.success(`Already logged in as ${chalk.bold(email)}`);
+      logger.info(
+        'Use "--force" to re-login or "envsync logout" to switch accounts.'
       );
       return;
     }
@@ -61,13 +60,13 @@ export const loginCommand = new Command("login")
     console.log(chalk.blue("\nEnvSync Login\n"));
 
     process.on("SIGINT", () => {
-      console.log(chalk.yellow("\nLogin cancelled."));
+      logger.warning("Login cancelled.");
       process.exit(0);
     });
 
     const success = await startBrowserLogin();
     if (success) {
-      console.log(chalk.gray(`Config saved to: ${configManager.getPath()}`));
+      logger.debug(`Config saved to: ${configManager.getPath()}`);
     } else {
       process.exit(1);
     }

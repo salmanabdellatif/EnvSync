@@ -1,13 +1,14 @@
 import { Command } from "commander";
 import chalk from "chalk";
 import { configManager } from "../lib/config.js";
+import { logger } from "../utils/logger.js";
 
 export const whoamiCommand = new Command("whoami")
   .description("Display the current logged-in user")
   .action(async () => {
     if (!configManager.isAuthenticated()) {
-      console.log(chalk.yellow("\nNot logged in."));
-      console.log(`Run ${chalk.cyan("envsync login")} to get started.`);
+      logger.warning("Not logged in.");
+      logger.info(`Run ${chalk.cyan("envsync login")} to get started.`);
       return;
     }
 
