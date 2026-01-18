@@ -1,3 +1,12 @@
+/**
+ * Environment Variable Parser
+ * Handles parsing and stringifying of .env files
+ * Supports:
+ * - Comments (full line and inline)
+ * - Quoted values (single and double)
+ * - Multiline values (basic support)
+ */
+
 import fs from "node:fs";
 
 export interface EnvEntry {
@@ -22,12 +31,13 @@ export function parseEnvFile(filePath: string): Record<string, EnvEntry> {
       continue;
     }
 
+    // 1. Handle Full Line Comments
     if (trimmed.startsWith("#")) {
       pendingComment = trimmed.replace(/^#\s*/, "");
       continue;
     }
 
-    // Parse Key=Value
+    // 2. Parse Key=Value
     const cleanLine = trimmed.startsWith("export ")
       ? trimmed.slice(7)
       : trimmed;
@@ -39,14 +49,22 @@ export function parseEnvFile(filePath: string): Record<string, EnvEntry> {
     }
 
     const key = cleanLine.slice(0, separatorIndex).trim();
-    let value = cleanLine.slice(separatorIndex + 1).trim();
+    const rawValue = cleanLine.slice(separatorIndex + 1).trim();
+    let value = rawValue;
 
-    // Strip quotes
-    if (
-      (value.startsWith('"') && value.endsWith('"')) ||
-      (value.startsWith("'") && value.endsWith("'"))
-    ) {
-      value = value.slice(1, -1);
+    // 3. Handle Inline Comments & Quotes
+    if (rawValue.startsWith('"') || rawValue.startsWith("'")) {
+      const quoteChar = rawValue[0];
+      // Check if it properly ends with the same quote
+      if (rawValue.endsWith(quoteChar) && rawValue.length > 1) {
+        value = rawValue.slice(1, -1);
+      }
+    } else {
+      // Unquoted value: Stop at the first #
+      const commentIndex = rawValue.indexOf("#");
+      if (commentIndex !== -1) {
+        value = rawValue.slice(0, commentIndex).trim();
+      }
     }
 
     if (key) {
@@ -59,4 +77,28 @@ export function parseEnvFile(filePath: string): Record<string, EnvEntry> {
   }
 
   return result;
+}
+
+export function stringifyEnv(
+  env: Record<string, { value: string; comment?: string }>
+): string {
+  let output = "";
+  for (const [key, entry] of Object.entries(env)) {
+    if (entry.comment) {
+      output += `# ${entry.comment}\n`;
+    }
+
+    let val = entry.value;
+
+    // Auto-Quote if value contains spaces, #, or newlines
+    const needsQuotes = /[\s#'"]/.test(val);
+
+    if (needsQuotes && !val.startsWith('"') && !val.startsWith("'")) {
+      // Escape existing double quotes
+      val = `"${val.replace(/"/g, '\\"')}"`;
+    }
+
+    output += `${key}=${val}\n\n`;
+  }
+  return output;
 }

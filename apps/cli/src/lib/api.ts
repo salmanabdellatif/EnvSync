@@ -1,6 +1,13 @@
 import axios from "axios";
 import { configManager } from "./config.js";
 import { BackupPayload } from "./crypto.js";
+import {
+  UserProfile,
+  Environment,
+  Project,
+  EnvVariable,
+  BatchChanges,
+} from "../types/index.js";
 
 const API_URL = "http://localhost:3000/api/v1";
 
@@ -35,13 +42,6 @@ apiClient.interceptors.response.use(
 
 // --- Response Types ---
 
-export interface UserProfile {
-  id: string;
-  email: string;
-  name: string;
-  publicKey?: string;
-}
-
 export interface LoginResponse {
   token: string;
   user: UserProfile;
@@ -49,19 +49,6 @@ export interface LoginResponse {
 
 export interface PublicKeyResponse {
   publicKey: string | null;
-}
-
-export interface Project {
-  id: string;
-  name: string;
-  slug: string;
-  description?: string;
-}
-
-export interface Environment {
-  id: string;
-  name: string;
-  projectId: string;
 }
 
 export interface ProjectKeyResponse {
@@ -75,27 +62,11 @@ export interface BatchResult {
   message: string;
 }
 
-// --- Variable Types ---
-
-export interface EnvVariable {
-  key: string;
-  encryptedValue: string;
-  iv: string;
-  authTag: string;
-  comment?: string;
-}
-
-export interface BatchChanges {
-  creates?: EnvVariable[];
-  updates?: EnvVariable[];
-  deletes?: string[];
-}
-
 export interface BatchPayload {
   changes: BatchChanges;
 }
 
-// --- 1. Auth & Identity ---
+// --- API Methods ---
 
 export async function verifyToken(token?: string): Promise<UserProfile> {
   const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
@@ -158,6 +129,13 @@ export async function getEnvironments(
   projectId: string
 ): Promise<Environment[]> {
   return apiClient.get(`/projects/${projectId}/environments`);
+}
+
+export async function createEnvironment(
+  projectId: string,
+  name: string
+): Promise<Environment> {
+  return apiClient.post(`/projects/${projectId}/environments`, { name });
 }
 
 export async function getEnvironment(
