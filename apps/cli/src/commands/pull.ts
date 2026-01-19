@@ -7,6 +7,7 @@ import { Command } from "commander";
 import chalk from "chalk";
 import ora from "ora";
 import fs from "node:fs";
+import path from "node:path";
 import { ProjectConfig, Environment } from "../types/index.js";
 
 // Utils
@@ -36,7 +37,7 @@ async function pullAllLinkedFiles(
     return;
   }
 
-  // Get project key
+  // 1. Load prerequisites
   const spinner = ora("Loading...").start();
   let projectKey: string;
   let environments: Environment[];
@@ -51,63 +52,152 @@ async function pullAllLinkedFiles(
     return;
   }
 
-  console.log(chalk.bold(`\nFound ${mappings.length} linked file(s).\n`));
+  // 2. Calculate alignment padding
+  const maxFileLen = Math.max(...mappings.map(([, f]) => f.length));
+  const maxEnvLen = Math.max(...mappings.map(([e]) => e.length));
 
-  // 1. Prepare Pulls
+  // 3. Scan and compare each file
+  console.log(chalk.bold("\nScanning linked files...\n"));
+
   const pendingPulls: Array<{
     env: Environment;
     filePath: string;
+    remoteSecrets: Record<string, { value: string; comment?: string }>;
+    changeCount: number;
   }> = [];
+  let syncedCount = 0;
 
   for (const [envName, filePath] of mappings) {
     const env = environments.find(
       (e) => e.name.toLowerCase() === envName.toLowerCase()
     );
 
+    const filePad = " ".repeat(maxFileLen - filePath.length);
+    const envPad = " ".repeat(maxEnvLen - envName.length);
+
     if (!env) {
-      logger.warning(
-        `Environment '${envName}' not found. Skipping ${filePath}.`
+      console.log(
+        chalk.yellow(
+          `  [SKIP]   ${filePath}${filePad} > ${envName}${envPad}  ⚠️ Env not found`
+        )
       );
       continue;
     }
-    pendingPulls.push({ env, filePath });
-    console.log(chalk.gray(`  - ${envName} -> ${filePath}`));
+
+    try {
+      // Fetch remote
+      const remoteSecrets = await fetchDecryptedSecrets(
+        config.projectId,
+        env.id,
+        projectKey
+      );
+
+      // Parse local (if exists)
+      let changeCount = 0;
+      if (fs.existsSync(filePath)) {
+        const { parseEnvFile } = await import("../utils/env.js");
+        const localVars = parseEnvFile(filePath);
+
+        // Calculate what would change (remote -> local comparison)
+        const remoteKeys = Object.keys(remoteSecrets);
+        const localKeys = Object.keys(localVars);
+
+        // Count differences
+        for (const key of remoteKeys) {
+          if (!localVars[key]) {
+            changeCount++; // New key from remote
+          } else {
+            const localVal = localVars[key].value?.trim() || "";
+            const remoteVal = remoteSecrets[key].value?.trim() || "";
+            const localComment = localVars[key].comment?.trim() || "";
+            const remoteComment = remoteSecrets[key].comment?.trim() || "";
+
+            if (localVal !== remoteVal || localComment !== remoteComment) {
+              changeCount++; // Value or comment changed
+            }
+          }
+        }
+        for (const key of localKeys) {
+          if (!remoteSecrets[key]) {
+            changeCount++; // Key will be removed (remote doesn't have it)
+          }
+        }
+      } else {
+        // File doesn't exist - all remote keys are new
+        changeCount = Object.keys(remoteSecrets).length;
+      }
+
+      if (changeCount === 0) {
+        console.log(
+          chalk.green(
+            `  [OK]     ${filePath}${filePad} > ${envName}${envPad} (Synced)`
+          )
+        );
+        syncedCount++;
+      } else {
+        console.log(
+          chalk.cyan(
+            `  [UPDATE] ${filePath}${filePad} > ${envName}${envPad} (${changeCount} changes)`
+          )
+        );
+        pendingPulls.push({ env, filePath, remoteSecrets, changeCount });
+      }
+    } catch (e: any) {
+      console.log(
+        chalk.red(
+          `  [ERR]    ${filePath}${filePad} > ${envName}${envPad}: ${e.message}`
+        )
+      );
+    }
   }
 
-  if (pendingPulls.length === 0) return;
+  // 4. Handle results
+  if (pendingPulls.length === 0) {
+    logger.success("\nAll files are already in sync!");
+    return;
+  }
 
-  // 2. Initial Overwrite Check (for safety)
-  const existingFiles = pendingPulls
-    .map((p) => p.filePath)
-    .filter((f) => fs.existsSync(f));
-
-  if (existingFiles.length > 0 && !options.yes) {
-    logger.warning(
-      `${existingFiles.length} file(s) already exist and will be overwritten.`
+  // 5. Confirm before overwriting
+  if (!options.yes) {
+    const totalChanges = pendingPulls.reduce(
+      (sum, p) => sum + p.changeCount,
+      0
     );
-    const confirmed = await promptConfirm("Overwrite all files?", false);
+    console.log("");
+    logger.warning(
+      `${pendingPulls.length} file(s) have changes (${totalChanges} total).`
+    );
+    const confirmed = await promptConfirm("Apply updates?", true);
     if (!confirmed) {
       logger.info("Cancelled.");
       return;
     }
   }
 
-  // 3. Execution
+  // 6. Execute pulls (only for changed files)
   console.log("");
   const pullSpinner = ora("Pulling...").start();
 
-  for (const { env, filePath } of pendingPulls) {
+  for (const { env, filePath, remoteSecrets } of pendingPulls) {
     try {
       pullSpinner.text = `Pulling ${env.name}...`;
-      await downloadAndSave(config.projectId, env.id, projectKey, filePath);
+
+      // Ensure directory exists
+      const dir = path.dirname(filePath);
+      if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
+      }
+
+      const envContent = stringifyEnv(remoteSecrets);
+      fs.writeFileSync(filePath, envContent);
     } catch (e: any) {
       logger.error(`\nFailed to pull ${env.name}: ${e.message}`);
     }
   }
 
-  pullSpinner.succeed("Batch pull complete.");
+  pullSpinner.succeed("Pull complete.");
   logger.success(
-    `Successfully restored ${pendingPulls.length} environment files.`
+    `Updated ${pendingPulls.length} file(s). ${syncedCount} already synced.`
   );
 }
 
@@ -123,6 +213,13 @@ async function downloadAndSave(
 ): Promise<number> {
   const remoteSecrets = await fetchDecryptedSecrets(projectId, envId, key);
   const envContent = stringifyEnv(remoteSecrets);
+
+  // Ensure directory exists (fixes Fresh Clone with nested paths)
+  const dir = path.dirname(filePath);
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+  }
+
   fs.writeFileSync(filePath, envContent);
   return Object.keys(remoteSecrets).length;
 }
