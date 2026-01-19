@@ -4,6 +4,7 @@
 
 import inquirer from "inquirer";
 import chalk from "chalk";
+import fs from "node:fs";
 import type { Environment, Project } from "../types/index.js";
 
 /**
@@ -172,4 +173,108 @@ export async function promptCreateFirstEnvironment(): Promise<string | null> {
   ]);
 
   return envName.trim().toLowerCase();
+}
+
+/**
+ * Prompt unified push target selector
+ * Shows flat menu with visual status for missing files
+ */
+export async function promptSelectPushTarget(
+  environments: Environment[],
+  mapping: Record<string, string>
+): Promise<{
+  type: "ALL" | "ENV" | "CREATE";
+  env?: Environment;
+}> {
+  const maxNameLen = Math.max(0, ...environments.map((e) => e.name.length));
+  const choices: any[] = [];
+
+  // 1. Calculate file status
+  let existingCount = 0;
+  let missingCount = 0;
+
+  environments.forEach((env) => {
+    const file = mapping[env.name];
+    if (file && fs.existsSync(file)) existingCount++;
+    else if (file) missingCount++;
+  });
+
+  // 2. Option A: Push All (with status context)
+  const mappingCount = existingCount + missingCount;
+  if (mappingCount > 0) {
+    const statusText =
+      missingCount > 0
+        ? `(${existingCount} found, ${missingCount} missing)`
+        : `(${mappingCount} files)`;
+
+    choices.push({
+      name: chalk.bold(`Push All Linked Files ${statusText}`),
+      value: "ALL",
+    });
+  }
+
+  // 3. Option B: Individual Environments with status
+  // Calculate max file path length for alignment
+  const maxFileLen = Math.max(
+    0,
+    ...environments.map((e) => (mapping[e.name] || "").length)
+  );
+
+  environments.forEach((env) => {
+    const linkedFile = mapping[env.name];
+    const namePadding = " ".repeat(maxNameLen - env.name.length + 2);
+
+    let label: string;
+    if (linkedFile) {
+      const filePadding = " ".repeat(maxFileLen - linkedFile.length + 1);
+      if (fs.existsSync(linkedFile)) {
+        // File exists - normal display
+        label = `${env.name}${namePadding}${chalk.gray(`(${linkedFile})`)}`;
+      } else {
+        // File missing - warning display with aligned "Missing"
+        label = `${
+          env.name
+        }${namePadding}(${linkedFile})${filePadding}${chalk.red("⚠️ Missing")}`;
+      }
+    } else {
+      // Not linked
+      label = env.name;
+    }
+
+    choices.push({ name: label, value: env });
+  });
+
+  // 4. Option C: Create
+  choices.push({ name: "+ Create new environment", value: "CREATE" });
+
+  const { result } = await inquirer.prompt([
+    {
+      type: "rawlist",
+      name: "result",
+      message: "Select target:",
+      choices,
+      pageSize: 10,
+    },
+  ]);
+
+  if (result === "ALL") return { type: "ALL" };
+  if (result === "CREATE") return { type: "CREATE" };
+  return { type: "ENV", env: result };
+}
+
+/**
+ * Prompt for new environment name
+ */
+export async function promptNewEnvironmentName(): Promise<string> {
+  const { newName } = await inquirer.prompt([
+    {
+      type: "input",
+      name: "newName",
+      message: "New environment name:",
+      validate: (input: string) =>
+        /^[a-z0-9_-]+$/.test(input.trim().toLowerCase()) ||
+        "Lowercase letters, numbers, dashes only.",
+    },
+  ]);
+  return newName.trim().toLowerCase();
 }

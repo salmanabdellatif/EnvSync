@@ -69,8 +69,6 @@ async function pushAllLinkedFiles(
     return;
   }
 
-  console.log(chalk.bold(`\nScanning ${mappings.length} file(s)...\n`));
-
   const pendingPushes: Array<{
     env: Environment;
     filePath: string;
@@ -83,14 +81,50 @@ async function pushAllLinkedFiles(
     (f) => !getLinkedFiles(config).includes(f)
   );
 
+  // Count existing vs missing files
+  let existingCount = 0;
+  let missingCount = 0;
+
+  for (const [, filePath] of mappings) {
+    if (fs.existsSync(filePath)) existingCount++;
+    else missingCount++;
+  }
+
+  const statusText =
+    missingCount > 0
+      ? `${existingCount} found, ${missingCount} missing`
+      : `${existingCount} files`;
+  console.log(chalk.bold(`\nScanning linked files (${statusText})...\n`));
+
+  // Calculate max lengths for alignment
+  const maxFileLen = Math.max(...mappings.map(([, f]) => f.length));
+  const maxEnvLen = Math.max(...mappings.map(([e]) => e.length));
+
   // 1. Dry Run - Calculate all diffs
   for (const [envName, filePath] of mappings) {
     const env = environments.find(
       (e) => e.name.toLowerCase() === envName.toLowerCase()
     );
 
-    if (!env || !fs.existsSync(filePath)) {
-      logger.debug(`  [XX] ${filePath} > ${envName} (Skip: Not found)`);
+    const filePad = " ".repeat(maxFileLen - filePath.length);
+    const envPad = " ".repeat(maxEnvLen - envName.length);
+
+    // Show missing files with warning
+    if (!fs.existsSync(filePath)) {
+      console.log(
+        chalk.yellow(
+          `  [SKIP] ${filePath}${filePad} > ${envName}${envPad}  ⚠️ File missing`
+        )
+      );
+      continue;
+    }
+
+    if (!env) {
+      console.log(
+        chalk.yellow(
+          `  [SKIP] ${filePath}${filePad} > ${envName}${envPad}  ⚠️ Env not found`
+        )
+      );
       continue;
     }
 
@@ -110,13 +144,19 @@ async function pushAllLinkedFiles(
       if (hasChanges(diff)) {
         pendingPushes.push({ env, filePath, localVars, diff });
         console.log(
-          chalk.cyan(`  [CHANGE] ${filePath} > ${env.name}`) +
+          chalk.cyan(
+            `  [CHANGE] ${filePath}${filePad} > ${env.name}${envPad}`
+          ) +
             chalk.gray(
               ` (+${diff.creates.length} ~${diff.updates.length} -${diff.deletes.length})`
             )
         );
       } else {
-        console.log(chalk.green(`  [OK] ${filePath} > ${env.name} (Synced)`));
+        console.log(
+          chalk.green(
+            `  [OK] ${filePath}${filePad} > ${env.name}${envPad} (Synced)`
+          )
+        );
       }
     } catch (e: any) {
       console.log(chalk.red(`  [ERR] ${filePath} > ${envName}: ${e.message}`));
@@ -186,25 +226,56 @@ async function pushAllLinkedFiles(
 
 async function pushSingleFile(
   config: ProjectConfig,
-  options: { file?: string; env?: string; prune?: boolean; yes?: boolean }
+  options: {
+    file?: string;
+    env?: string;
+    envObj?: Environment;
+    prune?: boolean;
+    yes?: boolean;
+  }
 ): Promise<void> {
-  // 1. Resolve environment (fetches from API)
-  const envResult = await resolveEnvironment(config.projectId, options.env);
-  if (!envResult) return;
+  // 1. Resolve Environment & File
+  let env = options.envObj;
+  let filePath = options.file;
 
-  // 2. Resolve file (checks mapping, prompts if needed)
-  const fileResult = await resolveFile(
-    config,
-    envResult.environments,
-    options.file,
-    options.env
-  );
-  if (!fileResult) return;
+  // Case A: Flag Mode (We have neither, or just string names)
+  if (!env) {
+    const envResult = await resolveEnvironment(config.projectId, options.env);
+    if (!envResult) return;
 
-  const { filePath, env } = fileResult;
+    // Resolve file using full prompt logic
+    const fileResult = await resolveFile(
+      config,
+      envResult.environments,
+      options.file,
+      options.env
+    );
+    if (!fileResult) return;
 
-  // 3. Parse file
-  const localVars = parseEnvFile(filePath);
+    env = fileResult.env;
+    filePath = fileResult.filePath;
+  }
+  // Case B: Interactive Mode (We have Env Object, but maybe no File Path)
+  else if (!filePath) {
+    // 🔍 BUG FIX: Check the mapping!
+    const mappedFile = config.mapping[env.name];
+
+    if (mappedFile && fs.existsSync(mappedFile)) {
+      filePath = mappedFile; // ✅ Found it!
+    } else {
+      // Now we can error safely
+      logger.error(`No local file found linked to ${chalk.bold(env.name)}.`);
+      logger.info(
+        `Run ${chalk.cyan("envsync push -f .env -e " + env.name)} to link one.`
+      );
+      return;
+    }
+  }
+
+  // --- RESTORED LOGIC START (This was missing!) ---
+
+  // 2. Parse file
+  const localVars = parseEnvFile(filePath!); // ! is safe here due to checks above
   const localKeys = Object.keys(localVars);
 
   if (localKeys.length === 0) {
@@ -214,14 +285,14 @@ async function pushSingleFile(
 
   logger.debug(`Found ${localKeys.length} variable(s) in ${filePath}`);
 
-  // 4. Validate keys
+  // 3. Validate keys
   const invalidKeys = validateEnvKeys(localKeys);
   if (invalidKeys.length > 0) {
     console.log(chalk.red.bold("\n" + formatKeyValidationError(invalidKeys)));
     return;
   }
 
-  // 5. Get project key
+  // 4. Get project key
   const keySpinner = ora("Preparing...").start();
   let projectKey: string;
 
@@ -233,7 +304,7 @@ async function pushSingleFile(
     return;
   }
 
-  // 6. Fetch remote and calculate diff
+  // 5. Fetch remote and calculate diff
   const diffSpinner = ora("Comparing...").start();
   const remote = await fetchDecryptedSecrets(
     config.projectId,
@@ -244,14 +315,14 @@ async function pushSingleFile(
 
   const diff = calculateDiff(localVars, remote, options.prune);
 
-  // 7. Print summary
+  // 6. Print summary
   printDiffSummary(diff, env.name);
 
   if (!hasChanges(diff)) {
     return;
   }
 
-  // 8. Confirm
+  // 7. Confirm
   if (!options.yes) {
     printDeleteWarning(diff.deletes);
     const confirmed = await promptConfirm("Apply changes?", true);
@@ -261,7 +332,7 @@ async function pushSingleFile(
     }
   }
 
-  // 9. Push
+  // 8. Push
   const pushSpinner = ora("Uploading...").start();
 
   try {
@@ -323,8 +394,26 @@ Examples:
       // 3. Dispatch to batch or single mode
       if (options.all) {
         await pushAllLinkedFiles(config, options);
-      } else {
+      } else if (options.env || options.file) {
+        // Specific target provided
         await pushSingleFile(config, options);
+      } else {
+        // Interactive mode - use unified resolver
+        const { resolvePushTarget } = await import("../utils/resolution.js");
+        const target = await resolvePushTarget(config);
+
+        if (!target) return;
+
+        if (target.type === "ALL") {
+          await pushAllLinkedFiles(config, options);
+        } else {
+          // Single mode - env and possibly filePath from resolver
+          await pushSingleFile(config, {
+            ...options,
+            envObj: target.env,
+            file: target.filePath,
+          });
+        }
       }
     } catch (error: any) {
       logger.error(

@@ -94,6 +94,129 @@ export async function resolveEnvironment(
   return { env: result.env!, environments };
 }
 
+// --- Push Target Resolution ---
+
+export async function resolvePushTarget(config: ProjectConfig): Promise<{
+  type: "ALL" | "SINGLE";
+  env?: Environment;
+  filePath?: string;
+} | null> {
+  // 1. Load Environments
+  const spinner = ora("Loading environments...").start();
+  let environments: Environment[];
+
+  try {
+    environments = await getEnvironments(config.projectId);
+    spinner.stop();
+  } catch (e: any) {
+    spinner.fail("Failed to load environments");
+    return null;
+  }
+
+  // Handle no environments
+  if (environments.length === 0) {
+    const newName = await promptCreateFirstEnvironment();
+    if (!newName) return null;
+
+    const createSpinner = ora("Creating environment...").start();
+    try {
+      const newEnv = await createEnvironment(config.projectId, newName);
+      createSpinner.succeed(`Environment "${newEnv.name}" created.`);
+      environments = [newEnv];
+    } catch (e: any) {
+      createSpinner.fail("Could not create environment.");
+      logger.error(e.response?.data?.message || e.message);
+      return null;
+    }
+  }
+
+  // 2. Show Flat Menu
+  const { promptSelectPushTarget, promptNewEnvironmentName } = await import(
+    "./ui.js"
+  );
+  const selection = await promptSelectPushTarget(environments, config.mapping);
+
+  // CASE A: Push All
+  if (selection.type === "ALL") {
+    return { type: "ALL" };
+  }
+
+  // CASE B: Existing Environment
+  if (selection.type === "ENV" && selection.env) {
+    const linkedFile = getLinkedFile(config, selection.env.name);
+
+    if (linkedFile) {
+      // Already linked
+      return { type: "SINGLE", env: selection.env, filePath: linkedFile };
+    }
+
+    // Not linked - prompt for file and link it
+    const unlinkedFiles = getUnlinkedFiles(config);
+
+    if (unlinkedFiles.length === 0) {
+      logger.warning("No unlinked .env files found.");
+      logger.info(
+        `Create a new file (e.g. .env.${selection.env.name}) and run push again.`
+      );
+      return null;
+    }
+
+    const selectedFile = await promptSelectFile(
+      unlinkedFiles,
+      `Select file for "${selection.env.name}":`
+    );
+
+    // Save link
+    linkFileToEnv(config, selection.env.name, selectedFile);
+    logger.success(`Linked: ${selectedFile} > ${selection.env.name}`);
+
+    return { type: "SINGLE", env: selection.env, filePath: selectedFile };
+  }
+
+  // CASE C: Create New Environment
+  if (selection.type === "CREATE") {
+    // 1. Ask Name
+    const newName = await promptNewEnvironmentName();
+
+    // 2. Create via API
+    const createSpinner = ora("Creating...").start();
+    let newEnv: Environment;
+    try {
+      newEnv = await createEnvironment(config.projectId, newName);
+      createSpinner.succeed(`Created "${newEnv.name}"`);
+    } catch (e: any) {
+      createSpinner.fail("Creation failed");
+      logger.error(e.response?.data?.message || e.message);
+      return null;
+    }
+
+    // 3. Check for unlinked files
+    const unlinkedFiles = getUnlinkedFiles(config);
+
+    if (unlinkedFiles.length === 0) {
+      logger.warning("No unlinked .env files found.");
+      logger.info(
+        `Create a new file (e.g. .env.${newName}) and run push again.`
+      );
+      return null;
+    }
+
+    // 4. Select file to link
+    const selectedFile = await promptSelectFile(
+      unlinkedFiles,
+      `Select file to link to ${newName}:`
+    );
+
+    // 5. Save link
+    linkFileToEnv(config, newEnv.name, selectedFile);
+    logger.success(`Linked: ${selectedFile} > ${newEnv.name}`);
+
+    return { type: "SINGLE", env: newEnv, filePath: selectedFile };
+  }
+
+  return null;
+}
+
 // --- File Resolution ---
 
 export async function resolveFile(
@@ -169,16 +292,33 @@ export async function resolveFile(
       return null;
     }
   }
-  // 3. No flags
+  // 3. No flags - select from unlinked files only
   else {
-    if (effectiveEnvFiles.length === 1) {
-      filePath = effectiveEnvFiles[0];
+    const unlinkedFiles = getUnlinkedFiles(config);
+
+    // If no unlinked files but we have files, all are linked
+    if (unlinkedFiles.length === 0 && effectiveEnvFiles.length > 0) {
+      // Show all files for existing linked scenario
+      if (effectiveEnvFiles.length === 1) {
+        filePath = effectiveEnvFiles[0];
+        logger.debug(`Using: ${filePath}`);
+      } else {
+        filePath = await promptSelectFile(
+          effectiveEnvFiles,
+          "Which file do you want to use?"
+        );
+      }
+    } else if (unlinkedFiles.length === 1) {
+      filePath = unlinkedFiles[0];
       logger.debug(`Using: ${filePath}`);
-    } else {
+    } else if (unlinkedFiles.length > 1) {
       filePath = await promptSelectFile(
-        effectiveEnvFiles,
-        "Which file do you want to use?"
+        unlinkedFiles,
+        "Which file do you want to link?"
       );
+    } else {
+      // Fresh clone scenario
+      filePath = effectiveEnvFiles[0];
     }
   }
 
