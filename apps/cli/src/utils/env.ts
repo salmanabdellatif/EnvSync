@@ -56,14 +56,22 @@ export function parseEnvFile(filePath: string): Record<string, EnvEntry> {
     if (rawValue.startsWith('"') || rawValue.startsWith("'")) {
       const quoteChar = rawValue[0];
       // Check if it properly ends with the same quote
+      // Use a more robust check for ending quote (not preceded by even number of backslashes)
       if (rawValue.endsWith(quoteChar) && rawValue.length > 1) {
-        value = rawValue.slice(1, -1);
+        value = rawValue
+          .slice(1, -1)
+          .replace(new RegExp(`\\\\${quoteChar}`, "g"), quoteChar);
       }
     } else {
-      // Unquoted value: Stop at the first #
+      // Unquoted value: Stop at the first # that has a space before it or is at the start
+      // This allows values like DATABASE_URL=postgres://user:pass@host:5432/db#tag
+      // standard .env rules usually treat # as comment unless quoted, but we can be smarter.
       const commentIndex = rawValue.indexOf("#");
       if (commentIndex !== -1) {
-        value = rawValue.slice(0, commentIndex).trim();
+        // Only treat as comment if preceded by whitespace
+        if (commentIndex === 0 || /\s/.test(rawValue[commentIndex - 1])) {
+          value = rawValue.slice(0, commentIndex).trim();
+        }
       }
     }
 
