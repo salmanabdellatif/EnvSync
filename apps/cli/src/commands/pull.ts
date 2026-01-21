@@ -18,7 +18,8 @@ import {
   getDecryptedProjectKey,
   fetchDecryptedSecrets,
 } from "../utils/secrets.js";
-import { stringifyEnv } from "../utils/env.js";
+import { stringifyEnv, parseEnvFile } from "../utils/env.js";
+import { calculateSyncStatus } from "../utils/status-utils.js";
 import { logger } from "../utils/logger.js";
 import { promptConfirm } from "../utils/ui.js";
 
@@ -92,38 +93,13 @@ async function pullAllLinkedFiles(
         projectKey
       );
 
-      // Parse local (if exists)
+      // Calculate status
       let changeCount = 0;
       if (fs.existsSync(filePath)) {
-        const { parseEnvFile } = await import("../utils/env.js");
         const localVars = parseEnvFile(filePath);
-
-        // Calculate what would change (remote -> local comparison)
-        const remoteKeys = Object.keys(remoteSecrets);
-        const localKeys = Object.keys(localVars);
-
-        // Count differences
-        for (const key of remoteKeys) {
-          if (!localVars[key]) {
-            changeCount++; // New key from remote
-          } else {
-            const localVal = localVars[key].value?.trim() || "";
-            const remoteVal = remoteSecrets[key].value?.trim() || "";
-            const localComment = localVars[key].comment?.trim() || "";
-            const remoteComment = remoteSecrets[key].comment?.trim() || "";
-
-            if (localVal !== remoteVal || localComment !== remoteComment) {
-              changeCount++; // Value or comment changed
-            }
-          }
-        }
-        for (const key of localKeys) {
-          if (!remoteSecrets[key]) {
-            changeCount++; // Key will be removed (remote doesn't have it)
-          }
-        }
+        const status = calculateSyncStatus(localVars, remoteSecrets);
+        changeCount = status.totalDiff;
       } else {
-        // File doesn't exist - all remote keys are new
         changeCount = Object.keys(remoteSecrets).length;
       }
 

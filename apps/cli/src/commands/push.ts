@@ -11,7 +11,7 @@ import { ProjectConfig, Environment } from "../types/index.js";
 
 // Utilities
 import { configManager } from "../lib/config.js";
-import { pushBatch } from "../lib/api.js";
+import { pushBatch, getEnvironments } from "../lib/api.js";
 import { parseEnvFile } from "../utils/env.js";
 import {
   loadProjectConfig,
@@ -60,7 +60,6 @@ async function pushAllLinkedFiles(
   let environments: Environment[];
 
   try {
-    const { getEnvironments } = await import("../lib/api.js");
     environments = await getEnvironments(config.projectId);
     projectKey = await getDecryptedProjectKey(config.projectId);
     spinner.succeed("Ready");
