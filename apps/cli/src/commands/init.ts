@@ -103,57 +103,70 @@ export const initCommand = new Command("init")
       try {
         const keyResponse = await getProjectKey(finalProjectId);
 
-        // Check if key exists (not just 404, but also null value)
-        if (!keyResponse.encryptedKey) {
-          throw { response: { status: 404 } }; // Trigger initialization
+        if (keyResponse.encryptedKey) {
+          // Key exists - user has access
+          keySpinner.succeed("Encryption verified.");
+        } else {
+          // Key is null - member exists but no wrapped key
+          // Try to initialize (only OWNER can do this)
+          keySpinner.text = "Initializing encryption...";
+
+          try {
+            const masterKeyHex = generateProjectKey();
+            const myPublicKey = configManager.getPublicKey();
+
+            if (!myPublicKey) {
+              keySpinner.fail("Public key missing.");
+              return;
+            }
+
+            const encryptedKey = encryptAsymmetric(masterKeyHex, myPublicKey);
+            await initializeProjectKey(finalProjectId, encryptedKey);
+            keySpinner.succeed("Encryption initialized.");
+          } catch (initError: any) {
+            // 403 = Not an owner, can't initialize - show grant message
+            if (initError.response?.status === 403) {
+              keySpinner.fail("Access denied.");
+
+              const currentUser = configManager.getUser();
+              const email = currentUser?.email || "your-email";
+
+              console.log("");
+              logger.warning(
+                `You are a member of "${finalProjectName}", but you don't have the secure key yet.`
+              );
+              logger.info(
+                "This happens if you were added via the Web UI without CLI encryption."
+              );
+
+              console.log("");
+              logger.info(
+                "Ask an Admin to run this command to unlock your access:"
+              );
+              console.log(chalk.bold.cyan(`  envsync grant ${email}`));
+              console.log("");
+
+              return;
+            }
+            throw initError;
+          }
         }
-
-        keySpinner.succeed("Encryption verified.");
       } catch (error: any) {
-        // 403 = Member without wrapped key (added via web UI)
+        // 403 from getProjectKey = Not a member at all
         if (error.response?.status === 403) {
-          keySpinner.fail("Access verification failed.");
-
-          const currentUser = configManager.getUser();
-          const email = currentUser?.email || "your-email";
-
-          console.log("");
-          logger.warning(
-            `You are a member of "${finalProjectName}", but you don't have the secure key yet.`
-          );
-          logger.info(
-            "This happens if you were added via the Web UI without CLI encryption."
-          );
-
-          console.log("");
-          logger.info(
-            "Ask an Admin to run this command to unlock your access:"
-          );
-          console.log(chalk.bold.cyan(`  envsync grant ${email}`));
-          console.log("");
-
+          logger.error("You are not a member of this project.");
           return;
         }
 
-        // 404 or null key = New project, needs key initialization
+        // 404 = Project not found
         if (error.response?.status === 404) {
-          keySpinner.text = "Initializing encryption...";
-
-          const masterKeyHex = generateProjectKey();
-          const myPublicKey = configManager.getPublicKey();
-
-          if (!myPublicKey) {
-            keySpinner.fail("Public key missing.");
-            return;
-          }
-
-          const encryptedKey = encryptAsymmetric(masterKeyHex, myPublicKey);
-          await initializeProjectKey(finalProjectId, encryptedKey);
-          keySpinner.succeed("Encryption initialized.");
-        } else {
-          keySpinner.fail("Encryption verification failed.");
-          throw error;
+          keySpinner.fail("Project not found.");
+          return;
         }
+
+        // Any other error
+        keySpinner.stop();
+        throw error;
       }
 
       // Step 6: Write config file (only after successful verification)
@@ -171,6 +184,7 @@ export const initCommand = new Command("init")
       logger.success("\nInitialized successfully!");
       logger.info(`Run ${chalk.cyan("envsync push")} to sync secrets.`);
     } catch (error: any) {
+      // Only catch unexpected errors (403 and 404 are handled above)
       logger.error("\nInitialization failed:");
       logger.error(error.message || error);
     }
