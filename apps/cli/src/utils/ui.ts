@@ -30,12 +30,17 @@ export async function promptSelectEnvironment(
  */
 export async function promptSelectOrCreateEnvironment(
   environments: Environment[],
-  message = "Select environment:"
+  message = "Select environment:",
+  allowCreate = true
 ): Promise<{ env: Environment | null; createNew: boolean; newName?: string }> {
   const choices = [
     ...environments.map((e) => ({ name: e.name, value: e.name })),
-    { name: "Create new environment", value: "__CREATE__" },
   ];
+
+  // Only add "Create new" option if allowed
+  if (allowCreate) {
+    choices.push({ name: "Create new environment", value: "__CREATE__" });
+  }
 
   const { selected } = await inquirer.prompt([
     {

@@ -26,10 +26,12 @@ import { logger } from "./logger.js";
 
 export async function resolveEnvironment(
   projectId: string,
-  flagEnv?: string
+  flagEnv?: string,
+  options: { allowCreate?: boolean } = {}
 ): Promise<{ env: Environment; environments: Environment[] } | null> {
   const spinner = ora("Loading environments...").start();
   let environments: Environment[];
+  const allowCreate = options.allowCreate !== false;
 
   try {
     environments = await getEnvironments(projectId);
@@ -41,6 +43,14 @@ export async function resolveEnvironment(
 
   // 1. No environments exist
   if (environments.length === 0) {
+    // For pull, can't create - need existing envs
+    if (!allowCreate) {
+      logger.error(
+        "No environments found. Push secrets first to create an environment."
+      );
+      return null;
+    }
+
     const newName = await promptCreateFirstEnvironment();
     if (!newName) return null;
 
@@ -75,7 +85,11 @@ export async function resolveEnvironment(
   }
 
   // 4. Multiple environments (Prompt)
-  const result = await promptSelectOrCreateEnvironment(environments);
+  const result = await promptSelectOrCreateEnvironment(
+    environments,
+    "Select environment:",
+    allowCreate
+  );
 
   if (result.createNew && result.newName) {
     const createSpinner = ora("Creating environment...").start();
@@ -224,7 +238,11 @@ export async function resolveFile(
   environments: Environment[],
   flagFile?: string,
   flagEnv?: string,
-  options: { allowNew?: boolean } = {}
+  options: {
+    allowNew?: boolean;
+    allowCreate?: boolean;
+    preResolvedEnv?: Environment;
+  } = {}
 ): Promise<{
   filePath: string;
   env: Environment;
@@ -282,11 +300,22 @@ export async function resolveFile(
           `Select file for "${flagEnv}":`
         );
       }
+
+      // Save the link if we just selected a file for this env
+      env = environments.find(
+        (e) => e.name.toLowerCase() === flagEnv.toLowerCase()
+      );
+      if (env) {
+        linkFileToEnv(config, env.name, filePath);
+        logger.success(`Linked: ${filePath} > ${env.name}`);
+      }
     }
 
-    env = environments.find(
-      (e) => e.name.toLowerCase() === flagEnv.toLowerCase()
-    );
+    if (!env) {
+      env = environments.find(
+        (e) => e.name.toLowerCase() === flagEnv.toLowerCase()
+      );
+    }
     if (!env) {
       logger.error(`Environment "${flagEnv}" not found.`);
       return null;
@@ -335,34 +364,42 @@ export async function resolveFile(
 
   // Link if needed
   if (!env) {
-    logger.info(`${filePath} is not linked to any environment.`);
-
-    const linkedEnvNames = getLinkedEnvNames(config);
-    const unlinkedEnvs = environments.filter(
-      (e) => !linkedEnvNames.includes(e.name)
-    );
-
-    const result = await promptSelectOrCreateEnvironment(
-      unlinkedEnvs,
-      "Link this file to:"
-    );
-
-    if (result.createNew && result.newName) {
-      const createSpinner = ora("Creating environment...").start();
-      try {
-        const newEnv = await createEnvironment(
-          config.projectId,
-          result.newName
-        );
-        env = newEnv;
-        createSpinner.succeed(`Environment "${newEnv.name}" created.`);
-      } catch (e: any) {
-        createSpinner.fail("Could not create environment.");
-        logger.error(e.response?.data?.message || e.message);
-        return null;
-      }
+    // Use pre-resolved env if provided (avoids double-prompting)
+    if (options.preResolvedEnv) {
+      env = options.preResolvedEnv;
     } else {
-      env = result.env!;
+      logger.info(`${filePath} is not linked to any environment.`);
+
+      const linkedEnvNames = getLinkedEnvNames(config);
+      const unlinkedEnvs = environments.filter(
+        (e) => !linkedEnvNames.includes(e.name)
+      );
+
+      // Pass allowCreate option (false for pull command)
+      const allowCreate = options.allowCreate !== false;
+      const result = await promptSelectOrCreateEnvironment(
+        unlinkedEnvs,
+        "Link this file to:",
+        allowCreate
+      );
+
+      if (result.createNew && result.newName) {
+        const createSpinner = ora("Creating environment...").start();
+        try {
+          const newEnv = await createEnvironment(
+            config.projectId,
+            result.newName
+          );
+          env = newEnv;
+          createSpinner.succeed(`Environment "${newEnv.name}" created.`);
+        } catch (e: any) {
+          createSpinner.fail("Could not create environment.");
+          logger.error(e.response?.data?.message || e.message);
+          return null;
+        }
+      } else {
+        env = result.env!;
+      }
     }
 
     linkFileToEnv(config, env.name, filePath);

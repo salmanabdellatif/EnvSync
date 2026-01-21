@@ -154,6 +154,28 @@ async function pullAllLinkedFiles(
   // 4. Handle results
   if (pendingPulls.length === 0) {
     logger.success("\nAll files are already in sync!");
+
+    // Show tip if there are unlinked remote environments
+    const linkedEnvNames = mappings.map(([envName]) => envName.toLowerCase());
+    const unlinkedEnvs = environments.filter(
+      (e) => !linkedEnvNames.includes(e.name.toLowerCase())
+    );
+
+    if (unlinkedEnvs.length > 0) {
+      console.log("");
+      console.log(
+        chalk.gray(
+          `💡 Tip: ${environments.length} environments on server, ${mappings.length} linked locally.`
+        )
+      );
+      console.log(
+        chalk.gray(
+          `   Run ${chalk.cyan(
+            `envsync pull -e ${unlinkedEnvs[0].name}`
+          )} to pull another.`
+        )
+      );
+    }
     return;
   }
 
@@ -232,17 +254,25 @@ async function pullSingleFile(
   config: ProjectConfig,
   options: { file?: string; env?: string; yes?: boolean }
 ): Promise<void> {
-  // 1. Resolve environment
-  const envResult = await resolveEnvironment(config.projectId, options.env);
+  // 1. Resolve environment (allowCreate: false - pull doesn't create envs)
+  const envResult = await resolveEnvironment(config.projectId, options.env, {
+    allowCreate: false,
+  });
   if (!envResult) return;
 
   // 2. Resolve file (with Fresh Clone support)
+  // Pass preResolvedEnv to avoid double-prompting for environment
+  // Pass allowCreate:false since pull shouldn't create new environments
   const fileResult = await resolveFile(
     config,
     envResult.environments,
     options.file,
     options.env,
-    { allowNew: true }
+    {
+      allowNew: true,
+      allowCreate: false,
+      preResolvedEnv: envResult.env,
+    }
   );
   if (!fileResult) return;
 
