@@ -71,13 +71,28 @@ export class MemberController {
   @RequireRole(ProjectRole.OWNER)
   async setKey(
     @Param('projectId') projectId: string,
-    @Body('encryptedKey') encryptedKey: string,
+    @Body('wrappedKey') wrappedKey: string,
     @Request() req,
   ) {
     return this.membersService.updateProjectKey(
       projectId,
       req.user.id,
-      encryptedKey,
+      wrappedKey,
+    );
+  }
+
+  @Patch(':userId/key')
+  @RequireRole(ProjectRole.ADMIN)
+  async grantAccess(
+    @Param('projectId') projectId: string,
+    @Param('userId') targetUserId: string,
+    @Body('wrappedKey') wrappedKey: string,
+    @Request() req,
+  ) {
+    return this.membersService.updateProjectKey(
+      projectId,
+      targetUserId,
+      wrappedKey,
     );
   }
 }

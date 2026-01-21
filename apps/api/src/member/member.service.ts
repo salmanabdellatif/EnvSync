@@ -155,9 +155,18 @@ export class MemberService {
     userId: string,
     encryptedKey: string,
   ) {
-    return this.prisma.projectMember.update({
-      where: { userId_projectId: { projectId, userId } },
-      data: { wrappedKey: encryptedKey },
-    });
+    try {
+      return await this.prisma.projectMember.update({
+        where: { userId_projectId: { projectId, userId } },
+        data: { wrappedKey: encryptedKey },
+      });
+    } catch (error) {
+      if (error.code === 'P2025') {
+        throw new NotFoundException(
+          `User ${userId} is not a member of project ${projectId}`,
+        );
+      }
+      throw error;
+    }
   }
 }
