@@ -6,6 +6,7 @@ import { whoamiCommand } from "./commands/whoami.js";
 import { initCommand } from "./commands/init.js";
 import { pushCommand } from "./commands/push.js";
 import { pullCommand } from "./commands/pull.js";
+import { addCommand } from "./commands/add.js";
 
 const program = new Command();
 
@@ -21,5 +22,6 @@ program.addCommand(whoamiCommand);
 program.addCommand(initCommand);
 program.addCommand(pushCommand);
 program.addCommand(pullCommand);
+program.addCommand(addCommand);
 
 program.parse(process.argv);

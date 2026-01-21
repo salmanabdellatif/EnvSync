@@ -166,3 +166,45 @@ export async function pushBatch(
     payload
   );
 }
+
+// --- 4. Members ---
+
+export interface UserLookupResponse {
+  id: string;
+  name: string;
+  email: string;
+  publicKey: string | null;
+}
+
+export interface ProjectMember {
+  user: {
+    id: string;
+    email: string;
+    name: string;
+  };
+  role: string;
+  wrappedKey: string | null;
+}
+
+export async function lookupUser(email: string): Promise<UserLookupResponse> {
+  return apiClient.get(`/users/lookup?email=${encodeURIComponent(email)}`);
+}
+
+export async function getProjectMembers(
+  projectId: string
+): Promise<ProjectMember[]> {
+  return apiClient.get(`/projects/${projectId}/members`);
+}
+
+export async function addProjectMember(
+  projectId: string,
+  email: string,
+  role: string,
+  wrappedKey: string
+): Promise<{ message: string }> {
+  return apiClient.post(`/projects/${projectId}/members`, {
+    email,
+    role,
+    wrappedKey,
+  });
+}
