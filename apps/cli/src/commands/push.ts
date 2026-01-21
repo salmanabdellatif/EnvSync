@@ -278,8 +278,11 @@ async function pushSingleFile(
   const localVars = parseEnvFile(filePath!); // ! is safe here due to checks above
   const localKeys = Object.keys(localVars);
 
-  if (localKeys.length === 0) {
+  if (localKeys.length === 0 && !options.prune) {
     logger.warning("File is empty. Nothing to push.");
+    logger.info(
+      "Use --prune if you want to delete all variables from the server."
+    );
     return;
   }
 
