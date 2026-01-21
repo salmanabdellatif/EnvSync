@@ -13,7 +13,29 @@ import { UpdateMemberDto } from './dto/update-member.dto';
 export class MemberService {
   constructor(private prisma: PrismaService) {}
 
-  async addMember(projectId: string, dto: AddMemberDto) {
+  async addMember(projectId: string, callerId: string, dto: AddMemberDto) {
+    const roleLevels = { OWNER: 4, ADMIN: 3, MEMBER: 2, VIEWER: 1 };
+
+    // 1. Fetch Caller
+    const callerMember = await this.prisma.projectMember.findUnique({
+      where: { userId_projectId: { projectId, userId: callerId } },
+    });
+
+    if (!callerMember) {
+      throw new ForbiddenException('Caller not found in project');
+    }
+
+    const callerLvl = roleLevels[callerMember.role];
+    const requestedLvl = roleLevels[dto.role];
+
+    // 2. Validate Role Level
+    if (requestedLvl > callerLvl) {
+      throw new ForbiddenException(
+        'You cannot grant a role higher than your own.',
+      );
+    }
+
+    // 3. Find Target User
     const user = await this.prisma.user.findUnique({
       where: { email: dto.email },
     });
@@ -121,8 +143,17 @@ export class MemberService {
 
     if (!member) throw new NotFoundException('Member not found');
 
+    // Safety Check: Project must have at least one owner
     if (member.role === 'OWNER') {
-      throw new BadRequestException('Cannot remove the project owner');
+      const ownerCount = await this.prisma.projectMember.count({
+        where: { projectId, role: 'OWNER' },
+      });
+
+      if (ownerCount <= 1) {
+        throw new BadRequestException(
+          'The project must have at least one owner.',
+        );
+      }
     }
 
     try {

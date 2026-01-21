@@ -25,9 +25,13 @@ export class MemberController {
 
   @Throttle({ default: { limit: 10, ttl: 60000 } })
   @Post()
-  @RequireRole(ProjectRole.ADMIN) // Only Admins can add
-  addMember(@Param('projectId') projectId: string, @Body() dto: AddMemberDto) {
-    return this.membersService.addMember(projectId, dto);
+  @RequireRole(ProjectRole.MEMBER) // Members can see add UI but restricted by service
+  addMember(
+    @Param('projectId') projectId: string,
+    @Body() dto: AddMemberDto,
+    @Request() req,
+  ) {
+    return this.membersService.addMember(projectId, req.user.id, dto);
   }
 
   @Get()
