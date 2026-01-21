@@ -9,6 +9,7 @@ import { pullCommand } from "./commands/pull.js";
 import { addCommand } from "./commands/add.js";
 import { grantCommand } from "./commands/grant.js";
 import { statusCommand } from "./commands/status.js";
+import { removeCommand } from "./commands/remove.js";
 
 const program = new Command();
 
@@ -25,6 +26,7 @@ program.addCommand(initCommand);
 program.addCommand(pushCommand);
 program.addCommand(pullCommand);
 program.addCommand(addCommand);
+program.addCommand(removeCommand);
 program.addCommand(grantCommand);
 program.addCommand(statusCommand);
 

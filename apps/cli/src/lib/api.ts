@@ -218,3 +218,10 @@ export async function updateMemberKey(
     wrappedKey,
   });
 }
+
+export async function removeProjectMember(
+  projectId: string,
+  userId: string
+): Promise<{ message: string }> {
+  return apiClient.delete(`/projects/${projectId}/members/${userId}`);
+}
