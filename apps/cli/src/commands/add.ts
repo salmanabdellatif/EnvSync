@@ -17,12 +17,12 @@ import { promptConfirm } from "../utils/ui.js";
 
 // Rich role descriptions for clarity
 const ROLE_CHOICES = [
+  { name: `Viewer  ${chalk.gray("- Read-only access")}`, value: "VIEWER" },
   { name: `Member  ${chalk.gray("- Read & Write secrets")}`, value: "MEMBER" },
   {
     name: `Admin   ${chalk.gray("- Manage members & settings")}`,
     value: "ADMIN",
   },
-  { name: `Viewer  ${chalk.gray("- Read-only access")}`, value: "VIEWER" },
   {
     name: `Owner   ${chalk.gray("- Full danger zone access")}`,
     value: "OWNER",
@@ -109,6 +109,25 @@ export const addCommand = new Command("add")
         return;
       }
 
+      // 6.5. Fetch Current User Role for Safety
+      const currentUser = configManager.getUser();
+      const projectMemberRecord = members.find(
+        (m) => m.user.id === currentUser?.id
+      );
+
+      if (!projectMemberRecord) {
+        logger.error("You are not a member of this project.");
+        return;
+      }
+
+      const roleLevels: Record<string, number> = {
+        OWNER: 4,
+        ADMIN: 3,
+        MEMBER: 2,
+        VIEWER: 1,
+      };
+      const currentRoleLevel = roleLevels[projectMemberRecord.role];
+
       // 7. Identity Confirmation (Visual check before proceeding)
       console.log(chalk.gray("--------------------------------"));
       console.log(`  User:  ${chalk.bold(targetUser.name)}`);
@@ -117,20 +136,45 @@ export const addCommand = new Command("add")
 
       // 8. Role Selection with Descriptions
       if (!role) {
+        // Filter choices based on permissions
+        const availableChoices = ROLE_CHOICES.filter(
+          (choice) => roleLevels[choice.value] <= currentRoleLevel
+        );
+
+        if (availableChoices.length === 0) {
+          logger.error("You do not have permission to add members.");
+          return;
+        }
+
         const { selectedRole } = await inquirer.prompt([
           {
-            type: "list",
+            type: "rawlist",
             name: "selectedRole",
             message: "Select permission level:",
-            choices: ROLE_CHOICES,
+            choices: availableChoices,
             pageSize: 4,
           },
         ]);
         role = selectedRole;
+      } else {
+        // Validate argument role
+        if (roleLevels[role] > currentRoleLevel) {
+          logger.error(`Permission denied: You cannot add an ${role}.`);
+          logger.info(`You are currently a ${projectMemberRecord.role}.`);
+          return;
+        }
       }
 
       // 9. Final Confirmation (Include role in message)
       console.log("");
+      if (role === "OWNER") {
+        logger.warning(chalk.bold("Caution: You are granting full Ownership."));
+        logger.info(
+          "Owners have ultimate control and cannot be removed unless another owner exists."
+        );
+        console.log("");
+      }
+
       const confirmed = await promptConfirm(
         `Add ${targetUser.name} as ${chalk.bold(role)}?`,
         true
