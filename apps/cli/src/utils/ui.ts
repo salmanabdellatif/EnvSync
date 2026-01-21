@@ -6,6 +6,7 @@ import inquirer from "inquirer";
 import chalk from "chalk";
 import fs from "node:fs";
 import type { Environment, Project } from "../types/index.js";
+import { logger } from "./logger.js";
 
 /**
  * Prompt user to select an environment
@@ -151,7 +152,6 @@ export async function promptConfirm(
 /**
  * Prompt to create an environment when none exist
  */
-import { logger } from "./logger.js";
 
 /**
  * Prompt to create an environment when none exist

@@ -5,6 +5,7 @@
 
 import chalk from "chalk";
 import type { EnvMap, DecryptedSecretMap, DiffResult } from "../types/index.js";
+import { logger } from "./logger.js";
 
 /**
  * Calculate difference between local and remote secrets
@@ -66,7 +67,6 @@ export function getChangeCount(diff: DiffResult): number {
 /**
  * Print diff summary to console
  */
-import { logger } from "./logger.js";
 
 /**
  * Print diff summary to console

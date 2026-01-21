@@ -13,7 +13,8 @@ import { ProjectConfig, Environment } from "../types/index.js";
 // Utils
 import { configManager } from "../lib/config.js";
 import { loadProjectConfig } from "../utils/config-file.js";
-import { resolveEnvironment, resolveFile } from "../utils/resolution.js";
+import { resolveEnvironment, resolveFile } from "../utils/resolution/index.js";
+import { getEnvironments } from "../lib/api.js";
 import {
   getDecryptedProjectKey,
   fetchDecryptedSecrets,
@@ -44,7 +45,6 @@ async function pullAllLinkedFiles(
   let environments: Environment[];
 
   try {
-    const { getEnvironments } = await import("../lib/api.js");
     environments = await getEnvironments(config.projectId);
     projectKey = await getDecryptedProjectKey(config.projectId);
     spinner.succeed("Ready");

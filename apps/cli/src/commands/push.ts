@@ -23,7 +23,11 @@ import {
   formatKeyValidationError,
 } from "../utils/validators.js";
 import { promptConfirm } from "../utils/ui.js";
-import { resolveEnvironment, resolveFile } from "../utils/resolution.js";
+import {
+  resolveEnvironment,
+  resolveFile,
+  resolvePushTarget,
+} from "../utils/resolution/index.js";
 import {
   getDecryptedProjectKey,
   fetchDecryptedSecrets,
@@ -401,7 +405,6 @@ Examples:
         await pushSingleFile(config, options);
       } else {
         // Interactive mode - use unified resolver
-        const { resolvePushTarget } = await import("../utils/resolution.js");
         const target = await resolvePushTarget(config);
 
         if (!target) return;
