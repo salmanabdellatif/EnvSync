@@ -97,18 +97,7 @@ export const initCommand = new Command("init")
         return; // Should not happen
       }
 
-      // Step 5: Write config file
-      const configContent: ProjectConfig = {
-        projectId: finalProjectId,
-        projectName: finalProjectName,
-        linkedAt: new Date().toISOString(),
-        mapping: {},
-      };
-
-      saveProjectConfig(configContent);
-      logger.success(`Linked to ${chalk.bold(finalProjectName)}`);
-
-      // Step 6: Project encryption (E2E handshake)
+      // Step 5: Project encryption (E2E handshake)
       const keySpinner = ora("Verifying encryption...").start();
 
       try {
@@ -121,6 +110,31 @@ export const initCommand = new Command("init")
 
         keySpinner.succeed("Encryption verified.");
       } catch (error: any) {
+        // 403 = Member without wrapped key (added via web UI)
+        if (error.response?.status === 403) {
+          keySpinner.fail("Access verification failed.");
+
+          const currentUser = configManager.getUser();
+          const email = currentUser?.email || "your-email";
+
+          console.log("");
+          logger.warning(
+            `You are a member of "${finalProjectName}", but you don't have the secure key yet.`
+          );
+          logger.info(
+            "This happens if you were added via the Web UI without CLI encryption."
+          );
+
+          console.log("");
+          logger.info(
+            "Ask an Admin to run this command to unlock your access:"
+          );
+          console.log(chalk.bold.cyan(`  envsync grant ${email}`));
+          console.log("");
+
+          return;
+        }
+
         // 404 or null key = New project, needs key initialization
         if (error.response?.status === 404) {
           keySpinner.text = "Initializing encryption...";
@@ -141,6 +155,17 @@ export const initCommand = new Command("init")
           throw error;
         }
       }
+
+      // Step 6: Write config file (only after successful verification)
+      const configContent: ProjectConfig = {
+        projectId: finalProjectId,
+        projectName: finalProjectName,
+        linkedAt: new Date().toISOString(),
+        mapping: {},
+      };
+
+      saveProjectConfig(configContent);
+      logger.success(`Linked to ${chalk.bold(finalProjectName)}`);
 
       // Done
       logger.success("\nInitialized successfully!");
