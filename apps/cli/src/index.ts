@@ -7,6 +7,7 @@ import { initCommand } from "./commands/init.js";
 import { pushCommand } from "./commands/push.js";
 import { pullCommand } from "./commands/pull.js";
 import { addCommand } from "./commands/add.js";
+import { grantCommand } from "./commands/grant.js";
 
 const program = new Command();
 
@@ -23,5 +24,6 @@ program.addCommand(initCommand);
 program.addCommand(pushCommand);
 program.addCommand(pullCommand);
 program.addCommand(addCommand);
+program.addCommand(grantCommand);
 
 program.parse(process.argv);

@@ -208,3 +208,13 @@ export async function addProjectMember(
     wrappedKey,
   });
 }
+
+export async function updateMemberKey(
+  projectId: string,
+  userId: string,
+  wrappedKey: string
+): Promise<{ message: string }> {
+  return apiClient.patch(`/projects/${projectId}/members/${userId}/key`, {
+    wrappedKey,
+  });
+}
