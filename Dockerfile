@@ -39,9 +39,9 @@ WORKDIR /app
 COPY --from=builder /prod/api/node_modules ./node_modules
 COPY --from=builder /prod/api/package.json ./package.json
 
-# FIX: Copy the FULL @prisma/client from builder (includes runtime files)
-# The production deploy doesn't include the runtime JS/WASM files properly
-COPY --from=builder /app/node_modules/.pnpm/@prisma+client*/node_modules/@prisma/client ./node_modules/@prisma/client
+# FIX: Copy the FULL @prisma/client from the API's resolved node_modules
+# This includes all runtime files (query_compiler_bg.postgresql.js, etc.)
+COPY --from=builder /app/apps/api/node_modules/@prisma/client ./node_modules/@prisma/client
 
 # Copy the build artifact
 COPY --from=builder /app/apps/api/dist ./dist
