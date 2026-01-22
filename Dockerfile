@@ -43,8 +43,12 @@ COPY --from=builder /prod/api/package.json ./package.json
 # Copy the build artifact
 COPY --from=builder /app/apps/api/dist ./dist
 
-# Copy Prisma assets
+# Copy Prisma assets (schema for migrations if needed)
 COPY --from=builder /app/apps/api/prisma ./prisma
+
+# Copy the GENERATED Prisma Client (critical for custom output path)
+# The compiled code in dist/src/generated/prisma imports from here
+COPY --from=builder /app/apps/api/src/generated ./dist/src/generated
 
 EXPOSE 3000
 
