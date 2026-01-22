@@ -36,18 +36,20 @@ FROM node:22-alpine AS runner
 WORKDIR /app
 
 # Copy the "Deployed" production dependencies
-# This folder has a clean node_modules and package.json
 COPY --from=builder /prod/api/node_modules ./node_modules
 COPY --from=builder /prod/api/package.json ./package.json
+
+# FIX: Copy the FULL @prisma/client from builder (includes runtime files)
+# The production deploy doesn't include the runtime JS/WASM files properly
+COPY --from=builder /app/node_modules/.pnpm/@prisma+client*/node_modules/@prisma/client ./node_modules/@prisma/client
 
 # Copy the build artifact
 COPY --from=builder /app/apps/api/dist ./dist
 
-# Copy Prisma assets (schema for migrations if needed)
+# Copy Prisma schema
 COPY --from=builder /app/apps/api/prisma ./prisma
 
-# Copy the GENERATED Prisma Client (critical for custom output path)
-# The compiled code in dist/src/generated/prisma imports from here
+# Copy the GENERATED Prisma Client (custom output path)
 COPY --from=builder /app/apps/api/src/generated ./dist/src/generated
 
 EXPOSE 3000
