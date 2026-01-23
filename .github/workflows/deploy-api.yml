@@ -4,14 +4,14 @@ on:
   push:
     branches: [master]
     paths:
-      - "apps/api/**" # Trigger if API code changes
-      - "libs/**" # Trigger if shared libs change
-      - "Dockerfile" # Trigger if build logic changes
+      - "apps/api/**"
+      - "libs/**"
+      - "Dockerfile"
       - ".github/workflows/deploy-api.yml"
 
 env:
-  # Change 'your-github-username' to your actual username
-  IMAGE_NAME: ghcr.io/${{ github.repository_owner }}/envsync-api:latest
+  REGISTRY: ghcr.io
+  IMAGE_NAME: envsync-api
 
 jobs:
   build-and-deploy:
@@ -24,50 +24,64 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # 1. Log in to GitHub Container Registry
+      - name: Lowercase Repo Owner
+        run: |
+          echo "REPO_OWNER=${GITHUB_REPOSITORY_OWNER,,}" >> $GITHUB_ENV
+
       - name: Log in to the Container registry
         uses: docker/login-action@v3
         with:
-          registry: ghcr.io
+          registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      # 2. Build and Push (Context is Root ".")
+      # 3. Build and Push
       - name: Build and push
         uses: docker/build-push-action@v5
         with:
-          context: . # ✅ Builds from root
-          file: ./Dockerfile # ✅ Uses root Dockerfile
+          context: .
+          file: ./Dockerfile
           push: true
-          tags: ${{ env.IMAGE_NAME }}
+          # Uses the lowercased owner from Step 1
+          tags: ${{ env.REGISTRY }}/${{ env.REPO_OWNER }}/${{ env.IMAGE_NAME }}:latest
 
-      # 3. Deploy to AWS EC2
+      # 4. Deploy to AWS EC2
       - name: Deploy to EC2
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.AWS_HOST }}
           username: ubuntu
           key: ${{ secrets.AWS_SSH_KEY }}
-          envs: GITHUB_TOKEN,IMAGE_NAME
+          # We pass the full secret file content to the script
+          script_stop: true
+          envs: GITHUB_TOKEN,REPO_OWNER,REGISTRY,IMAGE_NAME
           script: |
-            # Login to GHCR inside EC2
-            echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+            # A. Define Variables inside the server script
+            USER_NAME="${{ env.REPO_OWNER }}"
+            FULL_IMAGE="${{ env.REGISTRY }}/$USER_NAME/${{ env.IMAGE_NAME }}:latest"
 
-            # Pull the new image
-            docker pull ${{ env.IMAGE_NAME }}
+            # B. 🚀 MAGIC STEP: Create the .env file on the server
+            # We take the secret from GitHub and overwrite the file on EC2
+            echo "${{ secrets.ENV_PRODUCTION }}" > .env.production
 
-            # Stop & Remove old container
+            # C. Login to GHCR (Using the ephemeral GitHub Token)
+            echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+            # D. Pull the new image
+            docker pull $FULL_IMAGE
+
+            # E. Stop & Remove old container
             docker stop envsync-api || true
             docker rm envsync-api || true
 
-            # Run new container
-            # It reads the .env file from /home/ubuntu/EnvSync/.env
+            # F. Run new container
+            # We point to the file we just created in Step B (.env.production)
             docker run -d \
-              --env-file /home/ubuntu/EnvSync/.env \
+              --env-file .env.production \
               -p 3000:3000 \
               --name envsync-api \
               --restart unless-stopped \
-              ${{ env.IMAGE_NAME }}
+              $FULL_IMAGE
 
-            # Clean up old images to save space
+            # G. Cleanup
             docker image prune -f
