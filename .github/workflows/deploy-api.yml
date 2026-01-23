@@ -42,40 +42,36 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          # Uses the lowercased owner from Step 1
           tags: ${{ env.REGISTRY }}/${{ env.REPO_OWNER }}/${{ env.IMAGE_NAME }}:latest
 
       # 4. Deploy to AWS EC2
       - name: Deploy to EC2
         uses: appleboy/ssh-action@v1.0.3
+        env:
+          ENV_PRODUCTION: ${{ secrets.ENV_PRODUCTION }}
+          REPO_OWNER: ${{ env.REPO_OWNER }}
+          IMAGE_NAME: ${{ env.IMAGE_NAME }}
+          REGISTRY: ${{ env.REGISTRY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_ACTOR: ${{ github.actor }}
         with:
           host: ${{ secrets.AWS_HOST }}
           username: ubuntu
           key: ${{ secrets.AWS_SSH_KEY }}
-          # We pass the full secret file content to the script
           script_stop: true
-          envs: GITHUB_TOKEN,REPO_OWNER,REGISTRY,IMAGE_NAME
+          envs: ENV_PRODUCTION,REPO_OWNER,IMAGE_NAME,REGISTRY,GITHUB_TOKEN,GITHUB_ACTOR
           script: |
-            # A. Define Variables inside the server script
-            USER_NAME="${{ env.REPO_OWNER }}"
-            FULL_IMAGE="${{ env.REGISTRY }}/$USER_NAME/${{ env.IMAGE_NAME }}:latest"
+            FULL_IMAGE="$REGISTRY/$REPO_OWNER/$IMAGE_NAME:latest"
 
-            # B. 🚀 MAGIC STEP: Create the .env file on the server
-            # We take the secret from GitHub and overwrite the file on EC2
-            echo "${{ secrets.ENV_PRODUCTION }}" > .env.production
+            echo "$ENV_PRODUCTION" > .env.production
 
-            # C. Login to GHCR (Using the ephemeral GitHub Token)
-            echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+            echo "$GITHUB_TOKEN" | docker login ghcr.io -u $GITHUB_ACTOR --password-stdin
 
-            # D. Pull the new image
             docker pull $FULL_IMAGE
 
-            # E. Stop & Remove old container
             docker stop envsync-api || true
             docker rm envsync-api || true
 
-            # F. Run new container
-            # We point to the file we just created in Step B (.env.production)
             docker run -d \
               --env-file .env.production \
               -p 3000:3000 \
@@ -83,5 +79,4 @@ jobs:
               --restart unless-stopped \
               $FULL_IMAGE
 
-            # G. Cleanup
             docker image prune -f
