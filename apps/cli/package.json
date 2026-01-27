@@ -1,18 +1,19 @@
 {
-  "name": "envsync",
-  "version": "0.1.0",
+  "name": "@envsync-labs/cli",
+  "version": "0.1.4",
   "description": "E2E encrypted secrets management CLI",
   "author": "Salman Abdellatif",
   "license": "MIT",
   "type": "module",
   "main": "dist/index.js",
   "bin": {
-    "envsync": "./dist/index.js"
+    "envsync": "dist/index.js"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/salmanabdellatif/EnvSync"
+    "url": "git+https://github.com/salmanabdellatif/EnvSync.git"
   },
+  "homepage": "https://envsync.tech",
   "keywords": [
     "env",
     "secrets",

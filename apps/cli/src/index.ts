@@ -11,12 +11,16 @@ import { grantCommand } from "./commands/grant.js";
 import { statusCommand } from "./commands/status.js";
 import { removeCommand } from "./commands/remove.js";
 
+import { createRequire } from "module";
+const require = createRequire(import.meta.url);
+const pkg = require("../package.json");
+
 const program = new Command();
 
 program
   .name("envsync")
   .description("CLI for EnvSync - E2E encrypted secrets management")
-  .version("0.1.0");
+  .version(pkg.version, "-v, --version", "output the version number");
 
 // Register commands
 program.addCommand(loginCommand);
