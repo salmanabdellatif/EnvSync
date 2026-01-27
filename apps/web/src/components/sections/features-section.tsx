@@ -149,7 +149,7 @@ export function FeaturesSection() {
 
   return (
     <section className="scroll-snap-section relative flex items-center justify-center py-24 md:py-0">
-      <div className="max-w-5xl mx-auto px-4 relative z-10 w-full">
+      <div className="max-w-2xl lg:max-w-5xl mx-auto px-4 relative z-10 w-full">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-12 items-center">
           {/* LEFT: The Menu */}
           <div className="space-y-2 md:space-y-4">
