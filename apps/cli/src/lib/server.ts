@@ -27,9 +27,21 @@ export function startAuthServer(expectedSecret: string): Promise<AuthResult> {
     const server = http.createServer((req, res) => {
       const url = new URL(req.url || "", `http://localhost:${PORT}`);
 
+      // Enable CORS for frontend fetch() requests
+      res.setHeader("Access-Control-Allow-Origin", "*");
+      res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
+      res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+
+      // Handle preflight
+      if (req.method === "OPTIONS") {
+        res.writeHead(204);
+        res.end();
+        return;
+      }
+
       if (url.pathname !== "/callback") {
-        res.writeHead(404);
-        res.end("Not found");
+        res.writeHead(404, { "Content-Type": "application/json" });
+        res.end(JSON.stringify({ success: false, error: "Not found" }));
         return;
       }
 
@@ -38,8 +50,10 @@ export function startAuthServer(expectedSecret: string): Promise<AuthResult> {
 
       if (!token || !stateParam) {
         cleanup();
-        res.writeHead(400);
-        res.end("Missing parameters");
+        res.writeHead(400, { "Content-Type": "application/json" });
+        res.end(
+          JSON.stringify({ success: false, error: "Missing parameters" }),
+        );
         reject(new Error("Missing parameters"));
         return;
       }
@@ -54,7 +68,7 @@ export function startAuthServer(expectedSecret: string): Promise<AuthResult> {
         if (receivedSecret.length === expectedSecret.length) {
           secretsMatch = crypto.timingSafeEqual(
             Buffer.from(receivedSecret),
-            Buffer.from(expectedSecret)
+            Buffer.from(expectedSecret),
           );
         }
       } catch (e) {
@@ -63,33 +77,17 @@ export function startAuthServer(expectedSecret: string): Promise<AuthResult> {
 
       if (!secretsMatch) {
         cleanup();
-        res.writeHead(400);
-        res.end(`
-          <html>
-            <body style="font-family: sans-serif; text-align: center; padding-top: 50px;">
-              <h1 style="color: #e74c3c;">Authentication Error</h1>
-              <p>The login session expired or was invalid.</p>
-              <p style="color: #666;">Please close this tab and try again from your terminal.</p>
-            </body>
-          </html>`);
+        res.writeHead(400, { "Content-Type": "application/json" });
+        res.end(JSON.stringify({ success: false, error: "Invalid session" }));
         reject(new Error("State mismatch - possible CSRF attack"));
         return;
       }
 
       cleanup();
 
-      // Token received - verification happens in login.ts
-      res.writeHead(200, { "Content-Type": "text/html" });
-      res.end(`
-        <html>
-          <body style="font-family: sans-serif; text-align: center; padding-top: 50px;">
-            <h1>Authentication Received</h1>
-            <p>Verifying your credentials...</p>
-            <p style="color: #666;">Please check your terminal for the login result.</p>
-            <p style="color: #999; font-size: 14px;">You can close this tab.</p>
-          </body>
-        </html>
-      `);
+      // Return JSON success response
+      res.writeHead(200, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ success: true }));
 
       resolve({ token, state: stateParam });
     });
@@ -111,5 +109,6 @@ export function startAuthServer(expectedSecret: string): Promise<AuthResult> {
 export function buildLoginUrl(secret: string): string {
   const statePayload = JSON.stringify({ port: PORT, secret });
   const encodedState = Buffer.from(statePayload).toString("base64");
-  return `http://localhost:3001/login/cli?state=${encodedState}`;
+  // Use regular login page so users can use OAuth or email/password
+  return `https://envsync.tech/login?cli_state=${encodedState}`;
 }
