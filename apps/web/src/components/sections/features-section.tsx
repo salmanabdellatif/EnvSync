@@ -200,21 +200,19 @@ export function FeaturesSection() {
                         </span>
                         <span className="md:hidden">{feature.shortTitle}</span>
                       </motion.h3>
-                      <AnimatePresence initial={false}>
-                        {activeFeature === index && (
-                          <motion.div
-                            initial={{ height: 0, opacity: 0 }}
-                            animate={{ height: "auto", opacity: 1 }}
-                            exit={{ height: 0, opacity: 0 }}
-                            transition={{ duration: 0.3, ease: "easeInOut" }}
-                            className="overflow-hidden"
-                          >
-                            <p className="text-[11px] md:text-sm text-muted-foreground leading-relaxed mt-1">
-                              {feature.description}
-                            </p>
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
+                      <div
+                        className="grid transition-all duration-300 ease-in-out"
+                        style={{
+                          gridTemplateRows:
+                            activeFeature === index ? "1fr" : "0fr",
+                        }}
+                      >
+                        <div className="overflow-hidden">
+                          <p className="text-[11px] md:text-sm text-muted-foreground leading-relaxed mt-1">
+                            {feature.description}
+                          </p>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </motion.button>

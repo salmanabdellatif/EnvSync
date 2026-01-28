@@ -4,10 +4,10 @@ import { useState } from "react";
 import { Window } from "@/components/ui/Window";
 
 const packageManagers = [
-  { id: "npm", label: "npm", install: "npm install -g envsync" },
-  { id: "yarn", label: "yarn", install: "yarn global add envsync" },
-  { id: "pnpm", label: "pnpm", install: "pnpm add -g envsync" },
-  { id: "bun", label: "bun", install: "bun add -g envsync" },
+  { id: "npm", label: "npm", install: "npm install -g @envsync-labs/cli" },
+  { id: "yarn", label: "yarn", install: "yarn global add @envsync-labs/cli" },
+  { id: "pnpm", label: "pnpm", install: "pnpm add -g @envsync-labs/cli" },
+  { id: "bun", label: "bun", install: "bun add -g @envsync-labs/cli" },
 ] as const;
 
 function CopyButton({ text }: { text: string }) {
