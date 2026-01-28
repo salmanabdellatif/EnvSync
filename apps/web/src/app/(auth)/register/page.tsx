@@ -1,5 +1,6 @@
 import { Metadata } from "next";
 import Link from "next/link";
+import { Suspense } from "react";
 import { RegisterForm } from "@/components/auth";
 
 export const metadata: Metadata = {
@@ -22,7 +23,13 @@ export default function RegisterPage() {
       </div>
 
       {/* Interactive Form */}
-      <RegisterForm />
+      <Suspense
+        fallback={
+          <div className="h-[400px] animate-pulse bg-muted/20 rounded-lg" />
+        }
+      >
+        <RegisterForm />
+      </Suspense>
 
       {/* Footer Link */}
       <div className="text-center text-sm text-muted-foreground">
