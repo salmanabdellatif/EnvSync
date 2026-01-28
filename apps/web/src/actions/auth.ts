@@ -65,6 +65,32 @@ export async function loginAction(
 }
 
 /**
+ * CLI LOGIN ACTION
+ * Returns the token instead of redirecting (for CLI authentication flow).
+ */
+export async function cliLoginAction(
+  prevState: ActionState | undefined,
+  formData: FormData,
+): Promise<ActionState & { token?: string }> {
+  const rawData = Object.fromEntries(formData);
+  const validated = loginSchema.safeParse(rawData);
+
+  if (!validated.success) {
+    return { error: "Invalid email or password format." };
+  }
+
+  try {
+    const { access_token } = await api.auth.login(validated.data);
+
+    // Return the token for CLI redirect (don't set cookie or redirect)
+    return { success: true, token: access_token };
+  } catch (err: any) {
+    if (isRedirectError(err)) throw err;
+    return { error: err.message || "Login failed. Please try again." };
+  }
+}
+
+/**
  * REGISTER ACTION
  * Handles new user creation.
  */
