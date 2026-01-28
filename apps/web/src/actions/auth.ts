@@ -223,6 +223,18 @@ export async function logoutAction() {
 }
 
 /**
+ * GET CURRENT USER
+ * Fetches the authenticated user from the API.
+ */
+export async function getCurrentUser() {
+  try {
+    return await api.auth.me();
+  } catch {
+    return null;
+  }
+}
+
+/**
  * GET TOKEN
  * Returns the access token from cookies.
  */

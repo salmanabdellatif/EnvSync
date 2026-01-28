@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
+import { AuthProvider } from "@/providers/auth-provider";
+import { getCurrentUser } from "@/actions/auth";
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
@@ -29,16 +31,20 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const user = await getCurrentUser();
+
   return (
     <html lang="en" className="dark">
       <body className={`${geistMono.variable} font-mono antialiased`}>
-        <main>{children}</main>
-        <Toaster position="top-center" richColors />
+        <AuthProvider initialUser={user}>
+          <main>{children}</main>
+          <Toaster position="top-center" richColors />
+        </AuthProvider>
       </body>
     </html>
   );
