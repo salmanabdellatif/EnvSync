@@ -4,6 +4,7 @@ import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 import { AuthProvider } from "@/providers/auth-provider";
 import { getCurrentUser } from "@/actions/auth";
+import { GoogleAnalytics } from "@next/third-parties/google";
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
@@ -45,6 +46,7 @@ export default async function RootLayout({
           <main>{children}</main>
           <Toaster position="top-center" richColors />
         </AuthProvider>
+        <GoogleAnalytics gaId="G-LZ4BXR33FB" />
       </body>
     </html>
   );
