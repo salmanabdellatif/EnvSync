@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { Loader2, Terminal, CheckCircle2 } from "lucide-react";
+import { getTokenAction } from "@/actions/auth";
 import {
   Card,
   CardContent,
@@ -60,19 +61,14 @@ export function CLIAuthHandler() {
 
   const sendTokenToCLI = async (port: number, state: string) => {
     try {
-      // Get the token from the current session
-      const tokenResponse = await fetch("/api/auth/token");
-      if (!tokenResponse.ok) {
-        throw new Error("Failed to get token");
-      }
-
-      const data = await tokenResponse.json();
-      if (!data.token) {
+      // Get the token from the current session using server action
+      const token = await getTokenAction();
+      if (!token) {
         throw new Error("No token available");
       }
 
       // Send token to CLI via fetch (no redirect!)
-      const callbackUrl = `http://localhost:${port}/callback?token=${encodeURIComponent(data.token)}&state=${encodeURIComponent(state)}`;
+      const callbackUrl = `http://localhost:${port}/callback?token=${encodeURIComponent(token)}&state=${encodeURIComponent(state)}`;
       const cliResponse = await fetch(callbackUrl);
 
       if (!cliResponse.ok) {

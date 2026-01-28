@@ -219,5 +219,15 @@ export async function resetPasswordAction(
 export async function logoutAction() {
   const cookieStore = await cookies();
   cookieStore.delete(COOKIE_NAME);
-  redirect("/login");
+  redirect("/");
+}
+
+/**
+ * GET TOKEN
+ * Returns the access token from cookies.
+ */
+export async function getTokenAction() {
+  const cookieStore = await cookies();
+  const token = cookieStore.get(COOKIE_NAME)?.value;
+  return token || null;
 }
