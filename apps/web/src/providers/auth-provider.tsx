@@ -1,6 +1,12 @@
 "use client";
 
-import { createContext, useContext, useState, type ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  type ReactNode,
+} from "react";
 import { type User } from "@/lib/schemas";
 import { logoutAction } from "@/actions/auth";
 
@@ -19,7 +25,11 @@ export function AuthProvider({
   children: ReactNode;
   initialUser: User | null;
 }) {
-  const [user] = useState<User | null>(initialUser);
+  const [user, setUser] = useState<User | null>(initialUser);
+
+  useEffect(() => {
+    setUser(initialUser);
+  }, [initialUser]);
 
   return (
     <AuthContext.Provider

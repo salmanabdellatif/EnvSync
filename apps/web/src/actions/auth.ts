@@ -12,6 +12,7 @@ import {
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { isRedirectError } from "next/dist/client/components/redirect-error";
+import { revalidatePath } from "next/cache";
 
 // Define a standard return type for our UI to consume
 export type ActionState = {
@@ -59,6 +60,8 @@ export async function loginAction(
     // Handle API errors (e.g., "Invalid credentials")
     return { error: err.message || "Login failed. Please try again." };
   }
+
+  revalidatePath("/", "layout");
 
   // 4. Redirect (Must happen OUTSIDE the try/catch block)
   redirect("/dashboard");
@@ -219,6 +222,7 @@ export async function resetPasswordAction(
 export async function logoutAction() {
   const cookieStore = await cookies();
   cookieStore.delete(COOKIE_NAME);
+  revalidatePath("/", "layout");
   redirect("/");
 }
 
