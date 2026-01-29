@@ -57,7 +57,7 @@ envsync push
 - **Web**: Next.js 16, React 19, Tailwind CSS 4, shadcn/ui
 - **API**: NestJS, Prisma, PostgreSQL, Passport
 - **CLI**: Commander, Inquirer, Node.js
-- **Security**: AES-256-GCM, ECDH Key Exchange
+- **Security**: AES-256-GCM, RSA-2048
 
 ## Running Locally
 
