@@ -26,6 +26,21 @@ export const userSchema = z.object({
 export type User = z.infer<typeof userSchema>;
 
 /**
+ * Update user profile request.
+ */
+export const updateUserSchema = z.object({
+  name: z.string().min(1, "Name is required").max(100).optional(),
+  avatar: z
+    .string()
+    .optional()
+    .refine((val) => !val || val.startsWith("http"), {
+      message: "Must be a valid URL",
+    }),
+});
+
+export type UpdateUserInput = z.infer<typeof updateUserSchema>;
+
+/**
  * --- AUTH REQUESTS (INPUTS) ---
  * Used for form validation in Server Actions.
  */

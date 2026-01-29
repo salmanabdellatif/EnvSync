@@ -10,6 +10,7 @@ import {
   type ForgotPasswordInput,
   type ResetPasswordInput,
   type ResendVerificationInput,
+  type UpdateUserInput,
 } from "./schemas";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
@@ -149,6 +150,27 @@ class ApiClient {
         },
         messageResponseSchema,
       ),
+  };
+
+  /**
+   * --- USERS MODULE ---
+   */
+
+  users = {
+    me: () =>
+      this.request("/users/me", { method: "GET" }, profileResponseSchema),
+
+    update: (body: UpdateUserInput) =>
+      this.request(
+        "/users/me",
+        {
+          method: "PATCH",
+          body: JSON.stringify(body),
+        },
+        profileResponseSchema,
+      ),
+
+    delete: () => this.request("/users/me", { method: "DELETE" }),
   };
 }
 
