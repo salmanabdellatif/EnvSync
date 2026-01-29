@@ -51,6 +51,8 @@ export class UsersService {
         email: true,
         name: true,
         avatar: true,
+        emailVerified: true,
+        createdAt: true,
       },
     });
   }
