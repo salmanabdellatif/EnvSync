@@ -23,8 +23,9 @@ Sync your .env files across your team in under 100ms.
   </a>
 </div>
 
-<!-- Add screenshot once ready -->
-<!-- <img src="assets/screenshot.png" alt="EnvSync dashboard" width="1000" /> -->
+<br>
+
+<img src="assets/screenshot.png" alt="EnvSync" width="1000" />
 
 </div>
 
