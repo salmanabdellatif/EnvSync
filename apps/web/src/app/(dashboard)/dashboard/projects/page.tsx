@@ -1,18 +1,39 @@
-export default function ProjectsPage() {
+import { getProjectsAction } from "@/actions/projects";
+import { ProjectFormDialog, ProjectsList } from "@/components/projects";
+import { FolderGit2 } from "lucide-react";
+
+export default async function ProjectsPage() {
+  const projects = await getProjectsAction();
+
   return (
-    <div className="space-y-8">
-      <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold">Projects</h1>
-        <button className="bg-primary text-primary-foreground px-4 py-2 rounded-md">
-          New Project
-        </button>
-      </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <div className="bg-card border border-border rounded-lg p-6 hover:border-primary transition-colors cursor-pointer">
-          <h2 className="text-xl font-bold mb-2">Example Project</h2>
-          <p className="text-muted-foreground text-sm">Project description</p>
+    <div className="space-y-6 sm:space-y-8">
+      {/* Responsive header */}
+      <div className="flex flex-col gap-4 sm:flex-row sm:justify-between sm:items-center">
+        <div>
+          <h1 className="text-2xl sm:text-3xl font-bold">Projects</h1>
+          <p className="text-sm sm:text-base text-muted-foreground">
+            Manage your projects and environment variables
+          </p>
         </div>
+        <ProjectFormDialog />
       </div>
+
+      {projects.length === 0 ? (
+        <div className="flex flex-col items-center justify-center py-12 sm:py-16 text-center">
+          <div className="p-4 bg-muted rounded-full mb-4">
+            <FolderGit2 className="h-8 w-8 text-muted-foreground" />
+          </div>
+          <h2 className="text-lg sm:text-xl font-semibold mb-2">
+            No projects yet
+          </h2>
+          <p className="text-sm sm:text-base text-muted-foreground mb-4 max-w-sm">
+            Create your first project to start syncing environment variables.
+          </p>
+          <ProjectFormDialog />
+        </div>
+      ) : (
+        <ProjectsList projects={projects} />
+      )}
     </div>
   );
 }
