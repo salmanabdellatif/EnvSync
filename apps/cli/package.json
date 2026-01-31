@@ -1,6 +1,6 @@
 {
   "name": "@envsync-labs/cli",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "E2E encrypted secrets management CLI",
   "author": "Salman Abdellatif",
   "license": "MIT",

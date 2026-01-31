@@ -37,7 +37,7 @@ apiClient.interceptors.response.use(
       }
     }
     return Promise.reject(error);
-  }
+  },
 );
 
 // --- Response Types ---
@@ -75,7 +75,7 @@ export async function verifyToken(token?: string): Promise<UserProfile> {
 
 // Public Key
 export async function uploadPublicKey(
-  publicKey: string
+  publicKey: string,
 ): Promise<{ message: string }> {
   return apiClient.post("/users/key", { publicKey });
 }
@@ -86,7 +86,7 @@ export async function getMyPublicKey(): Promise<PublicKeyResponse> {
 
 // Private Key Backup
 export async function uploadBackup(
-  payload: BackupPayload
+  payload: BackupPayload,
 ): Promise<{ message: string }> {
   return apiClient.post("/users/backup", payload);
 }
@@ -111,36 +111,38 @@ export async function createProject(name: string): Promise<Project> {
 
 // Project Master Key (stored per-member with E2E encryption)
 export async function getProjectKey(
-  projectId: string
+  projectId: string,
 ): Promise<ProjectKeyResponse> {
   return apiClient.get(`/projects/${projectId}/members/key`);
 }
 
 export async function initializeProjectKey(
   projectId: string,
-  encryptedKey: string
+  wrappedKey: string,
 ): Promise<{ message: string }> {
-  return apiClient.post(`/projects/${projectId}/members/key`, { encryptedKey });
+  return apiClient.post(`/projects/${projectId}/members/key`, {
+    wrappedKey,
+  });
 }
 
 // --- 3. Environments & Secrets ---
 
 export async function getEnvironments(
-  projectId: string
+  projectId: string,
 ): Promise<Environment[]> {
   return apiClient.get(`/projects/${projectId}/environments`);
 }
 
 export async function createEnvironment(
   projectId: string,
-  name: string
+  name: string,
 ): Promise<Environment> {
   return apiClient.post(`/projects/${projectId}/environments`, { name });
 }
 
 export async function getEnvironment(
   projectId: string,
-  slug: string
+  slug: string,
 ): Promise<Environment | undefined> {
   const envs = await getEnvironments(projectId);
   return envs.find((e) => e.name.toLowerCase() === slug.toLowerCase());
@@ -148,22 +150,22 @@ export async function getEnvironment(
 
 export async function getSecrets(
   projectId: string,
-  envId: string
+  envId: string,
 ): Promise<EnvVariable[]> {
   return apiClient.get(
-    `/projects/${projectId}/environments/${envId}/variables`
+    `/projects/${projectId}/environments/${envId}/variables`,
   );
 }
 
 export async function pushBatch(
   projectId: string,
   envId: string,
-  changes: BatchChanges
+  changes: BatchChanges,
 ): Promise<BatchResult> {
   const payload: BatchPayload = { changes };
   return apiClient.post(
     `/projects/${projectId}/environments/${envId}/variables/batch`,
-    payload
+    payload,
   );
 }
 
@@ -191,7 +193,7 @@ export async function lookupUser(email: string): Promise<UserLookupResponse> {
 }
 
 export async function getProjectMembers(
-  projectId: string
+  projectId: string,
 ): Promise<ProjectMember[]> {
   return apiClient.get(`/projects/${projectId}/members`);
 }
@@ -200,7 +202,7 @@ export async function addProjectMember(
   projectId: string,
   email: string,
   role: string,
-  wrappedKey: string
+  wrappedKey: string,
 ): Promise<{ message: string }> {
   return apiClient.post(`/projects/${projectId}/members`, {
     email,
@@ -212,7 +214,7 @@ export async function addProjectMember(
 export async function updateMemberKey(
   projectId: string,
   userId: string,
-  wrappedKey: string
+  wrappedKey: string,
 ): Promise<{ message: string }> {
   return apiClient.patch(`/projects/${projectId}/members/${userId}/key`, {
     wrappedKey,
@@ -221,7 +223,7 @@ export async function updateMemberKey(
 
 export async function removeProjectMember(
   projectId: string,
-  userId: string
+  userId: string,
 ): Promise<{ message: string }> {
   return apiClient.delete(`/projects/${projectId}/members/${userId}`);
 }
