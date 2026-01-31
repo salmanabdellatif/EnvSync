@@ -97,3 +97,63 @@ export const authResponseSchema = z.object({
 });
 
 export const profileResponseSchema = userSchema;
+
+/**
+ * --- PROJECT DOMAIN ---
+ */
+
+// Simplified user for project members
+const projectMemberUserSchema = z.object({
+  id: z.string(),
+  email: z.string().email(),
+  name: z.string(),
+  avatar: z.string().url().nullish(),
+});
+
+export const projectMemberSchema = z.object({
+  id: z.string(),
+  userId: z.string(),
+  projectId: z.string(),
+  role: z.enum(["OWNER", "ADMIN", "MEMBER", "VIEWER"]),
+  joinedAt: z.string().datetime(),
+  user: projectMemberUserSchema,
+});
+
+export type ProjectMember = z.infer<typeof projectMemberSchema>;
+
+export const projectSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  slug: z.string(),
+  ownerId: z.string(),
+  description: z.string().nullish(),
+  createdAt: z.string().datetime(),
+  updatedAt: z.string().datetime(),
+  owner: projectMemberUserSchema.optional(),
+  members: z.array(projectMemberSchema).optional(),
+  _count: z
+    .object({
+      environments: z.number(),
+      members: z.number(),
+    })
+    .optional(),
+});
+
+export type Project = z.infer<typeof projectSchema>;
+
+export const projectsListSchema = z.array(projectSchema);
+
+// Input schemas for forms
+export const createProjectSchema = z.object({
+  name: z.string().min(1, "Name is required").max(100),
+  description: z.string().max(500).optional(),
+});
+
+export type CreateProjectInput = z.infer<typeof createProjectSchema>;
+
+export const updateProjectSchema = z.object({
+  name: z.string().min(1, "Name is required").max(100).optional(),
+  description: z.string().max(500).optional(),
+});
+
+export type UpdateProjectInput = z.infer<typeof updateProjectSchema>;

@@ -5,12 +5,16 @@ import {
   authResponseSchema,
   messageResponseSchema,
   profileResponseSchema,
+  projectSchema,
+  projectsListSchema,
   type LoginInput,
   type RegisterInput,
   type ForgotPasswordInput,
   type ResetPasswordInput,
   type ResendVerificationInput,
   type UpdateUserInput,
+  type CreateProjectInput,
+  type UpdateProjectInput,
 } from "./schemas";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
@@ -171,6 +175,45 @@ class ApiClient {
       ),
 
     delete: () => this.request("/users/me", { method: "DELETE" }),
+  };
+
+  /**
+   * --- PROJECTS MODULE ---
+   */
+
+  projects = {
+    list: () =>
+      this.request("/projects", { method: "GET" }, projectsListSchema),
+
+    create: (body: CreateProjectInput) =>
+      this.request(
+        "/projects",
+        {
+          method: "POST",
+          body: JSON.stringify(body),
+        },
+        projectSchema,
+      ),
+
+    getBySlug: (slug: string) =>
+      this.request(`/projects/${slug}`, { method: "GET" }, projectSchema),
+
+    update: (id: string, body: UpdateProjectInput) =>
+      this.request(
+        `/projects/${id}`,
+        {
+          method: "PATCH",
+          body: JSON.stringify(body),
+        },
+        projectSchema,
+      ),
+
+    delete: (id: string) =>
+      this.request(
+        `/projects/${id}`,
+        { method: "DELETE" },
+        messageResponseSchema,
+      ),
   };
 }
 
