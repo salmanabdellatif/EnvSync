@@ -136,15 +136,37 @@ export class MemberService {
     });
   }
 
-  async removeMember(projectId: string, userId: string) {
-    const member = await this.prisma.projectMember.findUnique({
+  async removeMember(projectId: string, userId: string, callerId: string) {
+    const roleLevels = { OWNER: 4, ADMIN: 3, MEMBER: 2, VIEWER: 1 };
+
+    // 1. Fetch Caller
+    const callerMember = await this.prisma.projectMember.findUnique({
+      where: { userId_projectId: { projectId, userId: callerId } },
+    });
+    if (!callerMember) {
+      throw new ForbiddenException('Caller not found in project');
+    }
+
+    // 2. Fetch Target
+    const targetMember = await this.prisma.projectMember.findUnique({
       where: { userId_projectId: { projectId, userId } },
     });
+    if (!targetMember) {
+      throw new NotFoundException('Member not found');
+    }
 
-    if (!member) throw new NotFoundException('Member not found');
+    const callerLvl = roleLevels[callerMember.role];
+    const targetLvl = roleLevels[targetMember.role];
 
-    // Safety Check: Project must have at least one owner
-    if (member.role === 'OWNER') {
+    // 3. Can't remove same or higher rank
+    if (targetLvl >= callerLvl) {
+      throw new ForbiddenException(
+        'You cannot remove a member with equal or higher rank than you.',
+      );
+    }
+
+    // 4. Safety Check: Project must have at least one owner
+    if (targetMember.role === 'OWNER') {
       const ownerCount = await this.prisma.projectMember.count({
         where: { projectId, role: 'OWNER' },
       });

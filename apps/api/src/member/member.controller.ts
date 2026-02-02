@@ -61,8 +61,9 @@ export class MemberController {
   removeMember(
     @Param('projectId') projectId: string,
     @Param('userId') userId: string,
+    @Request() req,
   ) {
-    return this.membersService.removeMember(projectId, userId);
+    return this.membersService.removeMember(projectId, userId, req.user.id);
   }
 
   @Get('key')
