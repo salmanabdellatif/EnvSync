@@ -7,6 +7,10 @@ import {
   profileResponseSchema,
   projectSchema,
   projectsListSchema,
+  membersListSchema,
+  projectMemberSchema,
+  environmentsListSchema,
+  environmentSchema,
   type LoginInput,
   type RegisterInput,
   type ForgotPasswordInput,
@@ -15,6 +19,10 @@ import {
   type UpdateUserInput,
   type CreateProjectInput,
   type UpdateProjectInput,
+  type AddMemberInput,
+  type UpdateMemberRoleInput,
+  type CreateEnvironmentInput,
+  type UpdateEnvironmentInput,
 } from "./schemas";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
@@ -211,6 +219,86 @@ class ApiClient {
     delete: (id: string) =>
       this.request(
         `/projects/${id}`,
+        { method: "DELETE" },
+        messageResponseSchema,
+      ),
+  };
+
+  /**
+   * --- MEMBERS MODULE ---
+   */
+  members = {
+    list: (projectId: string) =>
+      this.request(
+        `/projects/${projectId}/members`,
+        { method: "GET" },
+        membersListSchema,
+      ),
+    create: (projectId: string, body: AddMemberInput) =>
+      this.request(
+        `/projects/${projectId}/members`,
+        {
+          method: "POST",
+          body: JSON.stringify(body),
+        },
+        projectMemberSchema,
+      ),
+    update: (projectId: string, userId: string, body: UpdateMemberRoleInput) =>
+      this.request(
+        `/projects/${projectId}/members/${userId}`,
+        {
+          method: "PATCH",
+          body: JSON.stringify(body),
+        },
+        projectMemberSchema,
+      ),
+    delete: (projectId: string, userId: string) =>
+      this.request(
+        `/projects/${projectId}/members/${userId}`,
+        {
+          method: "DELETE",
+        },
+        messageResponseSchema,
+      ),
+  };
+
+  /**
+   * --- ENVIRONMENTS MODULE ---
+   */
+  environment = {
+    list: (projectId: string) =>
+      this.request(
+        `/projects/${projectId}/environments`,
+        { method: "GET" },
+        environmentsListSchema,
+      ),
+    getSingle: (projectId: string, envId: string) =>
+      this.request(
+        `/projects/${projectId}/environments/${envId}`,
+        { method: "GET" },
+        environmentSchema,
+      ),
+    create: (projectId: string, body: CreateEnvironmentInput) =>
+      this.request(
+        `/projects/${projectId}/environments`,
+        {
+          method: "POST",
+          body: JSON.stringify(body),
+        },
+        environmentSchema,
+      ),
+    update: (projectId: string, envId: string, body: UpdateEnvironmentInput) =>
+      this.request(
+        `/projects/${projectId}/environments/${envId}`,
+        {
+          method: "PATCH",
+          body: JSON.stringify(body),
+        },
+        environmentSchema,
+      ),
+    delete: (projectId: string, envId: string) =>
+      this.request(
+        `/projects/${projectId}/environments/${envId}`,
         { method: "DELETE" },
         messageResponseSchema,
       ),

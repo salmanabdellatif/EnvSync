@@ -8,7 +8,7 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex min-h-screen">
+    <div className="flex min-h-screen w-full">
       <Suspense fallback={null}>
         <CLIAuthHandler />
       </Suspense>
@@ -17,7 +17,7 @@ export default function DashboardLayout({
       <Sidebar />
 
       {/* Mobile-responsive shell with header and drawer */}
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col min-w-0 overflow-x-hidden">
         <DashboardShell>{children}</DashboardShell>
       </div>
     </div>

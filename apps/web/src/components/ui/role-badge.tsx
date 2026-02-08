@@ -48,7 +48,3 @@ export function RoleBadge({ role, size = "sm" }: RoleBadgeProps) {
     </span>
   );
 }
-
-export function canEditProject(role: Role | undefined): boolean {
-  return role === "OWNER" || role === "ADMIN";
-}

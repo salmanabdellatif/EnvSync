@@ -117,9 +117,12 @@ export const projectMemberSchema = z.object({
   role: z.enum(["OWNER", "ADMIN", "MEMBER", "VIEWER"]),
   joinedAt: z.string().datetime(),
   user: projectMemberUserSchema,
+  wrappedKey: z.string().nullable().optional(),
 });
 
 export type ProjectMember = z.infer<typeof projectMemberSchema>;
+
+export const membersListSchema = z.array(projectMemberSchema);
 
 export const projectSchema = z.object({
   id: z.string(),
@@ -157,3 +160,69 @@ export const updateProjectSchema = z.object({
 });
 
 export type UpdateProjectInput = z.infer<typeof updateProjectSchema>;
+
+/**
+ * --- ENVIRONMENT DOMAIN ---
+ * New schemas for environment management
+ */
+
+export const environmentSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  projectId: z.string(),
+  createdAt: z.string().datetime(),
+  updatedAt: z.string().datetime(),
+  _count: z
+    .object({
+      variables: z.number(),
+    })
+    .optional(),
+});
+
+export type Environment = z.infer<typeof environmentSchema>;
+
+export const environmentsListSchema = z.array(environmentSchema);
+
+// Input schemas for Environment actions
+export const createEnvironmentSchema = z.object({
+  name: z
+    .string()
+    .min(1, "Name is required")
+    .max(50, "Name must be less than 50 characters")
+    .regex(
+      /^[a-zA-Z0-9-_]+$/,
+      "Only letters, numbers, dashes, and underscores",
+    ),
+});
+
+export type CreateEnvironmentInput = z.infer<typeof createEnvironmentSchema>;
+
+export const updateEnvironmentSchema = z.object({
+  name: z
+    .string()
+    .min(1, "Name is required")
+    .max(50)
+    .regex(/^[a-zA-Z0-9-_]+$/, "Only letters, numbers, dashes, and underscores")
+    .optional(),
+});
+
+export type UpdateEnvironmentInput = z.infer<typeof updateEnvironmentSchema>;
+
+/**
+ * --- MEMBER MANAGEMENT INPUTS ---
+ * Inputs for adding/managing project members
+ */
+
+export const addMemberSchema = z.object({
+  email: emailSchema,
+  role: z.enum(["OWNER", "ADMIN", "MEMBER", "VIEWER"]),
+});
+
+export type AddMemberInput = z.infer<typeof addMemberSchema>;
+
+export const updateMemberRoleSchema = z.object({
+  // We include OWNER here because you might be promoting someone to owner.
+  role: z.enum(["OWNER", "ADMIN", "MEMBER", "VIEWER"]),
+});
+
+export type UpdateMemberRoleInput = z.infer<typeof updateMemberRoleSchema>;
