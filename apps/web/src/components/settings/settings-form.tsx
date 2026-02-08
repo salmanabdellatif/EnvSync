@@ -124,21 +124,6 @@ export function SettingsForm() {
             )}
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="avatar">Avatar URL</Label>
-            <Input
-              id="avatar"
-              type="url"
-              placeholder="https://example.com/avatar.jpg"
-              {...register("avatar")}
-            />
-            {errors.avatar && (
-              <p className="text-xs text-destructive">
-                {errors.avatar.message}
-              </p>
-            )}
-          </div>
-
           <div className="flex justify-end">
             <Button type="submit" isLoading={isSubmitting}>
               Save Changes
