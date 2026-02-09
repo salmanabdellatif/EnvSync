@@ -67,29 +67,20 @@ export function CLIAuthHandler() {
         throw new Error("No token available");
       }
 
-      // Send token to CLI via fetch (no redirect!)
-      const callbackUrl = `http://localhost:${port}/callback?token=${encodeURIComponent(token)}&state=${encodeURIComponent(state)}`;
-      const cliResponse = await fetch(callbackUrl);
-
-      if (!cliResponse.ok) {
-        throw new Error("Failed to send token to CLI");
-      }
-
-      // Success!
+      // Success state first (user sees this before redirect)
       setIsSuccess(true);
 
       // Clean up localStorage
       localStorage.removeItem(CLI_STATE_KEY);
 
-      // Clean URL params
-      window.history.replaceState({}, "", "/dashboard");
+      // Build callback URL for CLI
+      const callbackUrl = `http://localhost:${port}/callback?token=${encodeURIComponent(token)}&state=${encodeURIComponent(state)}`;
 
-      // Go to dashboard after 2 seconds
+      // Use redirect instead of fetch to avoid CORS issues
+      // The CLI server will respond with a page that closes or shows success
       setTimeout(() => {
-        setIsCLIAuth(false);
-        setIsVisible(false);
-        router.refresh();
-      }, 2000);
+        window.location.href = callbackUrl;
+      }, 1500);
     } catch (err: any) {
       setError(err.message || "Failed to authenticate CLI");
       localStorage.removeItem(CLI_STATE_KEY);
