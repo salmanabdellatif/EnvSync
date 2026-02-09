@@ -9,7 +9,8 @@ import {
   BatchChanges,
 } from "../types/index.js";
 
-const API_URL = process.env.ENVSYNC_API_URL || "http://localhost:3000/api/v1";
+const API_URL =
+  process.env.ENVSYNC_API_URL || "https://api.envsync.tech/api/v1";
 
 const apiClient = axios.create({
   baseURL: API_URL,
