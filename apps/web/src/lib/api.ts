@@ -11,6 +11,7 @@ import {
   projectMemberSchema,
   environmentsListSchema,
   environmentSchema,
+  variablesListSchema,
   type LoginInput,
   type RegisterInput,
   type ForgotPasswordInput,
@@ -299,6 +300,24 @@ class ApiClient {
     delete: (projectId: string, envId: string) =>
       this.request(
         `/projects/${projectId}/environments/${envId}`,
+        { method: "DELETE" },
+        messageResponseSchema,
+      ),
+  };
+
+  /**
+   * --- VARIABLES MODULE ---
+   */
+  variables = {
+    list: (projectId: string, envId: string) =>
+      this.request(
+        `/projects/${projectId}/environments/${envId}/variables?metadataOnly=true`,
+        { method: "GET" },
+        variablesListSchema,
+      ),
+    delete: (projectId: string, envId: string, varId: string) =>
+      this.request(
+        `/projects/${projectId}/environments/${envId}/variables/${varId}`,
         { method: "DELETE" },
         messageResponseSchema,
       ),

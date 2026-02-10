@@ -226,3 +226,31 @@ export const updateMemberRoleSchema = z.object({
 });
 
 export type UpdateMemberRoleInput = z.infer<typeof updateMemberRoleSchema>;
+
+/**
+ * --- VARIABLES ---
+ * Variable schema for web UI (metadata only)
+ */
+export const variableSchema = z.object({
+  id: z.string(),
+  key: z.string(),
+  comment: z.string().nullable(),
+  createdAt: z.string().datetime(),
+  updatedAt: z.string().datetime(),
+  createdUser: z
+    .object({
+      name: z.string(),
+      avatar: z.string().nullable(),
+      email: z.string(),
+    })
+    .optional(),
+  updatedUser: z
+    .object({
+      name: z.string(),
+      avatar: z.string().nullable(),
+      email: z.string(),
+    })
+    .optional(),
+});
+export type Variable = z.infer<typeof variableSchema>;
+export const variablesListSchema = z.array(variableSchema);
