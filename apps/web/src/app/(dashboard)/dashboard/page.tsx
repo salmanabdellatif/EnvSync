@@ -10,7 +10,6 @@ import {
   ExternalLink,
   BookOpen,
   Globe,
-  ChevronRight,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -18,8 +17,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getProjectsAction } from "@/actions/projects";
 import { getMembersAction } from "@/actions/members";
 import { getCurrentUser } from "@/actions/auth";
+import { ProjectCard } from "@/components/projects";
 import { siteLinks, cliCommands } from "@/config/links";
-import { formatDistanceToNow } from "date-fns";
 
 export const metadata: Metadata = {
   title: "Dashboard - EnvSync",
@@ -187,50 +186,7 @@ export default async function DashboardPage() {
 
         <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
           {projects.slice(0, 6).map((project) => (
-            <Link
-              key={project.id}
-              href={`/dashboard/projects/${project.slug}`}
-              className="group block"
-            >
-              <Card className="h-full transition-all duration-200 hover:shadow-lg hover:border-primary/40 border-l-2 border-l-primary/20 group-hover:border-l-primary">
-                <CardContent className="p-4 sm:p-5">
-                  {/* Project Name */}
-                  <div className="flex items-center justify-between mb-3">
-                    <h3 className="font-semibold text-sm group-hover:text-primary transition-colors truncate pr-2">
-                      {project.name}
-                    </h3>
-                    <ChevronRight className="h-4 w-4 text-muted-foreground shrink-0 opacity-0 group-hover:opacity-100 transition-opacity" />
-                  </div>
-
-                  {/* Description */}
-                  {project.description && (
-                    <p className="text-xs text-muted-foreground line-clamp-2 mb-3">
-                      {project.description}
-                    </p>
-                  )}
-
-                  {/* Badges */}
-                  <div className="flex items-center gap-3 text-xs text-muted-foreground">
-                    <span className="flex items-center gap-1 bg-muted/50 px-2 py-0.5 rounded-md">
-                      <Layers className="h-3 w-3" />
-                      {project._count?.environments || 0} envs
-                    </span>
-                    <span className="flex items-center gap-1 bg-muted/50 px-2 py-0.5 rounded-md">
-                      <Users className="h-3 w-3" />
-                      {project._count?.members || 0}
-                    </span>
-                  </div>
-
-                  {/* Updated time */}
-                  <p className="text-[11px] text-muted-foreground/60 mt-3">
-                    Updated{" "}
-                    {formatDistanceToNow(new Date(project.updatedAt), {
-                      addSuffix: true,
-                    })}
-                  </p>
-                </CardContent>
-              </Card>
-            </Link>
+            <ProjectCard key={project.id} project={project} />
           ))}
         </div>
       </div>
