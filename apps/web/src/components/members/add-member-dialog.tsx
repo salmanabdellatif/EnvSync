@@ -56,7 +56,7 @@ export function AddMemberDialog({
     resolver: zodResolver(addMemberSchema),
     defaultValues: {
       email: "",
-      role: "MEMBER",
+      role: "VIEWER",
     },
   });
 
@@ -80,7 +80,7 @@ export function AddMemberDialog({
   // Reset form when dialog opens
   useEffect(() => {
     if (open) {
-      reset({ email: "", role: "MEMBER" });
+      reset({ email: "", role: "VIEWER" });
     }
   }, [open, reset]);
 
