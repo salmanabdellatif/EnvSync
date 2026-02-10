@@ -221,7 +221,20 @@ export async function resetPasswordAction(
  */
 export async function logoutAction() {
   const cookieStore = await cookies();
+
+  // Delete cookie for current domain (email/password login sets it here)
   cookieStore.delete(COOKIE_NAME);
+
+  // Also delete the cookie set by the API with domain='.envsync.tech' (OAuth flow)
+  cookieStore.set(COOKIE_NAME, "", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    path: "/",
+    domain: process.env.NODE_ENV === "production" ? ".envsync.tech" : undefined,
+    maxAge: 0,
+  });
+
   revalidatePath("/", "layout");
   redirect("/");
 }
