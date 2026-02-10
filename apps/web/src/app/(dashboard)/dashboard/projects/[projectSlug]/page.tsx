@@ -1,9 +1,11 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getProjectAction } from "@/actions/projects";
 import { getEnvironmentsAction } from "@/actions/environments";
 import { getMembersAction } from "@/actions/members";
 import { getCurrentUser } from "@/actions/auth";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import {
   EnvironmentFormDialog,
   EnvironmentsList,
@@ -20,6 +22,18 @@ import { Button } from "@/components/ui/button";
 
 interface ProjectDetailsPageProps {
   params: Promise<{ projectSlug: string }>;
+}
+
+export async function generateMetadata({
+  params,
+}: ProjectDetailsPageProps): Promise<Metadata> {
+  const { projectSlug } = await params;
+  const project = await getProjectAction(projectSlug);
+  return {
+    title: project ? `${project.name} - EnvSync` : "Project - EnvSync",
+    description:
+      project?.description || "Manage project environments and secrets.",
+  };
 }
 
 export default async function ProjectDetailsPage({
@@ -51,6 +65,14 @@ export default async function ProjectDetailsPage({
 
   return (
     <div className="space-y-6">
+      {/* Breadcrumbs */}
+      <Breadcrumbs
+        items={[
+          { label: "Projects", href: "/dashboard/projects" },
+          { label: project.name },
+        ]}
+      />
+
       {/* Header */}
       <div className="flex items-start justify-between">
         <div>

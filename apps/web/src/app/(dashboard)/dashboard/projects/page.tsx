@@ -1,12 +1,22 @@
+import type { Metadata } from "next";
 import { getProjectsAction } from "@/actions/projects";
 import { ProjectFormDialog, ProjectsList } from "@/components/projects";
+import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { FolderGit2 } from "lucide-react";
+
+export const metadata: Metadata = {
+  title: "Projects - EnvSync",
+  description: "Manage your projects and environment variables.",
+};
 
 export default async function ProjectsPage() {
   const projects = await getProjectsAction();
 
   return (
     <div className="space-y-6 sm:space-y-8">
+      {/* Breadcrumbs */}
+      <Breadcrumbs items={[{ label: "Projects" }]} />
+
       {/* Responsive header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:justify-between sm:items-center">
         <div>
