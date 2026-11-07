@@ -5,9 +5,9 @@ on:
     branches: [master]
     paths:
       - "apps/api/**"
-      - "libs/**"
       - "Dockerfile"
       - ".github/workflows/deploy-api.yml"
+  workflow_dispatch: # allows running the deploy manually from the Actions tab
 
 env:
   REGISTRY: ghcr.io
@@ -42,41 +42,58 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: ${{ env.REGISTRY }}/${{ env.REPO_OWNER }}/${{ env.IMAGE_NAME }}:latest
+          # :latest for convenience, :<commit-sha> so every deploy is traceable and can be rolled back
+          tags: |
+            ${{ env.REGISTRY }}/${{ env.REPO_OWNER }}/${{ env.IMAGE_NAME }}:latest
+            ${{ env.REGISTRY }}/${{ env.REPO_OWNER }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
 
-      # 4. Deploy to AWS EC2
-      - name: Deploy to EC2
+      # 4. Deploy to Oracle Cloud VPS (Caddy on the server proxies api.envsync.tech -> 127.0.0.1:3000)
+      - name: Deploy to VPS
         uses: appleboy/ssh-action@v1.0.3
         env:
           ENV_PRODUCTION: ${{ secrets.ENV_PRODUCTION }}
-          REPO_OWNER: ${{ env.REPO_OWNER }}
-          IMAGE_NAME: ${{ env.IMAGE_NAME }}
-          REGISTRY: ${{ env.REGISTRY }}
+          FULL_IMAGE: ${{ env.REGISTRY }}/${{ env.REPO_OWNER }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_ACTOR: ${{ github.actor }}
         with:
-          host: ${{ secrets.AWS_HOST }}
+          host: ${{ secrets.VPS_HOST }}
           username: ubuntu
-          key: ${{ secrets.AWS_SSH_KEY }}
-          script_stop: true
-          envs: ENV_PRODUCTION,REPO_OWNER,IMAGE_NAME,REGISTRY,GITHUB_TOKEN,GITHUB_ACTOR
+          key: ${{ secrets.VPS_SSH_KEY }}
+          envs: ENV_PRODUCTION,FULL_IMAGE,GITHUB_TOKEN,GITHUB_ACTOR
           script: |
-            FULL_IMAGE="$REGISTRY/$REPO_OWNER/$IMAGE_NAME:latest"
+            set -e
+            mkdir -p ~/envsync && cd ~/envsync
 
-            echo "$ENV_PRODUCTION" > .env.production
+            # Env file readable only by the ubuntu user
+            umask 077
+            printf '%s\n' "$ENV_PRODUCTION" > .env.production
 
-            echo "$GITHUB_TOKEN" | docker login ghcr.io -u $GITHUB_ACTOR --password-stdin
-
-            docker pull $FULL_IMAGE
+            echo "$GITHUB_TOKEN" | docker login ghcr.io -u "$GITHUB_ACTOR" --password-stdin
+            docker pull "$FULL_IMAGE"
+            docker logout ghcr.io
 
             docker stop envsync-api || true
             docker rm envsync-api || true
 
+            # Bound to localhost only (reachable through Caddy, not directly from the internet).
+            # Memory cap keeps a leak from freezing the 1 GB VM; --restart brings it back.
             docker run -d \
-              --env-file .env.production \
-              -p 3000:3000 \
               --name envsync-api \
               --restart unless-stopped \
-              $FULL_IMAGE
+              --env-file .env.production \
+              -p 127.0.0.1:3000:3000 \
+              --memory=400m \
+              "$FULL_IMAGE"
 
-            docker image prune -f
+            # Fail the deploy if the API doesn't come up
+            for i in $(seq 1 30); do
+              if curl -fsS http://127.0.0.1:3000/api/v1/health > /dev/null 2>&1; then
+                echo "API is healthy"
+                docker image prune -af
+                exit 0
+              fi
+              sleep 2
+            done
+            echo "API did not become healthy. Last logs:"
+            docker logs --tail 50 envsync-api
+            exit 1
