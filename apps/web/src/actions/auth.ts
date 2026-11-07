@@ -242,8 +242,14 @@ export async function logoutAction() {
 /**
  * GET CURRENT USER
  * Fetches the authenticated user from the API.
+ * Visitors without a session cookie can't be logged in, so we skip the API call entirely.
  */
 export async function getCurrentUser() {
+  const cookieStore = await cookies();
+  if (!cookieStore.get(COOKIE_NAME)?.value) {
+    return null;
+  }
+
   try {
     return await api.auth.me();
   } catch {

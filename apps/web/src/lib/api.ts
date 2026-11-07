@@ -28,6 +28,10 @@ import {
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
+// Upper bound for any API call, so a slow or unreachable API can never hang a page render.
+// Kept generous because the Neon database can take a few seconds to wake up after being idle.
+const REQUEST_TIMEOUT_MS = 8000;
+
 type FetchOptions = RequestInit & {
   headers?: Record<string, string>;
 };
@@ -61,6 +65,7 @@ class ApiClient {
     const response = await fetch(url, {
       ...options,
       headers,
+      signal: options?.signal ?? AbortSignal.timeout(REQUEST_TIMEOUT_MS),
     });
 
     // Handle 401 Unauthorized (Global Redirect)
